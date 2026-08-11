@@ -4,20 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Yahiwenis Choir — Horbabicho Kalehiwot Church{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}</title>
     {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header>
-        <nav>
-            <a href="/">Home</a>
-        </nav>
+        <div class="nav-container">
+            <a href="{% url 'core:home' %}" class="brand">
+                {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+            </a>
+            <nav>
+                <a href="{% url 'core:home' %}">Home</a>
+                <a href="{% url 'core:about' %}">About Us</a>
+                <a href="{% url 'core:contact' %}">Contact</a>
+            </nav>
+        </div>
     </header>
 
     <main>
         {% block content %}
         {% endblock %}
     </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h3>{{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}</h3>
+                <p>{{ site_settings.choir_name_am }}</p>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Info</h4>
+                {% if site_settings and site_settings.phone_number %}
+                    <p><strong>Phone:</strong> {{ site_settings.phone_number }}</p>
+                {% endif %}
+                {% if site_settings and site_settings.email %}
+                    <p><strong>Email:</strong> {{ site_settings.email }}</p>
+                {% endif %}
+                {% if site_settings and site_settings.address %}
+                    <p><strong>Location:</strong> {{ site_settings.address }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

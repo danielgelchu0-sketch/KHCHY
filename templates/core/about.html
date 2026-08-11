@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header">
+        <h1>About Our Choir</h1>
+        <p class="subtitle">{{ site_settings.choir_name_am }}</p>
+    </section>
+
+    <section class="about-detail">
+        <h2>Our Mission & History / ስለ እኛ</h2>
+        
+        {% if site_settings and site_settings.about_text_en %}
+            <div class="about-text-en">
+                {{ site_settings.about_text_en|linebreaks }}
+            </div>
+        {% else %}
+            <p>Welcome to the official page of Horbabicho Kalehiwot Church Yahiwenis Choir.</p>
+        {% endif %}
+
+        {% if site_settings and site_settings.about_text_am %}
+            <div class="about-text-am" style="margin-top: 1.5rem; font-size: 1.05rem;">
+                {{ site_settings.about_text_am|linebreaks }}
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
