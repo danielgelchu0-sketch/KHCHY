@@ -1,0 +1,25 @@
+# Virtual Environment
+venv/
+.venv/
+
+# Environment variables / Secrets
+.env
+*.env
+
+# Python / Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database (for local dev fallback)
+*.sqlite3
+*.db
+
+# Media / Static files collected locally
+/media/
+/staticfiles/
+
+# IDE / OS specific files
+.vscode/
+.idea/
+.DS_Store
