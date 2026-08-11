@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if site_settings %}{{ site_settings.choir_name_en }}{% else %}Yahiwenis Choir{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="hero-banner">
+    {% if site_settings and site_settings.hero_banner %}
+        <img src="{{ site_settings.hero_banner.url }}" alt="Choir Banner">
+    {% endif %}
+    <div class="hero-text">
+        <h1>
+            {% if site_settings %}
+                {{ site_settings.choir_name_en }}
+                <br>
+                <small>{{ site_settings.choir_name_am }}</small>
+            {% else %}
+                Horbabicho Kalehiwot Church Yahiwenis Choir
+            {% endif %}
+        </h1>
+    </div>
+</section>
+
+<div class="container">
+    <section class="about-summary">
+        <h2>About Us</h2>
+        <p>{% if site_settings %}{{ site_settings.about_text_en }}{% else %}Welcome to our official website.{% endif %}</p>
+    </section>
+</div>
+{% endblock %}
