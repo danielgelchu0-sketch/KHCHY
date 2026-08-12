@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title_en }} — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header" style="margin: 2rem 0;">
+        <span style="background: #ebf8ff; color: #2b6cb0; font-size: 0.85rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 4px; text-transform: uppercase;">
+            {{ event.get_event_type_display }}
+        </span>
+        <h1 style="margin-top: 0.5rem;">{{ event.title_en }}</h1>
+        {% if event.title_am %}<h2 style="color: #4a5568; font-weight: normal;">{{ event.title_am }}</h2>{% endif %}
+    </section>
+
+    {% if event.banner_image %}
+        <div style="margin-bottom: 2rem;">
+            <img src="{{ event.banner_image.url }}" alt="{{ event.title_en }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px;">
+        </div>
+    {% endif %}
+
+    <div style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 1px solid #edf2f7; padding-bottom: 1rem;">
+            <div>
+                <strong>Start Time:</strong>
+                <p>{{ event.start_time|date:"F d, Y @ h:i A" }}</p>
+            </div>
+            {% if event.end_time %}
+                <div>
+                    <strong>End Time:</strong>
+                    <p>{{ event.end_time|date:"F d, Y @ h:i A" }}</p>
+                </div>
+            {% endif %}
+            <div>
+                <strong>Location:</strong>
+                <p>{{ event.location }}</p>
+            </div>
+        </div>
+
+        {% if event.description_en %}
+            <div style="margin-bottom: 1.5rem;">
+                <h3>About This Event</h3>
+                <p>{{ event.description_en|linebreaks }}</p>
+            </div>
+        {% endif %}
+
+        {% if event.description_am %}
+            <div>
+                <h3>ስለ ዝግጅቱ</h3>
+                <p>{{ event.description_am|linebreaks }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

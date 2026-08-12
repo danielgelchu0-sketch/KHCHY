@@ -80,3 +80,69 @@ header nav a {
     color: #1a365d;
     margin-bottom: 1rem;
 }
+
+/* Header & Nav Layout */
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+header nav a {
+    margin-left: 1.5rem;
+    color: #cbd5e0;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+header nav a:hover {
+    color: #ffffff;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #1a202c;
+    color: #a0aec0;
+    margin-top: 4rem;
+    padding-top: 3rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    padding-bottom: 2rem;
+}
+
+.footer-info h3 {
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.footer-contact h4 {
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+.footer-bottom {
+    border-top: 1px solid #2d3748;
+    text-align: center;
+    padding: 1.5rem 0;
+    font-size: 0.875rem;
+}
+
+/* Page Headers */
+.page-header {
+    margin: 2rem 0;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 1rem;
+}

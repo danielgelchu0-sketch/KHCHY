@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Rehearsals & Choir Members — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header">
+        <h1>Rehearsal Schedule & Choir Roster</h1>
+        <p>Access upcoming practice schedules, sheet music, and choir roster by voice sections.</p>
+    </section>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Left: Rehearsal Schedule -->
+        <div>
+            <h2>Rehearsal Sessions</h2>
+            <div style="margin-top: 1rem;">
+                {% for session in sessions %}
+                    <div style="background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin: 0 0 0.5rem 0;">{{ session.title }}</h3>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0 0 0.5rem 0;">
+                            📅 <strong>Date:</strong> {{ session.date|date:"F d, Y @ h:i A" }} | 📍 {{ session.location }}
+                        </p>
+                        {% if session.sheet_music %}
+                            <a href="{{ session.sheet_music.url }}" download style="display: inline-block; background: #2b6cb0; color: #fff; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; text-decoration: none; margin-top: 0.5rem;">
+                                📄 Download Sheet Music
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'rehearsal:rehearsal_detail' session.pk %}" style="display: inline-block; margin-left: 1rem; color: #2b6cb0; font-weight: bold; text-decoration: none; font-size: 0.9rem;">
+                            View Session Details &rarr;
+                        </a>
+                    </div>
+                {% empty %}
+                    <p style="color: #718096;">No upcoming rehearsal sessions scheduled.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right: Choir Members by Part -->
+        <div>
+            <h2>Choir Roster</h2>
+            <div style="background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                {% for part, members in members_by_part.items %}
+                    <h4 style="border-bottom: 1px solid #edf2f7; padding-bottom: 0.25rem; margin-top: 1rem; color: #2b6cb0;">{{ part }}</h4>
+                    <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: #4a5568;">
+                        {% for member in members %}
+                            <li>{{ member.full_name_en }} {% if member.full_name_am %}({{ member.full_name_am }}){% endif %}</li>
+                        {% empty %}
+                            <li style="color: #a0aec0; list-style: none;">No members assigned yet.</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

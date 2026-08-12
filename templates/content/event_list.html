@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Events & Schedule — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header">
+        <h1>Upcoming Events & Schedule</h1>
+        <p>Join us for choir services, rehearsals, and upcoming ministry concerts.</p>
+    </section>
+
+    <h2 style="margin-top: 2rem; color: #2d3748;">Upcoming Events</h2>
+    <div class="event-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        {% for event in upcoming_events %}
+            <div class="event-card" style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem;">
+                <span style="display: inline-block; background: #ebf8ff; color: #2b6cb0; font-size: 0.8rem; font-weight: bold; padding: 0.25rem 0.5rem; border-radius: 4px; text-transform: uppercase;">
+                    {{ event.get_event_type_display }}
+                </span>
+                <h3 style="margin-top: 0.75rem; font-size: 1.25rem;">{{ event.title_en }}</h3>
+                {% if event.title_am %}<p style="color: #718096; margin-top: 0.25rem;">{{ event.title_am }}</p>{% endif %}
+                
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: #4a5568;">
+                    <p>📅 <strong>Date:</strong> {{ event.start_time|date:"M d, Y @ h:i A" }}</p>
+                    <p>📍 <strong>Location:</strong> {{ event.location }}</p>
+                </div>
+
+                <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 1rem; color: #2b6cb0; font-weight: bold; text-decoration: none;">Event Details &rarr;</a>
+            </div>
+        {% empty %}
+            <p style="color: #718096;">No upcoming events scheduled right now.</p>
+        {% endfor %}
+    </div>
+
+    {% if past_events %}
+        <h2 style="margin-top: 3rem; color: #2d3748;">Recent Past Events</h2>
+        <div class="event-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+            {% for event in past_events %}
+                <div class="event-card" style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
+                    <h3>{{ event.title_en }}</h3>
+                    <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">📅 {{ event.start_time|date:"M d, Y" }}</p>
+                    <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 0.75rem; color: #4a5568; font-weight: bold; text-decoration: none;">View Past Event &rarr;</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
