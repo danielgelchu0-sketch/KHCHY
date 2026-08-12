@@ -10,6 +10,7 @@ urlpatterns = [
     path('music/', include('music.urls', namespace='music')),
     path('content/', include('content.urls', namespace='content')),
     path('rehearsal/', include('rehearsal.urls', namespace='rehearsal')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
 ]
 
 

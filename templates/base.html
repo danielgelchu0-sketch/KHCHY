@@ -24,7 +24,18 @@
     <a href="{% url 'rehearsal:rehearsal_list' %}">Rehearsals</a>
     <a href="{% url 'core:about' %}">About Us</a>
     <a href="{% url 'core:contact' %}">Contact</a>
+{% if user.is_authenticated %}
+        <span>Hi, {{ user.username }}</span>
+        <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:register' %}">Register</a>
+    {% endif %}
 </nav>
+
         </div>
     </header>
 

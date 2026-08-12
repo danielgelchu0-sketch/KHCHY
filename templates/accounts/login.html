@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-side">
+    <svg class="auth-seal" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" stroke="#C99A3E" stroke-width="2"/>
+      <path d="M28 12v32M16 22h24" stroke="#C99A3E" stroke-width="2" stroke-linecap="round"/>
+      <path d="M20 16l16 24M36 16L20 40" stroke="#C99A3E" stroke-width="1" opacity="0.5"/>
+    </svg>
+    <h2>{{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}</h2>
+    <p>Welcome back. Login to access rehearsal materials and member content.</p>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-form-wrap">
+      <h1>Login</h1>
+      <p class="auth-subtitle">Enter your credentials to continue.</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="auth-submit">Login</button>
+      </form>
+      <p class="auth-switch">Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

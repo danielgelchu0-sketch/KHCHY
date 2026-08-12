@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+.auth-page {
+  display: flex;
+  min-height: calc(100vh - 160px);
+}
+
+.auth-side {
+  flex: 0 0 38%;
+  background: #1F3D2B;
+  color: #F8F4EA;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.auth-seal {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.5rem;
+}
+
+.auth-side h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  margin: 0 0 0.75rem;
+}
+
+.auth-side p {
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: #E4C878;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.auth-form-panel {
+  flex: 1;
+  background: #F8F4EA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.auth-form-wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-form-wrap h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  color: #1F3D2B;
+  font-size: 2rem;
+  margin: 0 0 0.5rem;
+}
+
+.auth-subtitle {
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: #6B6255;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.auth-form-wrap form p {
+  margin: 0 0 1.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form-wrap label {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1F3D2B;
+  margin-bottom: 0.4rem;
+}
+
+.auth-form-wrap input,
+.auth-form-wrap select {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #D8CFBC;
+  border-radius: 4px;
+  background: #FFFFFF;
+  color: #2A2420;
+}
+
+.auth-form-wrap input:focus,
+.auth-form-wrap select:focus {
+  outline: 2px solid #C99A3E;
+  outline-offset: 1px;
+  border-color: #C99A3E;
+}
+
+.auth-form-wrap .helptext {
+  font-size: 0.78rem;
+  color: #6B6255;
+  margin-top: 0.3rem;
+}
+
+.auth-form-wrap ul.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.3rem 0 0;
+  color: #A23B3B;
+  font-size: 0.82rem;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 0.85rem;
+  background: #1F3D2B;
+  color: #F8F4EA;
+  border: none;
+  border-radius: 4px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.auth-submit:hover {
+  background: #16301F;
+}
+
+.auth-switch {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #6B6255;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: #1F3D2B;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .auth-page {
+    flex-direction: column;
+  }
+  .auth-side {
+    flex: none;
+    padding: 2rem 1.5rem;
+  }
+  .auth-seal {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+  }
+}

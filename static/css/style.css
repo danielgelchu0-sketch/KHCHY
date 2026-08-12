@@ -5,23 +5,66 @@
     box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
-    color: #2d3748;
-    background-color: #f7fafc;
+    color: #2A2420;
+    background-color: #F8F4EA;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: #1F3D2B;
+}
+
+a {
+    color: #1F3D2B;
 }
 
 /* Header & Nav */
 header {
-    background-color: #1a202c;
+    background-color: #1F3D2B;
     padding: 1rem 2rem;
 }
 
-header nav a {
-    color: #ffffff;
+header nav a,
+.brand,
+.brand-logo {
+    color: #F8F4EA;
     text-decoration: none;
     font-weight: 600;
+}
+
+/* Header & Nav Layout */
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand,
+.brand-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+header nav a {
+    margin-left: 1.5rem;
+    color: #D8CFBC;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.92rem;
+}
+
+header nav a:hover {
+    color: #C99A3E;
 }
 
 /* Hero Section */
@@ -48,18 +91,20 @@ header nav a {
     left: 2rem;
     right: 2rem;
     color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
 }
 
 .hero-text h1 {
+    font-family: 'Fraunces', serif;
     font-size: 2.5rem;
     font-weight: 700;
+    color: #ffffff;
 }
 
 .hero-text small {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 400;
-    color: #e2e8f0;
+    color: #E4C878;
 }
 
 /* Main Container & About Section */
@@ -72,46 +117,30 @@ header nav a {
 .about-summary {
     background: #ffffff;
     padding: 2.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    border: 1px solid #E9E1D0;
+    box-shadow: 0 4px 10px -4px rgba(31, 61, 43, 0.12);
 }
 
 .about-summary h2 {
-    color: #1a365d;
     margin-bottom: 1rem;
+    position: relative;
+    padding-bottom: 0.6rem;
 }
 
-/* Header & Nav Layout */
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.brand {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #fff;
-    text-decoration: none;
-}
-
-header nav a {
-    margin-left: 1.5rem;
-    color: #cbd5e0;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-header nav a:hover {
-    color: #ffffff;
+.about-summary h2::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: #C99A3E;
+    margin-top: 0.6rem;
 }
 
 /* Footer Styling */
 footer {
-    background-color: #1a202c;
-    color: #a0aec0;
+    background-color: #1F3D2B;
+    color: #C6BFA8;
     margin-top: 4rem;
     padding-top: 3rem;
 }
@@ -129,12 +158,16 @@ footer {
 }
 
 .footer-contact h4 {
-    color: #ffffff;
+    color: #C99A3E;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     margin-bottom: 0.75rem;
 }
 
 .footer-bottom {
-    border-top: 1px solid #2d3748;
+    border-top: 1px solid #2F4E3A;
     text-align: center;
     padding: 1.5rem 0;
     font-size: 0.875rem;
@@ -143,6 +176,6 @@ footer {
 /* Page Headers */
 .page-header {
     margin: 2rem 0;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #C99A3E;
     padding-bottom: 1rem;
 }
