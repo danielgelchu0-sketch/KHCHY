@@ -1,28 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}About Us — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        ስለ እኛ — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        About Us — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="page-header">
-        <h1>About Our Choir</h1>
-        <p class="subtitle">{{ site_settings.choir_name_am }}</p>
+        <h1>{% if is_amharic %}ስለ ኳየራችን{% else %}About Our Choir{% endif %}</h1>
+        <p class="subtitle">
+            {% if is_amharic %}
+                {{ site_settings.choir_name_am|default:"ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር" }}
+            {% else %}
+                {{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}
+            {% endif %}
+        </p>
     </section>
 
-    <section class="about-detail">
-        <h2>Our Mission & History / ስለ እኛ</h2>
+    <section class="about-detail" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); line-height: 1.8;">
+        <h2>{% if is_amharic %}ተልዕኳችን እና ታሪካችን{% else %}Our Mission & History{% endif %}</h2>
         
-        {% if site_settings and site_settings.about_text_en %}
-            <div class="about-text-en">
-                {{ site_settings.about_text_en|linebreaks }}
+        {% if is_amharic %}
+            <div class="about-text-am" style="margin-top: 1rem; font-size: 1.05rem;">
+                {% if site_settings and site_settings.about_text_am %}
+                    {{ site_settings.about_text_am|linebreaks }}
+                {% else %}
+                    <p>ወደ ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር ይፋዊ ገጽ እንኳን በደህና መጡ። ያህዌ ንሲ ኳየር እግዚአብሔርን በመንፈስ እና በእውነት ለማምለክ፣ ወንጌልን በዝማሬ ለማድረስ እና ቅዱሳንን በህብረት ለማነጽ የሚተጋ የወንጌላዊት ቤተክርስቲያን አገልግሎት ነው።</p>
+                {% endif %}
             </div>
         {% else %}
-            <p>Welcome to the official page of Horbabicho Kalehiwot Church Yahiwenis Choir.</p>
-        {% endif %}
-
-        {% if site_settings and site_settings.about_text_am %}
-            <div class="about-text-am" style="margin-top: 1.5rem; font-size: 1.05rem;">
-                {{ site_settings.about_text_am|linebreaks }}
+            <div class="about-text-en" style="margin-top: 1rem; font-size: 1.05rem;">
+                {% if site_settings and site_settings.about_text_en %}
+                    {{ site_settings.about_text_en|linebreaks }}
+                {% else %}
+                    <p>Welcome to the official page of Horbabicho Kalehiwot Church Yahiwenis Choir. Yahiwenis Choir is dedicated to worshiping God in spirit and truth, proclaiming the Gospel of Jesus Christ through music, and edifying the body of believers.</p>
+                {% endif %}
             </div>
         {% endif %}
     </section>

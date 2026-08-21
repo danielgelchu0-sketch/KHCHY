@@ -28,3 +28,13 @@ class SiteSetting(models.Model):
 
     def __str__(self):
         return self.choir_name_en
+
+    def get_choir_name(self, is_amharic=False):
+        if is_amharic and self.choir_name_am:
+            return self.choir_name_am
+        return self.choir_name_en
+
+    def get_about_text(self, is_amharic=False):
+        if is_amharic and self.about_text_am:
+            return self.about_text_am
+        return self.about_text_en

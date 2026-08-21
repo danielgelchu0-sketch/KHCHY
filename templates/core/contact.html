@@ -1,23 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Contact Us — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        ያግኙን — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        Contact Us — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="page-header">
-        <h1>Contact Us</h1>
-        <p>Get in touch with the choir administration and ministry leaders.</p>
+        <h1>{% if is_amharic %}ያግኙን{% else %}Contact Us{% endif %}</h1>
+        <p>{% if is_amharic %}ከኳየሩ አስተዳደር እና ከአገልግሎት መሪዎች ጋር ይገናኙ።{% else %}Get in touch with the choir administration and ministry leaders.{% endif %}</p>
     </section>
 
-    <section class="contact-grid">
-        <div class="contact-details">
-            <h2>Reach Out</h2>
+    <section class="contact-grid" style="margin-top: 2rem;">
+        <div class="contact-details" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); max-width: 600px;">
+            <h2 style="margin-bottom: 1.25rem;">{% if is_amharic %}የመገናኛ አድራሻዎች{% else %}Reach Out{% endif %}</h2>
             {% if site_settings %}
-                <p><strong>Phone:</strong> {{ site_settings.contact_phone|default:"N/A" }}</p>
-                <p><strong>Email:</strong> {{ site_settings.contact_email|default:"N/A" }}</p>
-                <p><strong>Address:</strong> {{ site_settings.address|default:"Horbabicho Kalehiwot Church" }}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>{% if is_amharic %}ስልክ:{% else %}Phone:{% endif %}</strong> {{ site_settings.contact_phone|default:"N/A" }}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>{% if is_amharic %}ኢሜይል:{% else %}Email:{% endif %}</strong> {{ site_settings.contact_email|default:"N/A" }}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>{% if is_amharic %}አድራሻ:{% else %}Address:{% endif %}</strong> {{ site_settings.address|default:"Horbabicho Kalehiwot Church" }}</p>
             {% else %}
-                <p>Contact information is currently being updated.</p>
+                <p>{% if is_amharic %}የመገናኛ መረጃው በቅርቡ ይዘምናል።{% else %}Contact information is currently being updated.{% endif %}</p>
             {% endif %}
         </div>
     </section>

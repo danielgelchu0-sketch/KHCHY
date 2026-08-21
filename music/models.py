@@ -16,6 +16,16 @@ class Album(models.Model):
     def __str__(self):
         return self.title_en
 
+    def get_title(self, is_amharic=False):
+        if is_amharic and self.title_am:
+            return self.title_am
+        return self.title_en
+
+    def get_description(self, is_amharic=False):
+        if is_amharic and self.description_am:
+            return self.description_am
+        return self.description_en
+
 
 class Song(models.Model):
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='songs')
@@ -33,3 +43,22 @@ class Song(models.Model):
 
     def __str__(self):
         return f"{self.track_number}. {self.title_en}"
+
+    def get_title(self, is_amharic=False):
+        if is_amharic and self.title_am:
+            return self.title_am
+        return self.title_en
+
+    def get_lyrics(self, is_amharic=False):
+        if is_amharic and self.lyrics_am:
+            return self.lyrics_am
+        return self.lyrics_en
+
+    @property
+    def youtube_embed_id(self):
+        if not self.youtube_url:
+            return None
+        # Extract YouTube ID from various URL patterns
+        pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
+        match = re.search(pattern, self.youtube_url)
+        return match.group(1) if match else None

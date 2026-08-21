@@ -1,15 +1,45 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ event.title_en }} — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        {{ event.title_am|default:event.title_en }} — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        {{ event.title_en }} — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <section class="page-header" style="margin: 2rem 0;">
+    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+        <a href="{% url 'content:event_list' %}" style="color: #1F3D2B; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+            &larr; {% if is_amharic %}ወደ ዝግጅቶች ዝርዝር ተመለስ{% else %}Back to Events{% endif %}
+        </a>
+    </div>
+
+    <section class="page-header" style="margin: 1.5rem 0;">
         <span style="background: #ebf8ff; color: #2b6cb0; font-size: 0.85rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 4px; text-transform: uppercase;">
-            {{ event.get_event_type_display }}
+            {% if is_amharic %}
+                {% if event.event_type == 'service' %}የእሑድ አገልግሎት{% elif event.event_type == 'rehearsal' %}የኳየር ልምምድ{% elif event.event_type == 'concert' %}ኮንሰርት / ልዩ ዝግጅት{% elif event.event_type == 'outreach' %}የወንጌል አገልግሎት / ጉዞ{% else %}{{ event.get_event_type_display }}{% endif %}
+            {% else %}
+                {{ event.get_event_type_display }}
+            {% endif %}
         </span>
-        <h1 style="margin-top: 0.5rem;">{{ event.title_en }}</h1>
-        {% if event.title_am %}<h2 style="color: #4a5568; font-weight: normal;">{{ event.title_am }}</h2>{% endif %}
+        <h1 style="margin-top: 0.5rem;">
+            {% if is_amharic %}
+                {{ event.title_am|default:event.title_en }}
+            {% else %}
+                {{ event.title_en }}
+            {% endif %}
+        </h1>
+        {% if is_amharic %}
+            {% if event.title_am and event.title_en and event.title_am != event.title_en %}
+                <h2 style="color: #4a5568; font-weight: normal; font-size: 1.2rem;">{{ event.title_en }}</h2>
+            {% endif %}
+        {% else %}
+            {% if event.title_am %}
+                <h2 style="color: #4a5568; font-weight: normal; font-size: 1.2rem;">{{ event.title_am }}</h2>
+            {% endif %}
+        {% endif %}
     </section>
 
     {% if event.banner_image %}
@@ -21,34 +51,29 @@
     <div style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
         <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 1px solid #edf2f7; padding-bottom: 1rem;">
             <div>
-                <strong>Start Time:</strong>
+                <strong>{% if is_amharic %}የመጀመሪያ ሰዓት:{% else %}Start Time:{% endif %}</strong>
                 <p>{{ event.start_time|date:"F d, Y @ h:i A" }}</p>
             </div>
             {% if event.end_time %}
                 <div>
-                    <strong>End Time:</strong>
+                    <strong>{% if is_amharic %}የማብቂያ ሰዓት:{% else %}End Time:{% endif %}</strong>
                     <p>{{ event.end_time|date:"F d, Y @ h:i A" }}</p>
                 </div>
             {% endif %}
             <div>
-                <strong>Location:</strong>
+                <strong>{% if is_amharic %}ቦታ:{% else %}Location:{% endif %}</strong>
                 <p>{{ event.location }}</p>
             </div>
         </div>
 
-        {% if event.description_en %}
-            <div style="margin-bottom: 1.5rem;">
-                <h3>About This Event</h3>
-                <p>{{ event.description_en|linebreaks }}</p>
-            </div>
-        {% endif %}
-
-        {% if event.description_am %}
-            <div>
-                <h3>ስለ ዝግጅቱ</h3>
-                <p>{{ event.description_am|linebreaks }}</p>
-            </div>
-        {% endif %}
+        <div style="margin-bottom: 1.5rem; line-height: 1.8;">
+            <h3>{% if is_amharic %}ስለ ዝግጅቱ{% else %}About This Event{% endif %}</h3>
+            {% if is_amharic %}
+                <p>{{ event.description_am|default:event.description_en|linebreaks }}</p>
+            {% else %}
+                <p>{{ event.description_en|default:event.description_am|linebreaks }}</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

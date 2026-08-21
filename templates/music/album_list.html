@@ -1,31 +1,57 @@
 {% extends 'base.html' %}
 
-{% block title %}Albums — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        አልበሞች — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        Albums — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="page-header">
-        <h1>Choir Albums</h1>
-        <p>Explore music and worship songs from Yahiwenis Choir.</p>
+        <h1>{% if is_amharic %}የኳየር አልበሞች{% else %}Choir Albums{% endif %}</h1>
+        <p>{% if is_amharic %}የያህዌ ንሲ ኳየር የአምልኮና የምስጋና መዝሙሮችን ያዳምጡ።{% else %}Explore music and worship songs from Yahiwenis Choir.{% endif %}</p>
     </section>
 
-    <div class="album-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+    <div class="album-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; margin-top: 2rem;">
         {% for album in albums %}
-            <div class="album-card" style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            <div class="album-card" style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-top: 3px solid #C99A3E;">
                 {% if album.cover_image %}
-                    <img src="{{ album.cover_image.url }}" alt="{{ album.title_en }}" style="width: 100%; height: 250px; object-fit: cover;">
+                    <img src="{{ album.cover_image.url }}" alt="{% if is_amharic %}{{ album.title_am|default:album.title_en }}{% else %}{{ album.title_en }}{% endif %}" style="width: 100%; height: 250px; object-fit: cover;">
                 {% else %}
-                    <div style="width: 100%; height: 250px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #718096;">No Cover Image</div>
+                    <div style="width: 100%; height: 250px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #718096;">
+                        {% if is_amharic %}የሽፋን ምስል የለም{% else %}No Cover Image{% endif %}
+                    </div>
                 {% endif %}
                 <div style="padding: 1.5rem;">
-                    <h3>{{ album.title_en }}</h3>
-                    {% if album.title_am %}<p style="color: #718096;">{{ album.title_am }}</p>{% endif %}
-                    {% if album.release_year %}<p><small>Released: {{ album.release_year }}</small></p>{% endif %}
-                    <a href="{% url 'music:album_detail' album.pk %}" style="display: inline-block; margin-top: 1rem; color: #2b6cb0; font-weight: bold; text-decoration: none;">View Tracks &rarr;</a>
+                    <h3 style="font-size: 1.25rem;">
+                        {% if is_amharic %}
+                            {{ album.title_am|default:album.title_en }}
+                        {% else %}
+                            {{ album.title_en }}
+                        {% endif %}
+                    </h3>
+                    {% if is_amharic %}
+                        {% if album.title_en and album.title_am and album.title_en != album.title_am %}
+                            <p style="color: #718096; margin-top: 0.25rem; font-size: 0.9rem;">{{ album.title_en }}</p>
+                        {% endif %}
+                    {% else %}
+                        {% if album.title_am %}
+                            <p style="color: #718096; margin-top: 0.25rem; font-size: 0.9rem;">{{ album.title_am }}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if album.release_year %}
+                        <p style="margin-top: 0.5rem;"><small><strong>{% if is_amharic %}የተለቀቀበት ዓመት:{% else %}Released:{% endif %}</strong> {{ album.release_year }}</small></p>
+                    {% endif %}
+                    <a href="{% url 'music:album_detail' album.pk %}" style="display: inline-block; margin-top: 1rem; color: #1F3D2B; font-weight: bold; text-decoration: none;">
+                        {% if is_amharic %}መዝሙሮችን ይመልከቱ &rarr;{% else %}View Tracks &rarr;{% endif %}
+                    </a>
                 </div>
             </div>
         {% empty %}
-            <p>No albums available at the moment.</p>
+            <p style="color: #718096;">{% if is_amharic %}በአሁኑ ሰዓት ምንም አልበም አልተገኘም።{% else %}No albums available at the moment.{% endif %}</p>
         {% endfor %}
     </div>
 </div>

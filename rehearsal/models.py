@@ -23,11 +23,28 @@ class ChoirMember(models.Model):
     is_active = models.BooleanField(default=True)
     joined_date = models.DateField(auto_now_add=True)
 
+    VOICE_PARTS_AMHARIC = {
+        'soprano': 'ሶፕራኖ (Soprano)',
+        'alto': 'አልቶ (Alto)',
+        'tenor': 'ቴነር (Tenor)',
+        'bass': 'ባስ (Bass)',
+    }
+
     class Meta:
         ordering = ['voice_part', 'full_name_en']
 
     def __str__(self):
         return f"{self.full_name_en} ({self.get_voice_part_display()})"
+
+    def get_full_name(self, is_amharic=False):
+        if is_amharic and self.full_name_am:
+            return self.full_name_am
+        return self.full_name_en
+
+    def get_voice_part_name(self, is_amharic=False):
+        if is_amharic:
+            return self.VOICE_PARTS_AMHARIC.get(self.voice_part, self.get_voice_part_display())
+        return self.get_voice_part_display()
 
 
 class RehearsalSession(models.Model):
@@ -44,3 +61,14 @@ class RehearsalSession(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.date.strftime('%Y-%m-%d %H:%M')}"
+
+    def get_title_lang(self, is_amharic=False):
+        if is_amharic:
+            if self.title.strip() == "Weekly Rehearsal":
+                return "ሳምንታዊ የልምምድ ፕሮግራም"
+        return self.title
+
+    def get_notes(self, is_amharic=False):
+        if is_amharic and self.notes_am:
+            return self.notes_am
+        return self.notes_en

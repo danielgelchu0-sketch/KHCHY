@@ -3,6 +3,15 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
+
+{% block title %}
+  {% if is_amharic %}
+    ይመዝገቡ — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+  {% else %}
+    Register — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="auth-page">
   <div class="auth-side">
@@ -11,19 +20,43 @@
       <path d="M28 12v32M16 22h24" stroke="#C99A3E" stroke-width="2" stroke-linecap="round"/>
       <path d="M20 16l16 24M36 16L20 40" stroke="#C99A3E" stroke-width="1" opacity="0.5"/>
     </svg>
-    <h2>{{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}</h2>
-    <p>Join the congregation. Your registration is reviewed by an administrator before you can access member recordings.</p>
+    <h2>
+      {% if is_amharic %}
+        {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+      {% else %}
+        {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+      {% endif %}
+    </h2>
+    <p>
+      {% if is_amharic %}
+        የኳየሩ አባል ይሁኑ። የተመዘገቡት መረጃ በአስተዳዳሪው ከጸደቀ በኋላ የአባላት ማቴሪያሎችን ማግኘት ይችላሉ።
+      {% else %}
+        Join the congregation. Your registration is reviewed by an administrator before you can access member recordings.
+      {% endif %}
+    </p>
   </div>
   <div class="auth-form-panel">
     <div class="auth-form-wrap">
-      <h1>Create account</h1>
-      <p class="auth-subtitle">Fill in your details to request membership.</p>
+      <h1>{% if is_amharic %}አዲስ መለያ ይፍጠሩ{% else %}Create account{% endif %}</h1>
+      <p class="auth-subtitle">
+        {% if is_amharic %}
+          የአባልነት ጥያቄ ለማቅረብ ዝርዝር መረጃዎን ይሙሉ::
+        {% else %}
+          Fill in your details to request membership.
+        {% endif %}
+      </p>
       <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="auth-submit">Register</button>
+        <button type="submit" class="auth-submit">{% if is_amharic %}ይመዝገቡ{% else %}Register{% endif %}</button>
       </form>
-      <p class="auth-switch">Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+      <p class="auth-switch">
+        {% if is_amharic %}
+          መለያ አለዎት? <a href="{% url 'accounts:login' %}">ይግቡ</a>
+        {% else %}
+          Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+        {% endif %}
+      </p>
     </div>
   </div>
 </div>

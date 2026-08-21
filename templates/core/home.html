@@ -1,31 +1,56 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {% if site_settings %}{{ site_settings.choir_name_en }}{% else %}Yahiwenis Choir{% endif %}
+    {% if is_amharic %}
+        {{ site_settings.choir_name_am|default:"ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        {{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
 <section class="hero-banner">
     {% if site_settings and site_settings.hero_banner %}
-        <img src="{{ site_settings.hero_banner.url }}" alt="Choir Banner">
+        <img src="{{ site_settings.hero_banner.url }}" alt="{% if is_amharic %}የያህዌ ንሲ ኳየር ባነር{% else %}Choir Banner{% endif %}">
     {% endif %}
     <div class="hero-text">
         <h1>
-            {% if site_settings %}
-                {{ site_settings.choir_name_en }}
-                <br>
-                <small>{{ site_settings.choir_name_am }}</small>
+            {% if is_amharic %}
+                {{ site_settings.choir_name_am|default:"ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር" }}
             {% else %}
-                Horbabicho Kalehiwot Church Yahiwenis Choir
+                {{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}
             {% endif %}
         </h1>
+        {% if is_amharic %}
+            {% if site_settings.choir_name_en %}
+                <small>{{ site_settings.choir_name_en }}</small>
+            {% endif %}
+        {% else %}
+            {% if site_settings.choir_name_am %}
+                <small>{{ site_settings.choir_name_am }}</small>
+            {% endif %}
+        {% endif %}
     </div>
 </section>
 
 <div class="container">
     <section class="about-summary">
-        <h2>About Us</h2>
-        <p>{% if site_settings %}{{ site_settings.about_text_en }}{% else %}Welcome to our official website.{% endif %}</p>
+        <h2>{% if is_amharic %}ስለ እኛ{% else %}About Us{% endif %}</h2>
+        <div style="font-size: 1.1rem; line-height: 1.8; color: #333;">
+            {% if is_amharic %}
+                {% if site_settings and site_settings.about_text_am %}
+                    {{ site_settings.about_text_am|linebreaks }}
+                {% else %}
+                    <p>ወደ ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር ይፋዊ ድረ-ገጽ እንኳን በደህና መጡ። በጌታችን በኢየሱስ ክርስቶስ ስም ሰላምታ እናቀርባለን።</p>
+                {% endif %}
+            {% else %}
+                {% if site_settings and site_settings.about_text_en %}
+                    {{ site_settings.about_text_en|linebreaks }}
+                {% else %}
+                    <p>Welcome to the official website of Horbabicho Kalehiwot Church Yahiwenis Choir.</p>
+                {% endif %}
+            {% endif %}
+        </div>
     </section>
 </div>
 {% endblock %}

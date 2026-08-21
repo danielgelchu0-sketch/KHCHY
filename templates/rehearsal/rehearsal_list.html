@@ -1,51 +1,83 @@
 {% extends 'base.html' %}
 
-{% block title %}Rehearsals & Choir Members — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        የልምምድ ፕሮግራም እና አባላት — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        Rehearsals & Choir Members — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="page-header">
-        <h1>Rehearsal Schedule & Choir Roster</h1>
-        <p>Access upcoming practice schedules, sheet music, and choir roster by voice sections.</p>
+        <h1>{% if is_amharic %}የልምምድ የጊዜ ሰሌዳ እና የአባላት ዝርዝር{% else %}Rehearsal Schedule & Choir Roster{% endif %}</h1>
+        <p>{% if is_amharic %}የመጪውን ልምምድ የጊዜ ሰሌዳ፣ የዜማ ኖታዎች (sheet music) እና የአባላትን የድምፅ ክፍል ዝርዝር ይመልከቱ።{% else %}Access upcoming practice schedules, sheet music, and choir roster by voice sections.{% endif %}</p>
     </section>
 
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
         <!-- Left: Rehearsal Schedule -->
         <div>
-            <h2>Rehearsal Sessions</h2>
+            <h2 style="color: #1F3D2B;">{% if is_amharic %}የልምምድ ፕሮግራሞች{% else %}Rehearsal Sessions{% endif %}</h2>
             <div style="margin-top: 1rem;">
                 {% for session in sessions %}
-                    <div style="background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h3 style="margin: 0 0 0.5rem 0;">{{ session.title }}</h3>
+                    <div style="background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #C99A3E;">
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">
+                            {% if is_amharic %}
+                                {% if session.title == "Weekly Rehearsal" %}ሳምንታዊ የልምምድ ፕሮግራም{% else %}{{ session.title }}{% endif %}
+                            {% else %}
+                                {{ session.title }}
+                            {% endif %}
+                        </h3>
                         <p style="color: #4a5568; font-size: 0.9rem; margin: 0 0 0.5rem 0;">
-                            📅 <strong>Date:</strong> {{ session.date|date:"F d, Y @ h:i A" }} | 📍 {{ session.location }}
+                            📅 <strong>{% if is_amharic %}ቀን:{% else %}Date:{% endif %}</strong> {{ session.date|date:"F d, Y @ h:i A" }} | 📍 <strong>{% if is_amharic %}ቦታ:{% else %}Location:{% endif %}</strong> {{ session.location }}
                         </p>
-                        {% if session.sheet_music %}
-                            <a href="{{ session.sheet_music.url }}" download style="display: inline-block; background: #2b6cb0; color: #fff; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; text-decoration: none; margin-top: 0.5rem;">
-                                📄 Download Sheet Music
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                            {% if session.sheet_music %}
+                                <a href="{{ session.sheet_music.url }}" download style="display: inline-block; background: #1F3D2B; color: #fff; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; text-decoration: none;">
+                                    📄 {% if is_amharic %}የዜማ ኖታ ያውርዱ{% else %}Download Sheet Music{% endif %}
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'rehearsal:rehearsal_detail' session.pk %}" style="color: #1F3D2B; font-weight: bold; text-decoration: none; font-size: 0.9rem;">
+                                {% if is_amharic %}የልምምዱን ዝርዝር ይመልከቱ &rarr;{% else %}View Session Details &rarr;{% endif %}
                             </a>
-                        {% endif %}
-                        <a href="{% url 'rehearsal:rehearsal_detail' session.pk %}" style="display: inline-block; margin-left: 1rem; color: #2b6cb0; font-weight: bold; text-decoration: none; font-size: 0.9rem;">
-                            View Session Details &rarr;
-                        </a>
+                        </div>
                     </div>
                 {% empty %}
-                    <p style="color: #718096;">No upcoming rehearsal sessions scheduled.</p>
+                    <p style="color: #718096;">{% if is_amharic %}የተያዘ የልምምድ ፕሮግራም የለም።{% else %}No upcoming rehearsal sessions scheduled.{% endif %}</p>
                 {% endfor %}
             </div>
         </div>
 
         <!-- Right: Choir Members by Part -->
         <div>
-            <h2>Choir Roster</h2>
-            <div style="background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="color: #1F3D2B;">{% if is_amharic %}የአባላት ዝርዝር{% else %}Choir Roster{% endif %}</h2>
+            <div style="background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 3px solid #C99A3E;">
                 {% for part, members in members_by_part.items %}
-                    <h4 style="border-bottom: 1px solid #edf2f7; padding-bottom: 0.25rem; margin-top: 1rem; color: #2b6cb0;">{{ part }}</h4>
-                    <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: #4a5568;">
+                    <h4 style="border-bottom: 1px solid #edf2f7; padding-bottom: 0.25rem; margin-top: 1rem; color: #1F3D2B; font-size: 1.05rem;">
+                        {% if is_amharic %}
+                            {% if part == 'Soprano' %}ሶፕራኖ (Soprano){% elif part == 'Alto' %}አልቶ (Alto){% elif part == 'Tenor' %}ቴነር (Tenor){% elif part == 'Bass' %}ባስ (Bass){% else %}{{ part }}{% endif %}
+                        {% else %}
+                            {{ part }}
+                        {% endif %}
+                    </h4>
+                    <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: #4a5568; margin-top: 0.5rem;">
                         {% for member in members %}
-                            <li>{{ member.full_name_en }} {% if member.full_name_am %}({{ member.full_name_am }}){% endif %}</li>
+                            <li style="margin-bottom: 0.25rem;">
+                                {% if is_amharic %}
+                                    {{ member.full_name_am|default:member.full_name_en }}
+                                    {% if member.full_name_am and member.full_name_en and member.full_name_am != member.full_name_en %}
+                                        <span style="color: #a0aec0;">({{ member.full_name_en }})</span>
+                                    {% endif %}
+                                {% else %}
+                                    {{ member.full_name_en }}
+                                    {% if member.full_name_am %}
+                                        <span style="color: #a0aec0;">({{ member.full_name_am }})</span>
+                                    {% endif %}
+                                {% endif %}
+                            </li>
                         {% empty %}
-                            <li style="color: #a0aec0; list-style: none;">No members assigned yet.</li>
+                            <li style="color: #a0aec0; list-style: none;">{% if is_amharic %}በዚህ ክፍል የተመደበ አባል የለም።{% else %}No members assigned yet.{% endif %}</li>
                         {% endfor %}
                     </ul>
                 {% endfor %}

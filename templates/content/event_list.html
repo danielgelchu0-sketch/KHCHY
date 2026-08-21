@@ -1,44 +1,78 @@
 {% extends 'base.html' %}
 
-{% block title %}Events & Schedule — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        ዝግጅቶች እና የጊዜ ሰሌዳ — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        Events & Schedule — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="page-header">
-        <h1>Upcoming Events & Schedule</h1>
-        <p>Join us for choir services, rehearsals, and upcoming ministry concerts.</p>
+        <h1>{% if is_amharic %}ዝግጅቶች እና የጊዜ ሰሌዳ{% else %}Upcoming Events & Schedule{% endif %}</h1>
+        <p>{% if is_amharic %}በኳየር አገልግሎቶች፣ ልምምዶች እና በመጪው የመንፈሳዊ ኮንሰርቶች ላይ አብረውን ይሳተፉ።{% else %}Join us for choir services, rehearsals, and upcoming ministry concerts.{% endif %}</p>
     </section>
 
-    <h2 style="margin-top: 2rem; color: #2d3748;">Upcoming Events</h2>
+    <h2 style="margin-top: 2rem; color: #1F3D2B;">{% if is_amharic %}መጪ ዝግጅቶች{% else %}Upcoming Events{% endif %}</h2>
     <div class="event-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
         {% for event in upcoming_events %}
-            <div class="event-card" style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem;">
+            <div class="event-card" style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem; border-top: 3px solid #C99A3E;">
                 <span style="display: inline-block; background: #ebf8ff; color: #2b6cb0; font-size: 0.8rem; font-weight: bold; padding: 0.25rem 0.5rem; border-radius: 4px; text-transform: uppercase;">
-                    {{ event.get_event_type_display }}
+                    {% if is_amharic %}
+                        {% if event.event_type == 'service' %}የእሑድ አገልግሎት{% elif event.event_type == 'rehearsal' %}የኳየር ልምምድ{% elif event.event_type == 'concert' %}ኮንሰርት / ልዩ ዝግጅት{% elif event.event_type == 'outreach' %}የወንጌል አገልግሎት / ጉዞ{% else %}{{ event.get_event_type_display }}{% endif %}
+                    {% else %}
+                        {{ event.get_event_type_display }}
+                    {% endif %}
                 </span>
-                <h3 style="margin-top: 0.75rem; font-size: 1.25rem;">{{ event.title_en }}</h3>
-                {% if event.title_am %}<p style="color: #718096; margin-top: 0.25rem;">{{ event.title_am }}</p>{% endif %}
+                <h3 style="margin-top: 0.75rem; font-size: 1.25rem;">
+                    {% if is_amharic %}
+                        {{ event.title_am|default:event.title_en }}
+                    {% else %}
+                        {{ event.title_en }}
+                    {% endif %}
+                </h3>
+                {% if is_amharic %}
+                    {% if event.title_am and event.title_en and event.title_am != event.title_en %}
+                        <p style="color: #718096; margin-top: 0.25rem; font-size: 0.9rem;">{{ event.title_en }}</p>
+                    {% endif %}
+                {% else %}
+                    {% if event.title_am %}
+                        <p style="color: #718096; margin-top: 0.25rem; font-size: 0.9rem;">{{ event.title_am }}</p>
+                    {% endif %}
+                {% endif %}
                 
                 <div style="margin-top: 1rem; font-size: 0.9rem; color: #4a5568;">
-                    <p>📅 <strong>Date:</strong> {{ event.start_time|date:"M d, Y @ h:i A" }}</p>
-                    <p>📍 <strong>Location:</strong> {{ event.location }}</p>
+                    <p>📅 <strong>{% if is_amharic %}ቀን:{% else %}Date:{% endif %}</strong> {{ event.start_time|date:"M d, Y @ h:i A" }}</p>
+                    <p>📍 <strong>{% if is_amharic %}ቦታ:{% else %}Location:{% endif %}</strong> {{ event.location }}</p>
                 </div>
 
-                <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 1rem; color: #2b6cb0; font-weight: bold; text-decoration: none;">Event Details &rarr;</a>
+                <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 1rem; color: #1F3D2B; font-weight: bold; text-decoration: none;">
+                    {% if is_amharic %}የዝግጅቱ ዝርዝር &rarr;{% else %}Event Details &rarr;{% endif %}
+                </a>
             </div>
         {% empty %}
-            <p style="color: #718096;">No upcoming events scheduled right now.</p>
+            <p style="color: #718096;">{% if is_amharic %}በአሁኑ ጊዜ የተያዘ መጪ ዝግጅት የለም።{% else %}No upcoming events scheduled right now.{% endif %}</p>
         {% endfor %}
     </div>
 
     {% if past_events %}
-        <h2 style="margin-top: 3rem; color: #2d3748;">Recent Past Events</h2>
+        <h2 style="margin-top: 3rem; color: #1F3D2B;">{% if is_amharic %}ያለፉ ዝግጅቶች{% else %}Recent Past Events{% endif %}</h2>
         <div class="event-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
             {% for event in past_events %}
                 <div class="event-card" style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
-                    <h3>{{ event.title_en }}</h3>
+                    <h3>
+                        {% if is_amharic %}
+                            {{ event.title_am|default:event.title_en }}
+                        {% else %}
+                            {{ event.title_en }}
+                        {% endif %}
+                    </h3>
                     <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">📅 {{ event.start_time|date:"M d, Y" }}</p>
-                    <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 0.75rem; color: #4a5568; font-weight: bold; text-decoration: none;">View Past Event &rarr;</a>
+                    <a href="{% url 'content:event_detail' event.pk %}" style="display: inline-block; margin-top: 0.75rem; color: #4a5568; font-weight: bold; text-decoration: none;">
+                        {% if is_amharic %}ያለፈውን ዝግጅት ይመልከቱ &rarr;{% else %}View Past Event &rarr;{% endif %}
+                    </a>
                 </div>
             {% endfor %}
         </div>

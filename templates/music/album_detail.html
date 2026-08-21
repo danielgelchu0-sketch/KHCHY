@@ -1,38 +1,80 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ album.title_en }} — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}{% endblock %}
+{% block title %}
+    {% if is_amharic %}
+        {{ album.title_am|default:album.title_en }} — {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+    {% else %}
+        {{ album.title_en }} — {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <section class="page-header" style="display: flex; gap: 2rem; align-items: center; margin: 2rem 0; flex-wrap: wrap;">
+    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+        <a href="{% url 'music:album_list' %}" style="color: #1F3D2B; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+            &larr; {% if is_amharic %}ወደ አልበሞች ተመለስ{% else %}Back to Albums{% endif %}
+        </a>
+    </div>
+
+    <section class="page-header" style="display: flex; gap: 2rem; align-items: center; margin: 1.5rem 0; flex-wrap: wrap;">
         {% if album.cover_image %}
-            <img src="{{ album.cover_image.url }}" alt="{{ album.title_en }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;">
+            <img src="{{ album.cover_image.url }}" alt="{% if is_amharic %}{{ album.title_am|default:album.title_en }}{% else %}{{ album.title_en }}{% endif %}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         {% else %}
             <div style="width: 180px; height: 180px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #718096; border-radius: 8px;">
-                No Cover Image
+                {% if is_amharic %}የሽፋን ምስል የለም{% else %}No Cover Image{% endif %}
             </div>
         {% endif %}
-        <div>
-            <h1 style="margin: 0; font-size: 2rem;">{{ album.title_en }}</h1>
-            {% if album.title_am %}
-                <h2 style="margin: 0.25rem 0 0.5rem 0; color: #4a5568; font-weight: normal;">{{ album.title_am }}</h2>
+        <div style="flex: 1; min-width: 250px;">
+            <h1 style="margin: 0; font-size: 2rem;">
+                {% if is_amharic %}
+                    {{ album.title_am|default:album.title_en }}
+                {% else %}
+                    {{ album.title_en }}
+                {% endif %}
+            </h1>
+            {% if is_amharic %}
+                {% if album.title_en and album.title_am and album.title_en != album.title_am %}
+                    <h2 style="margin: 0.25rem 0 0.5rem 0; color: #4a5568; font-weight: normal; font-size: 1.25rem;">{{ album.title_en }}</h2>
+                {% endif %}
+            {% else %}
+                {% if album.title_am %}
+                    <h2 style="margin: 0.25rem 0 0.5rem 0; color: #4a5568; font-weight: normal; font-size: 1.25rem;">{{ album.title_am }}</h2>
+                {% endif %}
             {% endif %}
             {% if album.release_year %}
-                <p style="margin-top: 0.5rem; color: #718096;"><strong>Released:</strong> {{ album.release_year }}</p>
+                <p style="margin-top: 0.5rem; color: #718096;">
+                    <strong>{% if is_amharic %}የተለቀቀበት ዓመት:{% else %}Released:{% endif %}</strong> {{ album.release_year }}
+                </p>
             {% endif %}
-            {% if album.description_en %}
-                <p style="margin-top: 0.5rem;">{{ album.description_en }}</p>
-            {% endif %}
+            <div style="margin-top: 0.75rem; line-height: 1.7;">
+                {% if is_amharic %}
+                    {{ album.description_am|default:album.description_en|linebreaks }}
+                {% else %}
+                    {{ album.description_en|default:album.description_am|linebreaks }}
+                {% endif %}
+            </div>
         </div>
     </section>
 
-    <section class="song-list">
-        <h3 style="margin-bottom: 1.5rem; border-bottom: 2px solid #edf2f7; padding-bottom: 0.5rem;">Tracklist</h3>
+    <section class="song-list" style="margin-top: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; border-bottom: 2px solid #C99A3E; padding-bottom: 0.5rem; color: #1F3D2B;">
+            {% if is_amharic %}የመዝሙሮች ዝርዝር{% else %}Tracklist{% endif %}
+        </h3>
         {% for song in songs %}
-            <div class="song-item" style="background: #fff; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h4 style="margin: 0; font-size: 1.25rem;">
-                    {{ song.track_number }}. {{ song.title_en }} 
-                    {% if song.title_am %}<span style="font-weight: normal; color: #4a5568;">({{ song.title_am }})</span>{% endif %}
+            <div class="song-item" style="background: #fff; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #C99A3E;">
+                <h4 style="margin: 0; font-size: 1.25rem; color: #1F3D2B;">
+                    {{ song.track_number }}. 
+                    {% if is_amharic %}
+                        {{ song.title_am|default:song.title_en }}
+                        {% if song.title_am and song.title_en and song.title_am != song.title_en %}
+                            <span style="font-weight: normal; color: #718096; font-size: 1rem;">({{ song.title_en }})</span>
+                        {% endif %}
+                    {% else %}
+                        {{ song.title_en }}
+                        {% if song.title_am %}
+                            <span style="font-weight: normal; color: #718096; font-size: 1rem;">({{ song.title_am }})</span>
+                        {% endif %}
+                    {% endif %}
                 </h4>
                 
                 <!-- Audio Player -->
@@ -40,7 +82,7 @@
                     <div style="margin-top: 1rem;">
                         <audio controls style="width: 100%;">
                             <source src="{{ song.audio_file.url }}" type="audio/mpeg">
-                            Your browser does not support the audio element.
+                            {% if is_amharic %}የእርስዎ አሳሽ የድምጽ ማጫወቻውን አይደግፍም።{% else %}Your browser does not support the audio element.{% endif %}
                         </audio>
                     </div>
                 {% endif %}
@@ -60,8 +102,8 @@
                 {% elif song.youtube_url %}
                     <!-- Fallback Link -->
                     <p style="margin-top: 0.75rem;">
-                        <a href="{{ song.youtube_url }}" target="_blank" rel="noopener noreferrer" style="color: #e53e3e; font-weight: bold; text-decoration: none;">
-                            ▶ Watch Video on YouTube
+                        <a href="{{ song.youtube_url }}" target="_blank" rel="noopener noreferrer" style="color: #c53030; font-weight: bold; text-decoration: none;">
+                            {% if is_amharic %}▶ ቪዲዮውን በዩቲዩብ ይመልከቱ{% else %}▶ Watch Video on YouTube{% endif %}
                         </a>
                     </p>
                 {% endif %}
@@ -69,26 +111,43 @@
                 <!-- Lyrics Section -->
                 {% if song.lyrics_en or song.lyrics_am %}
                     <details style="margin-top: 1rem; cursor: pointer;">
-                        <summary style="font-weight: bold; color: #2b6cb0;">View Lyrics / ግጥም</summary>
-                        <div style="margin-top: 0.75rem; background: #f7fafc; padding: 1.25rem; border-radius: 6px; border: 1px solid #edf2f7;">
-                            {% if song.lyrics_en %}
-                                <div style="margin-bottom: 1rem;">
-                                    <h5 style="margin-top: 0; color: #4a5568;">English Lyrics:</h5>
-                                    {{ song.lyrics_en|linebreaks }}
-                                </div>
-                            {% endif %}
-                            {% if song.lyrics_am %}
-                                <div>
-                                    <h5 style="margin-top: 0; color: #4a5568;">የአማርኛ ግጥም:</h5>
-                                    {{ song.lyrics_am|linebreaks }}
-                                </div>
+                        <summary style="font-weight: bold; color: #1F3D2B;">
+                            {% if is_amharic %}የመዝሙር ግጥም ይመልከቱ (Lyrics){% else %}View Lyrics / ግጥም{% endif %}
+                        </summary>
+                        <div style="margin-top: 0.75rem; background: #f7fafc; padding: 1.25rem; border-radius: 6px; border: 1px solid #edf2f7; line-height: 1.8;">
+                            {% if is_amharic %}
+                                {% if song.lyrics_am %}
+                                    <div style="margin-bottom: 1rem;">
+                                        <h5 style="margin-top: 0; color: #1F3D2B;">የአማርኛ ግጥም:</h5>
+                                        {{ song.lyrics_am|linebreaks }}
+                                    </div>
+                                {% endif %}
+                                {% if song.lyrics_en %}
+                                    <div>
+                                        <h5 style="margin-top: 0; color: #718096;">የእንግሊዝኛ ግጥም:</h5>
+                                        {{ song.lyrics_en|linebreaks }}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                {% if song.lyrics_en %}
+                                    <div style="margin-bottom: 1rem;">
+                                        <h5 style="margin-top: 0; color: #1F3D2B;">English Lyrics:</h5>
+                                        {{ song.lyrics_en|linebreaks }}
+                                    </div>
+                                {% endif %}
+                                {% if song.lyrics_am %}
+                                    <div>
+                                        <h5 style="margin-top: 0; color: #718096;">Amharic Lyrics:</h5>
+                                        {{ song.lyrics_am|linebreaks }}
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </details>
                 {% endif %}
             </div>
         {% empty %}
-            <p>No tracks added to this album yet.</p>
+            <p style="color: #718096;">{% if is_amharic %}ለዚህ አልበም እስካሁን ምንም መዝሙር አልተጨመረም።{% else %}No tracks added to this album yet.{% endif %}</p>
         {% endfor %}
     </section>
 </div>

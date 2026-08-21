@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{% if is_amharic %}am{% else %}en{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}{% endblock %}</title>
+    <title>{% block title %}{% if is_amharic %}{{ site_settings.choir_name_am|default:"ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር" }}{% else %}{{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}{% endif %}{% endblock %}</title>
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -15,27 +15,43 @@
     <header class="main-header">
         <div class="container nav-container">
             <a href="{% url 'core:home' %}" class="brand-logo">
-                {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+                {% if is_amharic %}
+                    {{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}
+                {% else %}
+                    {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}
+                {% endif %}
             </a>
-    <nav class="nav-links">
-    <a href="{% url 'core:home' %}">Home</a>
-    <a href="{% url 'music:album_list' %}">Albums</a>
-    <a href="{% url 'content:event_list' %}">Events</a>
-    <a href="{% url 'rehearsal:rehearsal_list' %}">Rehearsals</a>
-    <a href="{% url 'core:about' %}">About Us</a>
-    <a href="{% url 'core:contact' %}">Contact</a>
-{% if user.is_authenticated %}
-        <span>Hi, {{ user.username }}</span>
-        <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    {% else %}
-        <a href="{% url 'accounts:login' %}">Login</a>
-        <a href="{% url 'accounts:register' %}">Register</a>
-    {% endif %}
-</nav>
+            <div class="header-right">
+                <nav class="nav-links">
+                    <a href="{% url 'core:home' %}">{% if is_amharic %}መነሻ{% else %}Home{% endif %}</a>
+                    <a href="{% url 'music:album_list' %}">{% if is_amharic %}አልበሞች{% else %}Albums{% endif %}</a>
+                    <a href="{% url 'content:event_list' %}">{% if is_amharic %}ዝግጅቶች{% else %}Events{% endif %}</a>
+                    <a href="{% url 'rehearsal:rehearsal_list' %}">{% if is_amharic %}ልምምዶች{% else %}Rehearsals{% endif %}</a>
+                    <a href="{% url 'core:about' %}">{% if is_amharic %}ስለ እኛ{% else %}About Us{% endif %}</a>
+                    <a href="{% url 'core:contact' %}">{% if is_amharic %}ያግኙን{% else %}Contact{% endif %}</a>
+                    {% if user.is_authenticated %}
+                        <span class="nav-user">{% if is_amharic %}ሰላም{% else %}Hi{% endif %}, {{ user.username }}</span>
+                        <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-logout-btn">{% if is_amharic %}ይውጡ{% else %}Logout{% endif %}</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}">{% if is_amharic %}ይግቡ{% else %}Login{% endif %}</a>
+                        <a href="{% url 'accounts:register' %}">{% if is_amharic %}ይመዝገቡ{% else %}Register{% endif %}</a>
+                    {% endif %}
+                </nav>
 
+                <!-- Language Switcher Tabs -->
+                <div class="lang-switcher" role="group" aria-label="Language selection">
+                    <a href="{% url 'core:set_language' %}?lang=en&next={{ request.get_full_path|urlencode }}" 
+                       class="lang-tab {% if not is_amharic %}active{% endif %}" 
+                       title="English">EN</a>
+                    <span class="lang-divider">|</span>
+                    <a href="{% url 'core:set_language' %}?lang=am&next={{ request.get_full_path|urlencode }}" 
+                       class="lang-tab {% if is_amharic %}active{% endif %}" 
+                       title="Amharic (አማርኛ)">Amh</a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -59,31 +75,45 @@
     <!-- Global Footer -->
     <footer class="main-footer">
         <div class="container footer-container">
-            <div class="footer-info">
-                <h3>{{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}</h3>
-                {% if site_settings.choir_name_am %}
-                    <p class="amharic-text">{{ site_settings.choir_name_am }}</p>
-                {% endif %}
-            </div>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>
+                        {% if is_amharic %}
+                            {{ site_settings.choir_name_am|default:"ሆርባቢቾ ቃለ ሕይወት ቤተክርስቲያን ያህዌ ንሲ ኳየር" }}
+                        {% else %}
+                            {{ site_settings.choir_name_en|default:"Horbabicho Kalehiwot Church Yahiwenis Choir" }}
+                        {% endif %}
+                    </h3>
+                    {% if is_amharic %}
+                        {% if site_settings.choir_name_en %}
+                            <p class="amharic-text" style="opacity: 0.85; font-size: 0.95rem;">{{ site_settings.choir_name_en }}</p>
+                        {% endif %}
+                    {% else %}
+                        {% if site_settings.choir_name_am %}
+                            <p class="amharic-text">{{ site_settings.choir_name_am }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
 
-            <div class="footer-contact">
-                <h4>Contact Info</h4>
-                {% if site_settings %}
-                    {% if site_settings.contact_phone %}
-                        <p><strong>Phone:</strong> {{ site_settings.contact_phone }}</p>
+                <div class="footer-contact">
+                    <h4>{% if is_amharic %}የመገናኛ መረጃ{% else %}Contact Info{% endif %}</h4>
+                    {% if site_settings %}
+                        {% if site_settings.contact_phone %}
+                            <p><strong>{% if is_amharic %}ስልክ:{% else %}Phone:{% endif %}</strong> {{ site_settings.contact_phone }}</p>
+                        {% endif %}
+                        {% if site_settings.contact_email %}
+                            <p><strong>{% if is_amharic %}ኢሜይል:{% else %}Email:{% endif %}</strong> {{ site_settings.contact_email }}</p>
+                        {% endif %}
+                        {% if site_settings.address %}
+                            <p><strong>{% if is_amharic %}አድራሻ:{% else %}Address:{% endif %}</strong> {{ site_settings.address }}</p>
+                        {% endif %}
                     {% endif %}
-                    {% if site_settings.contact_email %}
-                        <p><strong>Email:</strong> {{ site_settings.contact_email }}</p>
-                    {% endif %}
-                    {% if site_settings.address %}
-                        <p><strong>Address:</strong> {{ site_settings.address }}</p>
-                    {% endif %}
-                {% endif %}
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
             <div class="container">
-                <p>&copy; {% now "Y" %} {{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}. All rights reserved.</p>
+                <p>&copy; {% now "Y" %} {% if is_amharic %}{{ site_settings.choir_name_am|default:"ያህዌ ንሲ ኳየር" }}። መብቱ በሕግ የተጠበቀ ነው።{% else %}{{ site_settings.choir_name_en|default:"Yahiwenis Choir" }}. All rights reserved.{% endif %}</p>
             </div>
         </div>
     </footer>
