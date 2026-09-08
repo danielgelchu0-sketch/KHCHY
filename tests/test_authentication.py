@@ -103,3 +103,25 @@ class AuthenticationTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("Password Reset Request", mail.outbox[0].subject)
         self.assertIn("resetme@example.com", mail.outbox[0].to)
+
+    def test_login_rate_limiting_after_repeated_failures(self):
+        """Repeated failed login attempts trigger rate limiting (HTTP 429)."""
+        from django.core.cache import cache
+        cache.clear()
+        User.objects.create_user(email="victim@example.com", password="CorrectPassword123!")
+
+        # 5 failed attempts
+        for _ in range(5):
+            self.client.post(self.login_url, {
+                "email": "victim@example.com",
+                "password": "WrongPassword999!",
+            })
+
+        # 6th attempt should return HTTP 429
+        response = self.client.post(self.login_url, {
+            "email": "victim@example.com",
+            "password": "WrongPassword999!",
+        })
+        self.assertEqual(response.status_code, 429)
+        self.assertContains(response, "Too many failed login attempts", status_code=429)
+        cache.clear()

@@ -95,3 +95,31 @@ class SecurityHardeningTests(TestCase):
         login_url = reverse("accounts:login")
         response = client.post(login_url, {"email": "test@example.com", "password": "pass"})
         self.assertEqual(response.status_code, 403)
+
+    def test_avatar_upload_rejects_oversized_file(self):
+        """Profile photo larger than 2MB is rejected by validation."""
+        from io import BytesIO
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from apps.accounts.forms import UserProfileForm
+
+        img_io = BytesIO()
+        Image.new("RGB", (50, 50), color="blue").save(img_io, format="JPEG")
+        valid_img_bytes = img_io.getvalue()
+
+        big_file = SimpleUploadedFile("avatar.jpg", valid_img_bytes, content_type="image/jpeg")
+        big_file.size = 2 * 1024 * 1024 + 500
+
+        form = UserProfileForm(data={"display_name": "Test User"}, files={"avatar": big_file}, user=self.user_a)
+        self.assertFalse(form.is_valid())
+        self.assertIn("avatar", form.errors)
+        self.assertIn("smaller than 2MB", form.errors["avatar"][0])
+
+    def test_avatar_upload_rejects_disallowed_extension(self):
+        """Executable or non-image extensions are rejected."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from apps.accounts.forms import UserProfileForm
+        bad_file = SimpleUploadedFile("malicious.exe", b"fake binary", content_type="application/x-msdownload")
+        form = UserProfileForm(data={"display_name": "Test User"}, files={"avatar": bad_file}, user=self.user_a)
+        self.assertFalse(form.is_valid())
+        self.assertIn("avatar", form.errors)

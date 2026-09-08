@@ -128,3 +128,40 @@ class DiscussionsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context["page_obj"].has_other_pages())
         self.assertEqual(len(response.context["page_obj"]), 20)
+
+    def test_edit_own_reply(self):
+        """Author can edit their own reply."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Original reply text.",
+            is_anonymous=False,
+        )
+        self.client.force_login(self.responder)
+        edit_url = reverse("discussions:reply_edit", kwargs={"pk": reply.id})
+        response = self.client.post(edit_url, {
+            "content": "Updated reply text with more clarity.",
+            "post_mode": "anonymous",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        reply.refresh_from_db()
+        self.assertIn("Updated reply text with more clarity.", reply.content)
+        self.assertTrue(reply.is_anonymous)
+
+    def test_user_cannot_edit_another_users_reply(self):
+        """User A cannot edit User B's reply."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Original reply text.",
+            is_anonymous=False,
+        )
+        self.client.force_login(self.user)
+        edit_url = reverse("discussions:reply_edit", kwargs={"pk": reply.id})
+        response = self.client.post(edit_url, {
+            "content": "Hacked reply content.",
+            "post_mode": "identified",
+        })
+        self.assertEqual(response.status_code, 403)
+        reply.refresh_from_db()
+        self.assertEqual(reply.content, "Original reply text.")

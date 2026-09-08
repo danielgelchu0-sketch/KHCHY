@@ -14,7 +14,11 @@
     <form method="post" novalidate>
       {% csrf_token %}
 
-      {% if form.non_field_errors %}
+      {% if rate_limited %}
+        <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
+          <p style="margin-bottom: 0;"><strong>Security Protection:</strong> Too many failed login attempts from your IP address. Please wait 5 minutes before trying again.</p>
+        </div>
+      {% elif form.non_field_errors %}
         <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
           {% for error in form.non_field_errors %}
             <p style="margin-bottom: 0;">{{ error }}</p>

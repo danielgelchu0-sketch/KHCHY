@@ -380,3 +380,54 @@ class BookmarkToggleView(View):
 
         messages.info(request, msg)
         return redirect(discussion.get_absolute_url())
+
+
+@method_decorator(login_required, name="dispatch")
+class ReplyEditView(View):
+    """Allows author or moderator to edit a reply."""
+
+    def get(self, request, pk):
+        reply = get_object_or_404(Reply, pk=pk)
+        if not reply.can_user_edit(request.user):
+            return HttpResponseForbidden("You are not authorized to edit this reply.")
+
+        form = ReplyCreateForm(
+            initial={
+                "content": reply.content,
+                "post_mode": "anonymous" if reply.is_anonymous else "identified",
+            }
+        )
+        return render(
+            request,
+            "discussions/reply_edit.html",
+            {
+                "form": form,
+                "reply": reply,
+                "discussion": reply.discussion,
+            },
+        )
+
+    def post(self, request, pk):
+        reply = get_object_or_404(Reply, pk=pk)
+        if not reply.can_user_edit(request.user):
+            return HttpResponseForbidden("You are not authorized to edit this reply.")
+
+        form = ReplyCreateForm(request.POST)
+        if form.is_valid():
+            reply.content = sanitize_user_input(form.cleaned_data["content"])
+            post_mode = form.cleaned_data["post_mode"]
+            reply.is_anonymous = (post_mode == "anonymous")
+            reply.save(update_fields=["content", "is_anonymous", "updated_at"])
+
+            messages.success(request, "Your reply has been updated.")
+            return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
+
+        return render(
+            request,
+            "discussions/reply_edit.html",
+            {
+                "form": form,
+                "reply": reply,
+                "discussion": reply.discussion,
+            },
+        )

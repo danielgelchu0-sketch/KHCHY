@@ -67,6 +67,9 @@
 
       {% if user.is_authenticated %}
         {% if reply.author == user or user.is_moderator %}
+          <a href="{% url 'discussions:reply_edit' pk=reply.id %}" style="margin-right: 0.5rem; color: var(--primary-700);">
+            Edit
+          </a>
           <form action="{% url 'discussions:reply_delete' pk=reply.id %}" method="post" onsubmit="return confirmAction('Delete this reply?');" style="display: inline;">
             {% csrf_token %}
             <button type="submit" style="color: var(--danger-txt);">

@@ -8,6 +8,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -42,19 +43,46 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
+MAX_FAILED_LOGIN_ATTEMPTS = 5
+LOCKOUT_DURATION = 300  # 5 minutes
+
+
 class LoginView(FormView):
-    """Handles member authentication with email and password."""
+    """Handles member authentication with email and password, protected by rate limiting."""
     template_name = "accounts/login.html"
     form_class = UserLoginForm
+
+    def _get_client_ip(self):
+        x_forwarded = self.request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded:
+            return x_forwarded.split(",")[0].strip()
+        return self.request.META.get("REMOTE_ADDR", "127.0.0.1")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect("discussions:topic_list")
+        if request.method == "POST":
+            client_ip = self._get_client_ip()
+            key = f"login_fails_{client_ip}"
+            fails = cache.get(key, 0)
+            if fails >= MAX_FAILED_LOGIN_ATTEMPTS:
+                logger.warning(f"Rate limited login attempt from IP {client_ip}")
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        "form": self.get_form(),
+                        "rate_limited": True,
+                    },
+                    status=429,
+                )
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.get_user()
         login(self.request, user)
+        client_ip = self._get_client_ip()
+        cache.delete(f"login_fails_{client_ip}")
         logger.info(f"Successful login for user: {user.email}")
         messages.info(self.request, f"Welcome back, {user.display_name}!")
         next_url = self.request.GET.get("next")
@@ -63,7 +91,11 @@ class LoginView(FormView):
         return redirect("discussions:topic_list")
 
     def form_invalid(self, form):
-        logger.warning("Failed login attempt with provided credentials.")
+        client_ip = self._get_client_ip()
+        key = f"login_fails_{client_ip}"
+        fails = cache.get(key, 0) + 1
+        cache.set(key, fails, timeout=LOCKOUT_DURATION)
+        logger.warning(f"Failed login attempt ({fails}/{MAX_FAILED_LOGIN_ATTEMPTS}) from IP {client_ip}")
         return super().form_invalid(form)
 
 

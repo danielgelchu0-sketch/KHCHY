@@ -1,3 +1,4 @@
+import os
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -156,6 +157,27 @@ class UserProfileForm(forms.ModelForm):
         if "admin" in name.lower() or "moderator" in name.lower() or "anonymous" in name.lower():
             raise ValidationError("Display name cannot contain reserved words.")
         return name
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get("avatar")
+        if avatar and hasattr(avatar, "size"):
+            # 1. Enforce 2MB size limit
+            if avatar.size > 2 * 1024 * 1024:
+                raise ValidationError("Profile photo must be smaller than 2MB.")
+            # 2. Enforce allowed extension
+            ext = os.path.splitext(avatar.name)[1].lower()
+            if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
+                raise ValidationError("Profile photo must be a JPG, PNG, or WEBP image file.")
+            # 3. Validate image integrity with Pillow
+            try:
+                from PIL import Image
+                img = Image.open(avatar)
+                img.verify()
+                if img.format.lower() not in ["jpeg", "png", "webp"]:
+                    raise ValidationError("Uploaded file is not a recognized JPEG, PNG, or WEBP image.")
+            except Exception:
+                raise ValidationError("Invalid or corrupted image file.")
+        return avatar
 
     def save(self, commit=True):
         profile = super().save(commit=False)

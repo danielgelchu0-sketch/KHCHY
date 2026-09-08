@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Reply | {{ discussion.title }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 760px;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="{{ discussion.get_absolute_url }}#reply-{{ reply.id }}">&larr; Back to discussion</a>
+    <h1 style="margin-top: 0.5rem; font-size: 1.75rem;">Edit Your Reply</h1>
+    <p class="text-muted">In discussion: <strong>{{ discussion.title }}</strong></p>
+  </div>
+
+  <div class="card" style="padding: 2rem;">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
+          {% for error in form.non_field_errors %}
+            <p style="margin-bottom: 0;">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+        {{ form.content }}
+        {% if form.content.errors %}
+          <div class="form-error">{{ form.content.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Identity Selector -->
+      <div class="identity-mode-selector">
+        <h4>Posting Identity Mode</h4>
+        <div class="identity-options-grid">
+          <label class="identity-option-card">
+            <input type="radio" name="post_mode" value="identified" {% if not reply.is_anonymous %}checked{% endif %}>
+            <div class="identity-card-content">
+              <strong>Post with my identity</strong>
+              <span>Displays your name (<strong>{{ user.display_name }}</strong>) to community members.</span>
+            </div>
+          </label>
+          <label class="identity-option-card">
+            <input type="radio" name="post_mode" value="anonymous" {% if reply.is_anonymous %}checked{% endif %}>
+            <div class="identity-card-content">
+              <strong>&#128274; Post anonymously</strong>
+              <span>Displays as <strong>Anonymous Member</strong>.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+        <a href="{{ discussion.get_absolute_url }}#reply-{{ reply.id }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
