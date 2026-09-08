@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load discussion_tags %}
+
+{% block title %}{{ discussion.title }} | {{ topic.name }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 860px;">
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+    <a href="{% url 'discussions:topic_list' %}">Topics</a>
+    <span class="text-muted" style="margin: 0 0.4rem;">&rsaquo;</span>
+    <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+  </div>
+
+  <!-- Discussion Hero Card -->
+  <article class="discussion-hero">
+    <!-- Moderator Inspection Banner -->
+    {% if discussion.is_anonymous and user.is_authenticated and user.is_moderator and not discussion.is_deleted %}
+      <div class="mod-inspect-box" style="margin-bottom: 1rem; font-size: 0.85rem; padding: 0.6rem 0.85rem;">
+        <strong>&#128737; Moderator Author Inspection:</strong> This question was posted anonymously to the community.
+        Internal author: <strong>{{ discussion.author.display_name }}</strong> (<code>{{ discussion.author.email }}</code>)
+      </div>
+    {% endif %}
+
+    <div>
+      <a href="{{ topic.get_absolute_url }}" class="topic-badge">{{ topic.name }}</a>
+      {% if discussion.status == 'locked' %}
+        <span class="topic-badge" style="background-color: #fee2e2; color: #991b1b;">&#128274; Discussion Locked</span>
+      {% endif %}
+    </div>
+
+    <h1 style="font-size: 1.85rem; margin-top: 0.5rem; margin-bottom: 0.75rem;">{{ discussion.title }}</h1>
+
+    <!-- Author & Meta -->
+    <div class="discussion-meta-row" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+      <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
+        {% if discussion.is_deleted %}
+          <span style="font-style: italic; color: var(--text-light);">Deleted</span>
+        {% elif discussion.is_anonymous %}
+          <!-- STRICT PRIVACY: Anonymous Presentation -->
+          &#128274; Anonymous Member
+        {% else %}
+          {% if discussion.author.profile.avatar %}
+            <img src="{{ discussion.author.profile.avatar.url }}" alt="{{ discussion.author.display_name }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          {% else %}
+            <span style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-100); color: var(--accent-700); font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center;">
+              {{ discussion.author.display_name|slice:":1" }}
+            </span>
+          {% endif %}
+          <a href="{% url 'accounts:public_profile' user_id=discussion.author.id %}" style="font-weight: 600; color: var(--primary-900);">
+            {{ discussion.author.display_name }}
+          </a>
+          {% if discussion.author.is_moderator %}
+            <span class="mod-tag">Mod</span>
+          {% endif %}
+        {% endif %}
+      </span>
+      <span>&bull;</span>
+      <span>Asked {{ discussion.created_at|date:"F j, Y, g:i a" }}</span>
+      <span>&bull;</span>
+      <span>{{ discussion.views_count }} view{{ discussion.views_count|pluralize }}</span>
+    </div>
+
+    <!-- Question Content -->
+    <div class="discussion-body">
+      {% if discussion.is_deleted %}
+        <p style="color: var(--text-muted); font-style: italic;">
+          This discussion was deleted by its author or community moderators.
+        </p>
+      {% else %}
+        {{ discussion.content|safe }}
+      {% endif %}
+    </div>
+
+    <!-- Discussion Actions Toolbar -->
+    <div class="discussion-actions-bar">
+      <div>
+        {% if user.is_authenticated and not discussion.is_deleted %}
+          {% include "discussions/partials/bookmark_button.html" with discussion=discussion is_bookmarked=is_bookmarked %}
+        {% endif %}
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        {% if user.is_authenticated and not discussion.is_deleted %}
+          {% if user != discussion.author %}
+            <a href="{% url 'moderation:report_submit' %}?type=discussion&id={{ discussion.id }}" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">
+              &#9873; Report
+            </a>
+          {% endif %}
+
+          {% if discussion.author == user or user.is_moderator %}
+            <a href="{% url 'discussions:discussion_edit' topic_slug=topic.slug pk=discussion.id %}" class="btn btn-secondary btn-sm">
+              Edit
+            </a>
+            <form action="{% url 'discussions:discussion_delete' topic_slug=topic.slug pk=discussion.id %}" method="post" onsubmit="return confirmAction('Are you sure you want to delete this discussion?');" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">Delete</button>
+            </form>
+          {% endif %}
+
+          <!-- Moderator Quick Controls -->
+          {% if user.is_moderator %}
+            <form action="{% url 'moderation:discussion_moderate' pk=discussion.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              {% if discussion.status == 'active' %}
+                <input type="hidden" name="action" value="lock">
+                <button type="submit" class="btn btn-secondary btn-sm">Lock [Mod]</button>
+              {% elif discussion.status == 'locked' %}
+                <input type="hidden" name="action" value="unlock">
+                <button type="submit" class="btn btn-secondary btn-sm">Unlock [Mod]</button>
+              {% endif %}
+            </form>
+            <form action="{% url 'moderation:discussion_moderate' pk=discussion.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="hide">
+              <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--warning-txt);">Hide [Mod]</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </article>
+
+  <!-- ==============================================================================
+       REPLIES SECTION: Answers & Discussion
+       ============================================================================== -->
+  <section id="answers-section" style="margin-top: 2.5rem;">
+    <h2 class="replies-section-title">
+      <span>Community Answers & Discussion</span>
+      <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">({{ replies_count }})</span>
+    </h2>
+
+    <!-- Replies Container (Live target for HTMX updates) -->
+    <div id="replies-container">
+      {% if root_replies %}
+        {% for reply in root_replies %}
+          {% include "discussions/partials/reply_card.html" with reply=reply discussion=discussion %}
+        {% endfor %}
+      {% else %}
+        <div id="no-replies-placeholder" class="card text-center" style="padding: 2.5rem 1.5rem; background-color: var(--surface);">
+          <p class="text-muted" style="margin-bottom: 0;">
+            No responses yet. Share your biblical guidance, prayerful reflection, or thoughtful answer below.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Main Reply Form -->
+    {% if discussion|can_reply:user %}
+      <div class="card" style="padding: 2rem; margin-top: 2rem; background-color: var(--surface);">
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Provide an Answer or Share Your Reflection</h3>
+        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">
+          Your reply can be posted with your identity or anonymously.
+        </p>
+
+        <form id="main-reply-form" action="{% url 'discussions:reply_create' topic_slug=topic.slug pk=discussion.id %}" method="post"
+              hx-post="{% url 'discussions:reply_create' topic_slug=topic.slug pk=discussion.id %}"
+              hx-target="#replies-container"
+              hx-swap="beforeend">
+          {% csrf_token %}
+
+          <div class="form-group">
+            {{ reply_form.content }}
+          </div>
+
+          <!-- Explicit Anonymity Choice Selector -->
+          <div class="identity-mode-selector">
+            <h4>How would you like to post this answer?</h4>
+            <div class="identity-options-grid">
+              <label class="identity-option-card">
+                <input type="radio" name="post_mode" value="identified" checked>
+                <div class="identity-card-content">
+                  <strong>Post with my identity</strong>
+                  <span>Display your name (<strong>{{ user.display_name }}</strong>) to other members.</span>
+                </div>
+              </label>
+
+              <label class="identity-option-card">
+                <input type="radio" name="post_mode" value="anonymous">
+                <div class="identity-card-content">
+                  <strong>&#128274; Post anonymously</strong>
+                  <span>Display as <strong>Anonymous Member</strong>. Your name and profile are completely hidden.</span>
+                </div>
+              </label>
+            </div>
+            <div class="privacy-explainer-banner" style="margin-top: 0.75rem;">
+              <strong>Note:</strong> Internal account identity is preserved for church moderation and safety review.
+            </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 1rem;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+              Post Answer
+            </button>
+          </div>
+        </form>
+      </div>
+    {% elif not user.is_authenticated %}
+      <div class="card text-center" style="padding: 2rem; margin-top: 2rem;">
+        <p style="margin-bottom: 1rem; font-weight: 500;">
+          Please sign in to participate in the discussion and provide an answer.
+        </p>
+        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">Sign In to Reply</a>
+      </div>
+    {% elif discussion.status == 'locked' %}
+      <div class="card text-center" style="padding: 2rem; margin-top: 2rem; background-color: var(--primary-50);">
+        <p class="text-muted" style="margin-bottom: 0;">
+          &#128274; This discussion has been locked by community moderators. No further replies can be submitted.
+        </p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

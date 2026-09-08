@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy & Anonymity Policy | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 860px;">
+  <div class="card" style="padding: 2.5rem;">
+    <h1>Privacy, Anonymity & Safety Policy</h1>
+    <p class="text-muted" style="font-size: 1rem; margin-bottom: 2rem;">
+      Last Updated: September 2026 &bull; HKHC Church Community Platform
+    </p>
+
+    <div class="privacy-explainer-banner" style="margin-bottom: 2rem; font-size: 0.95rem;">
+      <strong>Core Commitment:</strong> Our goal is to provide a psychologically safer way for youths, teens, and adults to ask difficult, sensitive, or embarrassing questions without fear of social judgment, while maintaining a safe, accountable community environment.
+    </div>
+
+    <h2>1. How Anonymity Works: Two Distinct Modes</h2>
+    <p>
+      In our platform, anonymity is a <strong>per-post choice</strong> made each time you submit a question or reply. It is not an account-wide setting. For every post, you are explicitly asked:
+    </p>
+    <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 1.25rem;">
+      <strong>1. Post with my identity:</strong> Your chosen community display name and profile picture will appear alongside your post.<br>
+      <strong>2. Post anonymously:</strong> Your post will be presented to other ordinary community members with the label <em>"Anonymous Member"</em>.
+    </div>
+    <p>
+      When you post anonymously:
+    </p>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+      <li>Other community members cannot see your real name or display name.</li>
+      <li>Other members cannot see your email address or user account profile.</li>
+      <li>Our application strictly obscures your internal user ID from HTML markup, JavaScript objects, URLs, and API responses.</li>
+    </ul>
+
+    <h2>2. Anonymity is Relative, Not Absolute</h2>
+    <p>
+      Because our community includes teenagers and vulnerable individuals, <strong>moderation is a first-class safety feature</strong>. To prevent bullying, self-harm, predatory behavior, harassment, and severe misconduct:
+    </p>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+      <li>Every post is internally associated with your authenticated church account in our secure database.</li>
+      <li>Authorized pastoral moderators and administrators have the ability to inspect the internal author of an anonymous post <strong>solely when investigating safety concerns, reports of abuse, threats, or severe policy violations</strong>.</li>
+      <li>Moderators cannot casually expose your identity to other members. All moderator investigative views and actions are permanently recorded in a secure, immutable audit log.</li>
+    </ul>
+
+    <h2>3. Authentication vs. Public Presentation</h2>
+    <p>
+      We maintain a strict architectural boundary between your:
+    </p>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+      <li><strong>Authentication Identity:</strong> Your private email address and password hash used for login. This is NEVER published or visible to other members.</li>
+      <li><strong>Public Display Identity:</strong> Your public community display name and optional bio/avatar, displayed when you choose identified posting.</li>
+      <li><strong>Anonymous Presentation:</strong> A neutral, privacy-protected presentation showing only "Anonymous Member" to ordinary users.</li>
+    </ul>
+
+    <h2>4. Reporting and Audit Accountability</h2>
+    <p>
+      Any community member can report posts that violate community guidelines. Reports are queued for pastoral review. Every action taken by a moderator—such as hiding content, issuing warnings, or resolving reports—is logged with a timestamp and stated reason to ensure pastoral accountability.
+    </p>
+
+    <h2>5. Questions and Pastoral Inquiries</h2>
+    <p>
+      If you have questions about how your privacy is handled or need pastoral support regarding a sensitive situation, please reach out to our pastoral team directly or through church leadership.
+    </p>
+  </div>
+</div>
+{% endblock %}

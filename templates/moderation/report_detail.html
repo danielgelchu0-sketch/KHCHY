@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Review Report #{{ report.id }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="{% url 'moderation:dashboard' %}">&larr; Back to Moderator Queue</a>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+      <h1>Report #{{ report.id }}: {{ report.get_category_display }}</h1>
+      <span class="badge badge-{{ report.status }}" style="font-size: 0.9rem; padding: 0.35rem 0.85rem;">
+        {{ report.get_status_display }}
+      </span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: start;">
+    <!-- Main Report Inspection Column -->
+    <div>
+      <!-- Report Metadata -->
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Report Submission Details</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+          <strong>Reported by:</strong> {{ report.reporter.display_name }} (<code>{{ report.reporter.email }}</code>)
+        </p>
+        <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+          <strong>Date:</strong> {{ report.created_at|date:"F j, Y, g:i a" }} ({{ report.created_at|timesince }} ago)
+        </p>
+        {% if report.description %}
+          <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem; margin-top: 0.75rem; font-size: 0.9rem;">
+            <strong>Reporter's Stated Reason:</strong><br>
+            {{ report.description }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- ==============================================================================
+           CONFIDENTIAL AUTHOR IDENTITY (Pastoral & Safety Inspection)
+           ============================================================================== -->
+      {% if internal_author %}
+        <div class="card" style="border: 2px solid #f59e0b; background-color: #fffbeb; margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: #b45309; margin-bottom: 0.5rem;">
+            <strong style="font-size: 1rem;">&#128737; Authorized Internal Author Inspection</strong>
+          </div>
+          <p style="font-size: 0.85rem; color: #92400e; margin-bottom: 0.75rem;">
+            This information is strictly confidential and presented to you in your pastoral/moderation capacity to investigate safety risks, harassment, or abuse.
+          </p>
+          <div style="background-color: white; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem;">
+            <p style="margin-bottom: 0.35rem;">
+              <strong>Internal Account:</strong> {{ internal_author.display_name }}
+            </p>
+            <p style="margin-bottom: 0.35rem;">
+              <strong>Registered Email:</strong> <code>{{ internal_author.email }}</code>
+            </p>
+            <p style="margin-bottom: 0.35rem;">
+              <strong>Account Status:</strong>
+              <span class="badge {% if internal_author.status == 'active' %}badge-resolved{% else %}badge-pending{% endif %}">
+                {{ internal_author.get_status_display }}
+              </span>
+            </p>
+            <p style="margin-bottom: 0;">
+              <strong>Member Since:</strong> {{ internal_author.date_joined|date:"M Y" }}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Flagged Content Preview -->
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Reported Content</h3>
+        {% if report.target_discussion %}
+          <div style="border-left: 4px solid var(--accent-700); padding-left: 1rem;">
+            <h4>{{ report.target_discussion.title }}</h4>
+            <div style="margin-top: 0.5rem; font-size: 0.95rem;">
+              {{ report.target_discussion.content|safe }}
+            </div>
+            <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+              Posting Mode: <strong>{% if report.target_discussion.is_anonymous %}Anonymous{% else %}Identified{% endif %}</strong> &bull;
+              Status: <strong>{{ report.target_discussion.get_status_display }}</strong>
+            </div>
+          </div>
+          <div style="margin-top: 1rem;">
+            <a href="{{ report.target_discussion.get_absolute_url }}" target="_blank" class="btn btn-secondary btn-sm">
+              View Discussion in Context &rarr;
+            </a>
+          </div>
+
+        {% elif report.target_reply %}
+          <div style="border-left: 4px solid var(--accent-700); padding-left: 1rem;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+              Reply in thread: "{{ report.target_reply.discussion.title }}"
+            </p>
+            <div style="font-size: 0.95rem;">
+              {{ report.target_reply.content|safe }}
+            </div>
+            <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+              Posting Mode: <strong>{% if report.target_reply.is_anonymous %}Anonymous{% else %}Identified{% endif %}</strong> &bull;
+              Status: <strong>{{ report.target_reply.get_status_display }}</strong>
+            </div>
+          </div>
+          <div style="margin-top: 1rem;">
+            <a href="{{ report.target_reply.discussion.get_absolute_url }}#reply-{{ report.target_reply.id }}" target="_blank" class="btn btn-secondary btn-sm">
+              View Reply in Thread &rarr;
+            </a>
+          </div>
+
+        {% elif report.target_user %}
+          <div>
+            <p><strong>Member Profile:</strong> {{ report.target_user.display_name }}</p>
+            <p>{{ report.target_user.profile.bio }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Report Resolution Form -->
+      <div class="card">
+        <h3>Resolve or Dismiss Report</h3>
+        <form method="post" novalidate style="margin-top: 1rem;">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ decision_form.action.id_for_label }}" class="form-label">{{ decision_form.action.label }}</label>
+            {{ decision_form.action }}
+          </div>
+          <div class="form-group">
+            <label for="{{ decision_form.resolution_note.id_for_label }}" class="form-label">{{ decision_form.resolution_note.label }}</label>
+            {{ decision_form.resolution_note }}
+            <span class="form-help">This note is recorded in the permanent audit trail for transparency and accountability.</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+            Submit Decision
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Actions & Sanctions Side Column -->
+    <div>
+      <!-- Content Quick Actions -->
+      {% if report.target_discussion %}
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Discussion Moderation</h3>
+          <form action="{% url 'moderation:discussion_moderate' pk=report.target_discussion.id %}" method="post" style="margin-bottom: 0.5rem;">
+            {% csrf_token %}
+            {% if report.target_discussion.status == 'active' %}
+              <input type="hidden" name="action" value="hide">
+              <button type="submit" class="btn btn-outline btn-sm" style="width: 100%; color: var(--danger-txt); border-color: #fecdd3; margin-bottom: 0.5rem;">
+                Hide Discussion from Members
+              </button>
+            {% else %}
+              <input type="hidden" name="action" value="restore">
+              <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; margin-bottom: 0.5rem;">
+                Restore Discussion to Active
+              </button>
+            {% endif %}
+          </form>
+
+          <form action="{% url 'moderation:discussion_moderate' pk=report.target_discussion.id %}" method="post">
+            {% csrf_token %}
+            {% if report.target_discussion.status == 'locked' %}
+              <input type="hidden" name="action" value="unlock">
+              <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%;">Unlock Discussion</button>
+            {% else %}
+              <input type="hidden" name="action" value="lock">
+              <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%;">Lock Discussion</button>
+            {% endif %}
+          </form>
+        </div>
+      {% elif report.target_reply %}
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Reply Moderation</h3>
+          <form action="{% url 'moderation:reply_moderate' pk=report.target_reply.id %}" method="post">
+            {% csrf_token %}
+            {% if report.target_reply.status == 'active' %}
+              <input type="hidden" name="action" value="hide">
+              <button type="submit" class="btn btn-outline btn-sm" style="width: 100%; color: var(--danger-txt); border-color: #fecdd3;">
+                Hide Reply from Public
+              </button>
+            {% else %}
+              <input type="hidden" name="action" value="restore">
+              <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%;">
+                Restore Reply
+              </button>
+            {% endif %}
+          </form>
+        </div>
+      {% endif %}
+
+      <!-- User Sanctions Form -->
+      {% if internal_author and internal_author != user %}
+        <div class="card">
+          <h3 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Account Sanctions</h3>
+          <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 1rem;">
+            Warn, temporarily suspend, or permanently ban {{ internal_author.display_name }}.
+          </p>
+
+          <form action="{% url 'moderation:user_sanction' user_id=internal_author.id %}" method="post" onsubmit="return confirmAction('Apply this sanction to user?');">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="{{ sanction_form.action.id_for_label }}" class="form-label" style="font-size: 0.85rem;">Action</label>
+              {{ sanction_form.action }}
+            </div>
+            <div class="form-group">
+              <label for="{{ sanction_form.reason.id_for_label }}" class="form-label" style="font-size: 0.85rem;">Reason (Required)</label>
+              {{ sanction_form.reason }}
+            </div>
+            <button type="submit" class="btn btn-danger btn-sm" style="width: 100%;">
+              Apply Account Sanction
+            </button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+# Core requirements for HKHC Community Discussion Platform
+Django>=5.1,<6.2
+python-dotenv>=1.0.0
+pillow>=10.0.0
+bleach>=6.0.0

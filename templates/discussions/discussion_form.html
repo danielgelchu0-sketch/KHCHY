@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Ask a Question | {{ topic.name }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="{{ topic.get_absolute_url }}">&larr; Back to {{ topic.name }}</a>
+    <h1 style="margin-top: 0.5rem; margin-bottom: 0.25rem;">Ask a Question</h1>
+    <p class="text-muted">Room: <strong>{{ topic.name }}</strong> &mdash; {{ topic.description }}</p>
+  </div>
+
+  <div class="card" style="padding: 2rem;">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+          {% for error in form.non_field_errors %}
+            <p style="margin-bottom: 0;">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+        {{ form.title }}
+        <span class="form-help">{{ form.title.help_text }}</span>
+        {% if form.title.errors %}
+          <div class="form-error">{{ form.title.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+        {{ form.content }}
+        <span class="form-help">Feel free to share context, personal background, scripture, or specific doubts.</span>
+        {% if form.content.errors %}
+          <div class="form-error">{{ form.content.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <!-- ==============================================================================
+           CORE REQUIREMENT: Explicit Anonymity Choice Box (Impossible to Miss)
+           ============================================================================== -->
+      <div class="identity-mode-selector">
+        <h4>How would you like to post?</h4>
+        <p class="selector-help">
+          Make an intentional choice for this specific question. Your decision applies to this question independently.
+        </p>
+
+        <div class="identity-options-grid">
+          <!-- Option 1: Identified -->
+          <label class="identity-option-card">
+            <input type="radio" name="post_mode" value="identified" {% if form.post_mode.value == 'identified' or not form.post_mode.value %}checked{% endif %}>
+            <div class="identity-card-content">
+              <strong>Post with my identity</strong>
+              <span>Displays your name (<strong>{{ user.display_name }}</strong>) and profile photo to all members.</span>
+            </div>
+          </label>
+
+          <!-- Option 2: Anonymous -->
+          <label class="identity-option-card">
+            <input type="radio" name="post_mode" value="anonymous" {% if form.post_mode.value == 'anonymous' %}checked{% endif %}>
+            <div class="identity-card-content">
+              <strong>&#128274; Post anonymously</strong>
+              <span>Displays as <strong>Anonymous Member</strong>. Your name, email, and user ID are strictly hidden from other members.</span>
+            </div>
+          </label>
+        </div>
+
+        {% if form.post_mode.errors %}
+          <div class="form-error" style="margin-top: 0.75rem;">{{ form.post_mode.errors.0 }}</div>
+        {% endif %}
+
+        <!-- Truthful Privacy Notice -->
+        <div id="identity-mode-notice" class="privacy-explainer-banner {% if form.post_mode.value != 'anonymous' %}hidden{% endif %}">
+          <strong>Privacy Safeguard Disclosure:</strong> Your identity will be hidden from other community members, but church moderators may be able to identify the account associated with this post when investigating severe abuse, safety concerns, or harassment reports.
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+        <a href="{{ topic.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+          Publish Question
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load discussion_tags %}
+
+{% block title %}Discussion Topics & Rooms | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1>Discussion Rooms</h1>
+      <p class="text-muted" style="margin-bottom: 0;">
+        Choose a dedicated topic room to explore discussions or ask sensitive questions in a safe environment.
+      </p>
+    </div>
+  </div>
+
+  <!-- Topics Grid -->
+  <div class="topics-grid">
+    {% for topic in topics %}
+      <a href="{{ topic.get_absolute_url }}" class="topic-card">
+        <div>
+          <div class="topic-header">
+            <div class="topic-icon-wrap" aria-hidden="true">&#128172;</div>
+            <h2 class="topic-title">{{ topic.name }}</h2>
+          </div>
+          <p class="topic-desc">{{ topic.description }}</p>
+        </div>
+        <div class="topic-meta">
+          <span>{{ topic.discussions_count }} active thread{{ topic.discussions_count|pluralize }}</span>
+          <span style="color: var(--accent-700); font-weight: 600;">Enter Room &rarr;</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Recent Discussions Stream -->
+  <div style="margin-top: 3.5rem;">
+    <h2 style="margin-bottom: 1.25rem;">Recent Community Discussions</h2>
+    {% if recent_discussions %}
+      {% for discussion in recent_discussions %}
+        <div class="discussion-item">
+          <div class="discussion-main">
+            <div>
+              <a href="{{ discussion.topic.get_absolute_url }}" class="topic-badge">{{ discussion.topic.name }}</a>
+            </div>
+            <a href="{{ discussion.get_absolute_url }}" class="discussion-title-link">{{ discussion.title }}</a>
+            <div class="discussion-meta-row">
+              <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
+                {% if discussion.is_anonymous %}
+                  &#128274; {{ discussion|display_author:user }}
+                {% else %}
+                  {{ discussion.author.display_name }}
+                {% endif %}
+              </span>
+              <span>&bull;</span>
+              <span>Last active {{ discussion.last_activity_at|timesince }} ago</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 90px;">
+            <span class="stat-chip" style="font-weight: 700; color: var(--primary-800); font-size: 1rem;">
+              {{ discussion.replies.count }}
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">replies</span>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card text-center" style="padding: 2.5rem;">
+        <p class="text-muted">No discussions yet. Be the first to start a conversation in one of the rooms above!</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+<div id="reply-{{ reply.id }}" class="reply-card {% if reply.parent %}nested{% endif %}">
+  <!-- Moderator Author Inspection Banner (Only rendered for authorized moderators) -->
+  {% if reply.is_anonymous and user.is_authenticated and user.is_moderator and not reply.is_deleted %}
+    <div class="mod-inspect-box">
+      <strong>&#128737; Moderator Inspection:</strong> This post is anonymous to members. True author:
+      <strong>{{ reply.author.display_name }}</strong> (<code>{{ reply.author.email }}</code>)
+    </div>
+  {% endif %}
+
+  <!-- Reply Header -->
+  <div class="reply-header">
+    <div style="display: flex; align-items: center; gap: 0.65rem;">
+      {% if reply.is_deleted %}
+        <span class="author-chip anonymous" style="color: var(--text-light); font-style: italic;">Deleted</span>
+      {% elif reply.is_anonymous %}
+        <!-- CRITICAL ANONYMITY: Zero author ID, profile link, or real name in DOM -->
+        <span class="author-chip anonymous">
+          &#128274; Anonymous Member
+        </span>
+      {% else %}
+        {% if reply.author.profile.avatar %}
+          <img src="{{ reply.author.profile.avatar.url }}" alt="{{ reply.author.display_name }}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+          <span style="width: 28px; height: 28px; border-radius: 50%; background-color: var(--accent-100); color: var(--accent-700); font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;">
+            {{ reply.author.display_name|slice:":1" }}
+          </span>
+        {% endif %}
+        <a href="{% url 'accounts:public_profile' user_id=reply.author.id %}" style="font-weight: 600; color: var(--primary-900);">
+          {{ reply.author.display_name }}
+        </a>
+        {% if reply.author.is_moderator %}
+          <span class="mod-tag">Mod</span>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div style="color: var(--text-muted); font-size: 0.8rem;">
+      {{ reply.created_at|timesince }} ago
+    </div>
+  </div>
+
+  <!-- Reply Body -->
+  <div class="reply-content">
+    {% if reply.is_deleted %}
+      <p style="color: var(--text-muted); font-style: italic; margin-bottom: 0;">
+        This reply was removed.
+      </p>
+    {% else %}
+      {{ reply.content|safe }}
+    {% endif %}
+  </div>
+
+  <!-- Reply Actions Bar -->
+  {% if not reply.is_deleted and discussion.status == 'active' and not discussion.topic.is_archived %}
+    <div class="reply-actions">
+      {% if user.is_authenticated and user.can_post %}
+        <button type="button" onclick="toggleNestedReplyForm({{ reply.id }})">
+          &#8617; Reply
+        </button>
+      {% endif %}
+
+      {% if user.is_authenticated and user != reply.author %}
+        <a href="{% url 'moderation:report_submit' %}?type=reply&id={{ reply.id }}" title="Report this reply">
+          &#9873; Report
+        </a>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        {% if reply.author == user or user.is_moderator %}
+          <form action="{% url 'discussions:reply_delete' pk=reply.id %}" method="post" onsubmit="return confirmAction('Delete this reply?');" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="color: var(--danger-txt);">
+              Delete
+            </button>
+          </form>
+        {% endif %}
+
+        {% if user.is_moderator %}
+          <form action="{% url 'moderation:reply_moderate' pk=reply.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="hide">
+            <button type="submit" style="color: var(--warning-txt);">
+              Hide [Mod]
+            </button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <!-- Nested Reply Form (Toggled) -->
+    {% if user.is_authenticated and user.can_post %}
+      <div id="reply-form-{{ reply.id }}" class="nested-reply-form hidden" style="margin-top: 1rem; padding: 1rem; background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <form action="{% url 'discussions:reply_create' topic_slug=discussion.topic.slug pk=discussion.id %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="parent_id" value="{{ reply.id }}">
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <textarea name="content" rows="3" class="form-textarea" placeholder="Write a reply to this comment..." required></textarea>
+          </div>
+
+          <!-- Nested Anonymity Selector -->
+          <div class="identity-mode-selector" style="padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-900);">Post as:</span>
+            <div style="display: flex; gap: 1rem; margin-top: 0.35rem; font-size: 0.85rem;">
+              <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                <input type="radio" name="post_mode" value="identified" checked>
+                <span>{{ user.display_name }}</span>
+              </label>
+              <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                <input type="radio" name="post_mode" value="anonymous">
+                <span>&#128274; Anonymous Member</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleNestedReplyForm({{ reply.id }})">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Submit Reply</button>
+          </div>
+        </form>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <!-- Recursive Child Replies -->
+  {% if reply.child_replies %}
+    <div class="child-replies-list" style="margin-top: 1rem;">
+      {% for child in reply.child_replies %}
+        {% include "discussions/partials/reply_card.html" with reply=child discussion=discussion %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

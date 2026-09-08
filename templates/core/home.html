@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Hero Section -->
+  <section class="card" style="padding: 3rem 2.5rem; background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%); border-color: #cbd5e1; margin-bottom: 2.5rem; text-align: center;">
+    <span class="topic-badge" style="background-color: var(--accent-100); color: var(--accent-700); font-weight: 700;">A Protected Space for Honest Dialogue</span>
+    <h1 style="font-size: 2.5rem; color: var(--primary-900); max-width: 800px; margin: 1rem auto 1.25rem;">
+      Ask difficult questions about faith, struggles, and life without social fear.
+    </h1>
+    <p style="font-size: 1.15rem; color: var(--primary-700); max-width: 700px; margin: 0 auto 2rem; line-height: 1.7;">
+      Growing in Christ means wrestling with hard questions. We provide our church family—teens, youths, and adults—a psychologically safe, structured, and carefully moderated community platform where you can choose to participate under your identity or post anonymously.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 0.85rem 1.75rem; font-size: 1.05rem;">Join Our Community</a>
+      <a href="{% url 'discussions:topic_list' %}" class="btn btn-secondary" style="padding: 0.85rem 1.75rem; font-size: 1.05rem;">Browse Discussion Rooms</a>
+    </div>
+  </section>
+
+  <!-- Core Pillars -->
+  <section style="margin-bottom: 3.5rem;">
+    <h2 class="text-center" style="margin-bottom: 2rem;">Built on Care, Privacy, and Biblical Accountability</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+      <div class="card" style="margin-bottom: 0;">
+        <div class="topic-icon-wrap" style="background-color: #eff6ff; color: #1d4ed8; margin-bottom: 1rem;">&#128274;</div>
+        <h3>True Post-by-Post Privacy</h3>
+        <p class="text-muted">
+          Choose before submitting every single question or reply whether to share your name or post anonymously. Your anonymity choice is completely flexible and never permanent.
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom: 0;">
+        <div class="topic-icon-wrap" style="background-color: #f0fdf4; color: #15803d; margin-bottom: 1rem;">&#128737;</div>
+        <h3>First-Class Safety & Moderation</h3>
+        <p class="text-muted">
+          Our church moderators review community reports, prevent bullying, and safeguard members while upholding a safe space for vulnerable sharing.
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom: 0;">
+        <div class="topic-icon-wrap" style="background-color: #fefce8; color: #a16207; margin-bottom: 1rem;">&#128172;</div>
+        <h3>Structured, Thoughtful Dialogue</h3>
+        <p class="text-muted">
+          Organized by specific topics and threaded questions rather than chaotic chat streams, giving questions the deep, prayerful reflection they deserve.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Topic Rooms -->
+  <section>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem;">
+      <div>
+        <h2>Discussion Rooms</h2>
+        <p class="text-muted" style="margin-bottom: 0;">Explore conversations across dedicated topic areas</p>
+      </div>
+      <a href="{% url 'discussions:topic_list' %}" class="btn btn-outline btn-sm">View All Rooms &rarr;</a>
+    </div>
+
+    <div class="topics-grid">
+      {% for topic in featured_topics %}
+        <a href="{{ topic.get_absolute_url }}" class="topic-card">
+          <div>
+            <div class="topic-header">
+              <div class="topic-icon-wrap">&#128172;</div>
+              <h3 class="topic-title">{{ topic.name }}</h3>
+            </div>
+            <p class="topic-desc">{{ topic.description }}</p>
+          </div>
+          <div class="topic-meta">
+            <span>{{ topic.active_discussions_count }} questions</span>
+            <span style="color: var(--accent-700); font-weight: 600;">Enter Room &rarr;</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Settings | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 640px;">
+  <div class="card" style="padding: 2.5rem 2rem;">
+    <h2>Community Profile Settings</h2>
+    <p class="text-muted">Manage your public display name, biography, and profile photo.</p>
+
+    <div class="privacy-explainer-banner" style="margin-bottom: 2rem;">
+      <strong>Identity Notice:</strong> Your email address (<code>{{ user.email }}</code>) is strictly private and never shown to other members. Only your Display Name and Avatar are shown when you choose to post with your identity.
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
+          {% for error in form.non_field_errors %}
+            <p style="margin-bottom: 0;">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.display_name.id_for_label }}" class="form-label">{{ form.display_name.label }}</label>
+        {{ form.display_name }}
+        {% if form.display_name.errors %}
+          <div class="form-error">{{ form.display_name.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.bio.id_for_label }}" class="form-label">{{ form.bio.label }}</label>
+        {{ form.bio }}
+        {% if form.bio.errors %}
+          <div class="form-error">{{ form.bio.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.avatar.id_for_label }}" class="form-label">{{ form.avatar.label }}</label>
+        {% if user.profile.avatar %}
+          <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem;">
+            <img src="{{ user.profile.avatar.url }}" alt="Current Avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);">
+            <span class="text-muted" style="font-size: 0.85rem;">Current profile photo</span>
+          </div>
+        {% endif %}
+        {{ form.avatar }}
+        {% if form.avatar.errors %}
+          <div class="form-error">{{ form.avatar.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+        <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+        <a href="{% url 'accounts:public_profile' user_id=user.id %}" class="btn btn-secondary">View Public Profile</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

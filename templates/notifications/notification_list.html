@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 760px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1>Notifications</h1>
+      <p class="text-muted" style="margin-bottom: 0;">Updates on your questions, replies, and followed conversations.</p>
+    </div>
+
+    {% if unread_count > 0 %}
+      <form action="{% url 'notifications:mark_all_read' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary btn-sm">
+          Mark All as Read
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+    <a href="?filter=all" class="btn btn-sm {% if filter_type != 'unread' %}btn-primary{% else %}btn-secondary{% endif %}">
+      All Notifications
+    </a>
+    <a href="?filter=unread" class="btn btn-sm {% if filter_type == 'unread' %}btn-primary{% else %}btn-secondary{% endif %}">
+      Unread {% if unread_count > 0 %}({{ unread_count }}){% endif %}
+    </a>
+  </div>
+
+  <!-- Notifications Feed -->
+  {% if page_obj %}
+    {% for notif in page_obj %}
+      <div class="card" style="padding: 1.25rem; margin-bottom: 0.75rem; {% if not notif.is_read %}border-left: 4px solid var(--accent-700); background-color: #fafbfc;{% endif %}">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+          <div style="flex-grow: 1;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+              <span class="badge {% if notif.notification_type == 'moderation' %}badge-pending{% else %}badge-review{% endif %}">
+                {{ notif.get_notification_type_display }}
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">{{ notif.created_at|timesince }} ago</span>
+            </div>
+            <h3 style="font-size: 1.05rem; margin-bottom: 0.35rem;">{{ notif.title }}</h3>
+            <p style="font-size: 0.9rem; color: var(--primary-800); margin-bottom: 0.75rem;">
+              {{ notif.message }}
+            </p>
+            <form action="{% url 'notifications:mark_read' pk=notif.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary btn-sm">
+                View Discussion &rarr;
+              </button>
+            </form>
+          </div>
+
+          {% if not notif.is_read %}
+            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--accent-700); display: inline-block; flex-shrink: 0;" title="Unread"></span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+      <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+        {% if page_obj.has_previous %}
+          <a href="?filter={{ filter_type }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&larr; Previous</a>
+        {% endif %}
+        <span style="padding: 0.35rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?filter={{ filter_type }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">Next &rarr;</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="card text-center" style="padding: 3rem 1.5rem;">
+      <p class="text-muted" style="margin-bottom: 0;">
+        {% if filter_type == 'unread' %}
+          You have no unread notifications.
+        {% else %}
+          You don't have any notifications yet.
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Access Denied (403) | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="max-width: 580px; padding: 4rem 1rem;">
+  <div class="card" style="padding: 3rem 2rem;">
+    <h1 style="font-size: 3rem; color: var(--danger-txt); margin-bottom: 0.5rem;">403</h1>
+    <h2>Access Restricted</h2>
+    <p class="text-muted" style="margin-top: 1rem; margin-bottom: 2rem;">
+      You do not have the required permissions to view this resource or perform this action. If you believe this is in error, please contact a community administrator.
+    </p>
+    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">Return to Community Home</a>
+  </div>
+</div>
+{% endblock %}

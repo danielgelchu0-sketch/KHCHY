@@ -1,0 +1,3 @@
+-r base.txt
+# PostgreSQL adapter - psycopg is recommended for Django on production environments like PythonAnywhere
+psycopg2-binary>=2.9.9

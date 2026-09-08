@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ COMMUNITY_NAME }}{% endblock %} | Church Community Discussion</title>
+  <meta name="description" content="{{ COMMUNITY_DESCRIPTION }}">
+  <!-- Production Styles -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- Offline-safe minified HTMX -->
+  <script src="{% static 'js/htmx.min.js' %}"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="{% url 'core:home' %}" class="brand-link" aria-label="{{ COMMUNITY_NAME }} Home">
+        <div class="brand-logo-icon" aria-hidden="true">&#10013;</div>
+        <div>
+          <span class="brand-name">{{ COMMUNITY_NAME }}</span>
+          <span class="brand-tagline">Safe, Honest, Biblical Fellowship</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="{% url 'discussions:topic_list' %}">Topics & Rooms</a></li>
+          <li class="nav-item"><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
+          <li class="nav-item"><a href="{% url 'core:privacy_policy' %}">Privacy & Safety</a></li>
+          {% if user.is_authenticated and user.is_moderator %}
+            <li class="nav-item">
+              <a href="{% url 'moderation:dashboard' %}" class="mod-link">
+                Moderator Hub
+                {% if pending_reports_count > 0 %}
+                  <span class="notification-badge" style="position: static; margin-left: 0.25rem;">{{ pending_reports_count }}</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Search & Auth Actions -->
+      <div class="nav-actions">
+        <!-- Quick Search -->
+        <form action="{% url 'core:search' %}" method="get" class="search-form" role="search">
+          <input type="search" name="q" placeholder="Search questions..." value="{{ request.GET.q|default:'' }}" class="form-input" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: 180px;" aria-label="Search discussions">
+        </form>
+
+        {% if user.is_authenticated %}
+          <!-- Notification Bell with HTMX polling -->
+          <a href="{% url 'notifications:list' %}" class="notification-link" aria-label="Notifications"
+             hx-get="{% url 'notifications:badge' %}" hx-trigger="every 45s" hx-target="#nav-notification-badge" hx-swap="outerHTML">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span id="nav-notification-badge" class="notification-badge {% if unread_notifications_count == 0 %}hidden{% endif %}">
+              {{ unread_notifications_count }}
+            </span>
+          </a>
+
+          <!-- User Profile & Status -->
+          <div class="user-badge">
+            <span>{{ user.display_name }}</span>
+            {% if user.is_moderator %}
+              <span class="mod-tag">Mod</span>
+            {% endif %}
+          </div>
+          <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary btn-sm">Settings</a>
+          <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline btn-sm">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm">Log in</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Join Community</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  <div class="container messages-container" style="padding-top: 1rem;">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-auto-dismiss" role="alert">
+          <div>{{ message }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Main Content Block -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <strong>{{ COMMUNITY_NAME }}</strong>
+        <p class="text-muted" style="margin-top: 0.25rem; font-size: 0.85rem; max-width: 480px;">
+          Providing teens, youths, and adults a psychologically safer, moderated space to explore difficult questions about faith, relationships, and struggles in biblical fellowship.
+        </p>
+      </div>
+      <ul class="footer-links">
+        <li><a href="{% url 'discussions:topic_list' %}">Topic Rooms</a></li>
+        <li><a href="{% url 'core:guidelines' %}">Community Guidelines</a></li>
+        <li><a href="{% url 'core:privacy_policy' %}">Privacy & Anonymity Policy</a></li>
+        {% if user.is_authenticated and user.is_moderator %}
+          <li><a href="{% url 'moderation:audit_log_list' %}">Audit Logs</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Application Interactivity Script -->
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

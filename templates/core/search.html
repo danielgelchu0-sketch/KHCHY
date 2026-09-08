@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load discussion_tags %}
+
+{% block title %}Search: {{ query }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card" style="margin-bottom: 2rem;">
+    <h2>Search Community Discussions</h2>
+    <p class="text-muted">Find questions, answers, and discussions across all church topic rooms.</p>
+    <form action="{% url 'core:search' %}" method="get" style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+      <input type="search" name="q" value="{{ query }}" placeholder="Search by keyword, topic, or question..." class="form-input" required autofocus>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  {% if query %}
+    <!-- Topic Matches -->
+    {% if topics_matched %}
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Matched Discussion Rooms</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          {% for topic in topics_matched %}
+            <a href="{{ topic.get_absolute_url }}" class="card" style="padding: 0.75rem 1.25rem; margin-bottom: 0; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+              <span style="font-weight: 600; color: var(--primary-900);">{{ topic.name }}</span>
+              <span class="topic-badge" style="margin-bottom: 0;">{{ topic.active_discussions_count }} questions</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Discussion Thread Results -->
+    <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">
+      Discussion Results for "<span style="color: var(--accent-700);">{{ query }}</span>"
+    </h3>
+
+    {% if results %}
+      {% for discussion in results %}
+        <div class="discussion-item">
+          <div class="discussion-main">
+            <div>
+              <a href="{{ discussion.topic.get_absolute_url }}" class="topic-badge">{{ discussion.topic.name }}</a>
+            </div>
+            <a href="{{ discussion.get_absolute_url }}" class="discussion-title-link">{{ discussion.title }}</a>
+            <div class="discussion-meta-row">
+              <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
+                {% if discussion.is_anonymous %}
+                  &#128274; {{ discussion|display_author:user }}
+                {% else %}
+                  {{ discussion.author.display_name }}
+                {% endif %}
+              </span>
+              <span>&bull;</span>
+              <span>{{ discussion.created_at|timesince }} ago</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 100px;">
+            <span class="stat-chip" style="font-weight: 700; color: var(--primary-800); font-size: 1rem;">
+              {{ discussion.replies.count }}
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">replies</span>
+          </div>
+        </div>
+      {% endfor %}
+
+      <!-- Pagination -->
+      {% if results.has_other_pages %}
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+          {% if results.has_previous %}
+            <a href="?q={{ query }}&page={{ results.previous_page_number }}" class="btn btn-secondary btn-sm">&larr; Previous</a>
+          {% endif %}
+          <span style="padding: 0.35rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+            Page {{ results.number }} of {{ results.paginator.num_pages }}
+          </span>
+          {% if results.has_next %}
+            <a href="?q={{ query }}&page={{ results.next_page_number }}" class="btn btn-secondary btn-sm">Next &rarr;</a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="card text-center" style="padding: 3rem 1.5rem;">
+        <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 1rem;">No discussions found matching your search.</p>
+        <a href="{% url 'discussions:topic_list' %}" class="btn btn-secondary">Explore Topics</a>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

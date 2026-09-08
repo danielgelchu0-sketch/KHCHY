@@ -1,0 +1,12 @@
+<form action="{% url 'discussions:bookmark_toggle' pk=discussion.id %}" method="post"
+      hx-post="{% url 'discussions:bookmark_toggle' pk=discussion.id %}"
+      hx-swap="outerHTML" style="display: inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-sm {% if is_bookmarked %}btn-primary{% else %}btn-secondary{% endif %}" title="Follow this discussion for updates">
+    {% if is_bookmarked %}
+      &#9733; Following Discussion
+    {% else %}
+      &#9734; Follow Discussion
+    {% endif %}
+  </button>
+</form>

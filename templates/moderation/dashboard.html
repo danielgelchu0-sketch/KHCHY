@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Moderator Dashboard | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1>Moderation & Safety Center</h1>
+      <p class="text-muted" style="margin-bottom: 0;">
+        Review member reports, investigate abuse, safeguard youths, and uphold community guidelines.
+      </p>
+    </div>
+    <a href="{% url 'moderation:audit_log_list' %}" class="btn btn-secondary btn-sm">
+      View All Audit Logs &rarr;
+    </a>
+  </div>
+
+  <!-- Community Health & Stats Metrics -->
+  <div class="mod-stats-grid">
+    <div class="stat-box" style="border-left: 4px solid #f59e0b;">
+      <span class="stat-number" style="color: #b45309;">{{ stats.pending_reports }}</span>
+      <span class="stat-label">Pending Reports</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.total_users }}</span>
+      <span class="stat-label">Total Members</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.active_users }}</span>
+      <span class="stat-label">Active Members</span>
+    </div>
+    <div class="stat-box" style="border-left: 4px solid #ef4444;">
+      <span class="stat-number" style="color: #b91c1c;">{{ stats.suspended_users }}</span>
+      <span class="stat-label">Suspended Users</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.total_discussions }}</span>
+      <span class="stat-label">Discussions</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.anonymous_discussions }}</span>
+      <span class="stat-label">Anonymous Threads</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.total_replies }}</span>
+      <span class="stat-label">Total Answers</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ stats.anonymous_replies }}</span>
+      <span class="stat-label">Anonymous Answers</span>
+    </div>
+  </div>
+
+  <!-- Reports Queue Section -->
+  <div class="card" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+      <h2 style="font-size: 1.3rem; margin-bottom: 0;">Reports Queue</h2>
+      <div style="display: flex; gap: 0.5rem; font-size: 0.85rem;">
+        <a href="?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-primary{% else %}btn-secondary{% endif %}">Pending</a>
+        <a href="?status=under_review" class="btn btn-sm {% if status_filter == 'under_review' %}btn-primary{% else %}btn-secondary{% endif %}">Under Review</a>
+        <a href="?status=resolved" class="btn btn-sm {% if status_filter == 'resolved' %}btn-primary{% else %}btn-secondary{% endif %}">Resolved</a>
+        <a href="?status=dismissed" class="btn btn-sm {% if status_filter == 'dismissed' %}btn-primary{% else %}btn-secondary{% endif %}">Dismissed</a>
+        <a href="?status=all" class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-secondary{% endif %}">All</a>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Target Content</th>
+            <th>Reporter</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if page_obj %}
+            {% for report in page_obj %}
+              <tr>
+                <td>#{{ report.id }}</td>
+                <td>
+                  <span style="font-weight: 600; color: var(--primary-900);">{{ report.get_category_display }}</span>
+                </td>
+                <td>
+                  <div style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ report.get_target_repr }}
+                  </div>
+                </td>
+                <td>{{ report.reporter.display_name }}</td>
+                <td>{{ report.created_at|timesince }} ago</td>
+                <td>
+                  <span class="badge badge-{{ report.status }}">
+                    {{ report.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  <a href="{% url 'moderation:report_detail' pk=report.id %}" class="btn btn-secondary btn-sm">
+                    Inspect & Review
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center" style="padding: 2.5rem; color: var(--text-muted);">
+                No reports found under this status filter.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+        {% if page_obj.has_previous %}
+          <a href="?status={{ status_filter }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&larr; Previous</a>
+        {% endif %}
+        <span style="padding: 0.35rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?status={{ status_filter }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">Next &rarr;</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Moderation Actions / Audit Trail -->
+  <div class="card" style="padding: 1.5rem;">
+    <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">Recent Moderation Actions Taken</h2>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Moderator</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for action in recent_actions %}
+            <tr>
+              <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
+                {{ action.created_at|date:"M j, H:i" }}
+              </td>
+              <td><strong>{{ action.moderator.display_name|default:"System" }}</strong></td>
+              <td><span class="badge badge-review">{{ action.get_action_display }}</span></td>
+              <td>{{ action.target_repr }}</td>
+              <td style="font-size: 0.85rem;">{{ action.reason|truncatechars:70 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center" style="padding: 1.5rem; color: var(--text-muted);">
+                No moderation actions recorded yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}{{ member.display_name }} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 760px;">
+  <!-- Member Header -->
+  <div class="card" style="padding: 2.5rem 2rem; margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+      <div>
+        {% if member.profile.avatar %}
+          <img src="{{ member.profile.avatar.url }}" alt="{{ member.display_name }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);">
+        {% else %}
+          <div style="width: 80px; height: 80px; border-radius: 50%; background-color: var(--accent-100); color: var(--accent-700); font-weight: 700; font-size: 2rem; display: flex; align-items: center; justify-content: center;">
+            {{ member.display_name|slice:":1" }}
+          </div>
+        {% endif %}
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <h2 style="margin-bottom: 0;">{{ member.display_name }}</h2>
+          {% if member.is_moderator %}
+            <span class="mod-tag">Moderator</span>
+          {% endif %}
+        </div>
+        <p class="text-muted" style="margin-top: 0.25rem; margin-bottom: 0.5rem; font-size: 0.9rem;">
+          Member since {{ member.date_joined|date:"F Y" }}
+        </p>
+        {% if member.profile.bio %}
+          <p style="color: var(--primary-800); margin-bottom: 0; font-size: 0.95rem;">
+            {{ member.profile.bio }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if user.is_authenticated and user != member %}
+      <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; text-align: right;">
+        <a href="{% url 'moderation:report_submit' %}?type=user&id={{ member.id }}" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">
+          Report Profile
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Member's Identified Discussions -->
+  <h3>Discussions Started by {{ member.display_name }}</h3>
+  <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
+    Only questions published with this member's identity are shown here.
+  </p>
+
+  {% if discussions %}
+    {% for disc in discussions %}
+      <div class="discussion-item">
+        <div class="discussion-main">
+          <a href="{{ disc.topic.get_absolute_url }}" class="topic-badge">{{ disc.topic.name }}</a>
+          <a href="{{ disc.get_absolute_url }}" class="discussion-title-link">{{ disc.title }}</a>
+          <div class="discussion-meta-row">
+            <span>{{ disc.created_at|date:"M d, Y" }}</span>
+            <span>&bull;</span>
+            <span>{{ disc.replies.count }} replies</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card text-center" style="padding: 2rem;">
+      <p class="text-muted" style="margin-bottom: 0;">No public discussions have been posted by this member.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
