@@ -1,8 +1,9 @@
+{% load i18n %}
 <div id="reply-{{ reply.id }}" class="reply-card {% if reply.parent %}nested{% endif %}">
   <!-- Moderator Author Inspection Banner (Only rendered for authorized moderators) -->
   {% if reply.is_anonymous and user.is_authenticated and user.is_moderator and not reply.is_deleted %}
     <div class="mod-inspect-box">
-      <strong>&#128737; Moderator Inspection:</strong> This post is anonymous to members. True author:
+      <strong>&#128737; {% trans "Moderator Inspection" %}:</strong> {% trans "This post is anonymous to members. True author:" %}
       <strong>{{ reply.author.display_name }}</strong> (<code>{{ reply.author.email }}</code>)
     </div>
   {% endif %}
@@ -11,11 +12,11 @@
   <div class="reply-header">
     <div style="display: flex; align-items: center; gap: 0.65rem;">
       {% if reply.is_deleted %}
-        <span class="author-chip anonymous" style="color: var(--text-light); font-style: italic;">Deleted</span>
+        <span class="author-chip anonymous" style="color: var(--text-light); font-style: italic;">{% trans "Deleted" %}</span>
       {% elif reply.is_anonymous %}
         <!-- CRITICAL ANONYMITY: Zero author ID, profile link, or real name in DOM -->
         <span class="author-chip anonymous">
-          &#128274; Anonymous Member
+          &#128274; {% trans "Anonymous Member" %}
         </span>
       {% else %}
         {% if reply.author.profile.avatar %}
@@ -29,13 +30,13 @@
           {{ reply.author.display_name }}
         </a>
         {% if reply.author.is_moderator %}
-          <span class="mod-tag">Mod</span>
+          <span class="mod-tag">{% trans "Mod" %}</span>
         {% endif %}
       {% endif %}
     </div>
 
     <div style="color: var(--text-muted); font-size: 0.8rem;">
-      {{ reply.created_at|timesince }} ago
+      {{ reply.created_at|timesince }} {% trans "ago" %}
     </div>
   </div>
 
@@ -43,7 +44,7 @@
   <div class="reply-content">
     {% if reply.is_deleted %}
       <p style="color: var(--text-muted); font-style: italic; margin-bottom: 0;">
-        This reply was removed.
+        {% trans "This reply was removed." %}
       </p>
     {% else %}
       {{ reply.content|safe }}
@@ -55,25 +56,25 @@
     <div class="reply-actions">
       {% if user.is_authenticated and user.can_post %}
         <button type="button" onclick="toggleNestedReplyForm({{ reply.id }})">
-          &#8617; Reply
+          &#8617; {% trans "Reply" %}
         </button>
       {% endif %}
 
       {% if user.is_authenticated and user != reply.author %}
-        <a href="{% url 'moderation:report_submit' %}?type=reply&id={{ reply.id }}" title="Report this reply">
-          &#9873; Report
+        <a href="{% url 'moderation:report_submit' %}?type=reply&id={{ reply.id }}" title="{% trans 'Report this reply' %}">
+          &#9873; {% trans "Report" %}
         </a>
       {% endif %}
 
       {% if user.is_authenticated %}
         {% if reply.author == user or user.is_moderator %}
           <a href="{% url 'discussions:reply_edit' pk=reply.id %}" style="margin-right: 0.5rem; color: var(--primary-700);">
-            Edit
+            {% trans "Edit" %}
           </a>
-          <form action="{% url 'discussions:reply_delete' pk=reply.id %}" method="post" onsubmit="return confirmAction('Delete this reply?');" style="display: inline;">
+          <form action="{% url 'discussions:reply_delete' pk=reply.id %}" method="post" onsubmit="return confirmAction('{% trans "Delete this reply?" %}');" style="display: inline;">
             {% csrf_token %}
             <button type="submit" style="color: var(--danger-txt);">
-              Delete
+              {% trans "Delete" %}
             </button>
           </form>
         {% endif %}
@@ -83,7 +84,7 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="hide">
             <button type="submit" style="color: var(--warning-txt);">
-              Hide [Mod]
+              {% trans "Hide [Mod]" %}
             </button>
           </form>
         {% endif %}
@@ -98,12 +99,12 @@
           <input type="hidden" name="parent_id" value="{{ reply.id }}">
 
           <div class="form-group" style="margin-bottom: 0.75rem;">
-            <textarea name="content" rows="3" class="form-textarea" placeholder="Write a reply to this comment..." required></textarea>
+            <textarea name="content" rows="3" class="form-textarea" placeholder="{% trans 'Write a reply to this comment...' %}" required></textarea>
           </div>
 
           <!-- Nested Anonymity Selector -->
           <div class="identity-mode-selector" style="padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-900);">Post as:</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-900);">{% trans "Post as:" %}</span>
             <div style="display: flex; gap: 1rem; margin-top: 0.35rem; font-size: 0.85rem;">
               <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
                 <input type="radio" name="post_mode" value="identified" checked>
@@ -111,14 +112,14 @@
               </label>
               <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
                 <input type="radio" name="post_mode" value="anonymous">
-                <span>&#128274; Anonymous Member</span>
+                <span>&#128274; {% trans "Anonymous Member" %}</span>
               </label>
             </div>
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleNestedReplyForm({{ reply.id }})">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-sm">Submit Reply</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleNestedReplyForm({{ reply.id }})">{% trans "Cancel" %}</button>
+            <button type="submit" class="btn btn-primary btn-sm">{% trans "Submit Reply" %}</button>
           </div>
         </form>
       </div>

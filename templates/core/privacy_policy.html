@@ -1,65 +1,124 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Privacy & Anonymity Policy | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Privacy & Anonymity Policy" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 860px;">
   <div class="card" style="padding: 2.5rem;">
-    <h1>Privacy, Anonymity & Safety Policy</h1>
-    <p class="text-muted" style="font-size: 1rem; margin-bottom: 2rem;">
-      Last Updated: September 2026 &bull; HKHC Church Community Platform
-    </p>
+    {% if LANGUAGE_CODE == 'am' %}
+      <h1>የግላዊነት፣ የሚስጥራዊነት እና የደህንነት መመሪያ</h1>
+      <p class="text-muted" style="font-size: 1rem; margin-bottom: 2rem;">
+        የመጨረሻ ማሻሻያ፡ መስከረም 2026 &bull; የHKHC ቤተክርስቲያን ማህበረሰብ መድረክ
+      </p>
 
-    <div class="privacy-explainer-banner" style="margin-bottom: 2rem; font-size: 0.95rem;">
-      <strong>Core Commitment:</strong> Our goal is to provide a psychologically safer way for youths, teens, and adults to ask difficult, sensitive, or embarrassing questions without fear of social judgment, while maintaining a safe, accountable community environment.
-    </div>
+      <div class="privacy-explainer-banner" style="margin-bottom: 2rem; font-size: 0.95rem;">
+        <strong>ዋነኛ ዓላማችን፡</strong> ታዳጊዎች፣ ወጣቶችና ጎልማሶች ያለምንም ማኅበራዊ ፍርሃት ወይም ስጋት አስቸጋሪና ስሜታዊ ጥያቄዎችን በግልጽ እንዲጠይቁ ማድረግ ሲሆን፣ በተመሳሳይ ጊዜ ደህንነቱ የተጠበቀና ተጠያቂነት ያለበት መንፈሳዊ ማህበረሰብ እንዲኖር ማስቻል ነው።
+      </div>
 
-    <h2>1. How Anonymity Works: Two Distinct Modes</h2>
-    <p>
-      In our platform, anonymity is a <strong>per-post choice</strong> made each time you submit a question or reply. It is not an account-wide setting. For every post, you are explicitly asked:
-    </p>
-    <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 1.25rem;">
-      <strong>1. Post with my identity:</strong> Your chosen community display name and profile picture will appear alongside your post.<br>
-      <strong>2. Post anonymously:</strong> Your post will be presented to other ordinary community members with the label <em>"Anonymous Member"</em>.
-    </div>
-    <p>
-      When you post anonymously:
-    </p>
-    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
-      <li>Other community members cannot see your real name or display name.</li>
-      <li>Other members cannot see your email address or user account profile.</li>
-      <li>Our application strictly obscures your internal user ID from HTML markup, JavaScript objects, URLs, and API responses.</li>
-    </ul>
+      <h2>1. ሚስጥራዊነት እንዴት እንደሚሰራ፡ ሁለት የተለያዩ ምርጫዎች</h2>
+      <p>
+        በዚህ መድረክ ላይ ማንነትን አለመግለጽ (ሚስጥራዊነት) <strong>ለእያንዳንዱ ጽሑፍ የሚደረግ ምርጫ</strong> ነው። ለመላው አካውንት የሚሆን ቋሚ ቅንብር አይደለም። ለእያንዳንዱ ጥያቄ ወይም ምላሽ ግልጽ ምርጫ ይሰጥዎታል፡
+      </p>
+      <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 1.25rem;">
+        <strong>1. በመገለጫ ስሜ ልጻፍ፡</strong> የመረጡት የማህበረሰብ ስምና የመገለጫ ፎቶ ከጽሑፍዎ ጋር አብሮ ይታያል።<br>
+        <strong>2. ማንነቴ ሳይገለጽ (በሚስጥር) ልጻፍ፡</strong> ጽሑፍዎ ለሌሎች ተራ የማህበረሰብ አባላት <em>"ማንነቱ ያልተገለጸ አባል"</em> በሚል ስም ብቻ ይታያል።
+      </div>
+      <p>
+        በሚስጥር በሚጽፉበት ጊዜ፡
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>ሌሎች የማህበረሰብ አባላት ትክክለኛ ስምዎን ወይም የመገለጫ ስምዎን ማየት አይችሉም።</li>
+        <li>ሌሎች አባላት የኢሜይል አድራሻዎን ወይም የመለያዎን መገለጫ ማየት አይችሉም።</li>
+        <li>የእኛ ሥርዓት የመለያ መለያ ቁጥርዎን (User ID) ከHTML ኮድ፣ ከጃቫስክሪፕትና ከማንኛውም ይፋዊ መረጃ በጥብቅ ይደብቃል።</li>
+      </ul>
 
-    <h2>2. Anonymity is Relative, Not Absolute</h2>
-    <p>
-      Because our community includes teenagers and vulnerable individuals, <strong>moderation is a first-class safety feature</strong>. To prevent bullying, self-harm, predatory behavior, harassment, and severe misconduct:
-    </p>
-    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
-      <li>Every post is internally associated with your authenticated church account in our secure database.</li>
-      <li>Authorized pastoral moderators and administrators have the ability to inspect the internal author of an anonymous post <strong>solely when investigating safety concerns, reports of abuse, threats, or severe policy violations</strong>.</li>
-      <li>Moderators cannot casually expose your identity to other members. All moderator investigative views and actions are permanently recorded in a secure, immutable audit log.</li>
-    </ul>
+      <h2>2. ሚስጥራዊነት የተገደበ እንጂ ፍጹም አይደለም</h2>
+      <p>
+        ማህበረሰባችን ታዳጊዎችንና ተጋላጭ የሆኑ ግለሰቦችን ስለሚያካትት፣ <strong>ክትትል እና ደህንነት ቀዳሚ ተግባራችን ነው</strong>። ትንኮሳን፣ ራስን መጉዳትን፣ ተገቢ ያልሆኑ ግንኙነቶችንና ከባድ ጥፋቶችን ለመከላከል፡
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>እያንዳንዱ ጽሑፍ በዋናው የውሂብ ጎታ (Database) ውስጥ ከተመዘገበው የቤተክርስቲያን መለያዎ ጋር ተገናኝቶ ይያዛል።</li>
+        <li>ፈቃድ የተሰጣቸው የቤተክርስቲያን አወያዮች በሚስጥር የተጻፈውን ጽሑፍ እውነተኛ ጸሐፊ መመርመር የሚችሉት <strong>የደህንነት ስጋት፣ የትንኮሳ ጥቆማ ወይም ከባድ የመመሪያ ጥሰት ሲያጋጥም ብቻ ነው</strong>።</li>
+        <li>አወያዮች የማንኛውንም አባል ማንነት ለሌሎች አባላት በዘፈቀደ ማጋለጥ አይችሉም። እያንዳንዱ የአወያዮች ምርመራና እርምጃ በማይሰረዝ የክትትል መዝገብ (Audit Log) ውስጥ በቋሚነት ይመዘገባል።</li>
+      </ul>
 
-    <h2>3. Authentication vs. Public Presentation</h2>
-    <p>
-      We maintain a strict architectural boundary between your:
-    </p>
-    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
-      <li><strong>Authentication Identity:</strong> Your private email address and password hash used for login. This is NEVER published or visible to other members.</li>
-      <li><strong>Public Display Identity:</strong> Your public community display name and optional bio/avatar, displayed when you choose identified posting.</li>
-      <li><strong>Anonymous Presentation:</strong> A neutral, privacy-protected presentation showing only "Anonymous Member" to ordinary users.</li>
-    </ul>
+      <h2>3. የመለያ ማንነት እና የይፋዊ መገለጫ ልዩነት</h2>
+      <p>
+        በመረጃ አያያዝ ረገድ የሚከተሉትን በጥብቅ እንለያለን፡
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li><strong>የመግቢያ ማንነት፡</strong> ለመግባት የሚጠቀሙበት ሚስጥራዊ የኢሜይል አድራሻና የይለፍ ቃል፤ ይህ ፈጽሞ ለማንም አይታይም።</li>
+        <li><strong>የይፋዊ መገለጫ ማንነት፡</strong> በስምዎ ለመጻፍ ሲመርጡ የሚታየው የማህበረሰብ ስምና ፎቶ።</li>
+        <li><strong>ሚስጥራዊ ገጽታ፡</strong> ለተራ ተጠቃሚዎች "ማንነቱ ያልተገለጸ አባል" በሚል ብቻ የሚቀርብ ገለልተኛ ገጽታ።</li>
+      </ul>
 
-    <h2>4. Reporting and Audit Accountability</h2>
-    <p>
-      Any community member can report posts that violate community guidelines. Reports are queued for pastoral review. Every action taken by a moderator—such as hiding content, issuing warnings, or resolving reports—is logged with a timestamp and stated reason to ensure pastoral accountability.
-    </p>
+      <h2>4. ጥቆማዎች እና የክትትል ተጠያቂነት</h2>
+      <p>
+        ማንኛውም የማህበረሰብ አባል መመሪያን የሚጥሱ ጽሑፎችን መጠቆም ይችላል። ጥቆማዎች ለአወያዮች ይቀርባሉ። አወያዮች የሚወስዷቸው ማናቸውም እርምጃዎች — ይዘትን መደበቅ፣ ማስጠንቀቂያ መስጠት ወይም ውሳኔ ማስተላለፍ — ተጠያቂነትን ለማረጋገጥ ከነምክንያታቸው ይመዘገባሉ።
+      </p>
 
-    <h2>5. Questions and Pastoral Inquiries</h2>
-    <p>
-      If you have questions about how your privacy is handled or need pastoral support regarding a sensitive situation, please reach out to our pastoral team directly or through church leadership.
-    </p>
+      <h2>5. ጥያቄዎች እና የፓስተሮች ምክክር</h2>
+      <p>
+        ስለ ግላዊነትዎ አያያዝ ማንኛውም ጥያቄ ካለዎት ወይም ሚስጥራዊ መንፈሳዊ ምክር የሚፈልጉ ከሆነ፣ እባክዎን በቀጥታ የቤተክርስቲያኑን መጋቢዎች ወይም አመራሮችን ያነጋግሩ።
+      </p>
+    {% else %}
+      <h1>Privacy, Anonymity & Safety Policy</h1>
+      <p class="text-muted" style="font-size: 1rem; margin-bottom: 2rem;">
+        Last Updated: September 2026 &bull; HKHC Church Community Platform
+      </p>
+
+      <div class="privacy-explainer-banner" style="margin-bottom: 2rem; font-size: 0.95rem;">
+        <strong>Core Commitment:</strong> Our goal is to provide a psychologically safer way for youths, teens, and adults to ask difficult, sensitive, or embarrassing questions without fear of social judgment, while maintaining a safe, accountable community environment.
+      </div>
+
+      <h2>1. How Anonymity Works: Two Distinct Modes</h2>
+      <p>
+        In our platform, anonymity is a <strong>per-post choice</strong> made each time you submit a question or reply. It is not an account-wide setting. For every post, you are explicitly asked:
+      </p>
+      <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 1.25rem;">
+        <strong>1. Post with my identity:</strong> Your chosen community display name and profile picture will appear alongside your post.<br>
+        <strong>2. Post anonymously:</strong> Your post will be presented to other ordinary community members with the label <em>"Anonymous Member"</em>.
+      </div>
+      <p>
+        When you post anonymously:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>Other community members cannot see your real name or display name.</li>
+        <li>Other members cannot see your email address or user account profile.</li>
+        <li>Our application strictly obscures your internal user ID from HTML markup, JavaScript objects, URLs, and API responses.</li>
+      </ul>
+
+      <h2>2. Anonymity is Relative, Not Absolute</h2>
+      <p>
+        Because our community includes teenagers and vulnerable individuals, <strong>moderation is a first-class safety feature</strong>. To prevent bullying, self-harm, predatory behavior, harassment, and severe misconduct:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>Every post is internally associated with your authenticated church account in our secure database.</li>
+        <li>Authorized pastoral moderators and administrators have the ability to inspect the internal author of an anonymous post <strong>solely when investigating safety concerns, reports of abuse, threats, or severe policy violations</strong>.</li>
+        <li>Moderators cannot casually expose your identity to other members. All moderator investigative views and actions are permanently recorded in a secure, immutable audit log.</li>
+      </ul>
+
+      <h2>3. Authentication vs. Public Presentation</h2>
+      <p>
+        We maintain a strict architectural boundary between your:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li><strong>Authentication Identity:</strong> Your private email address and password hash used for login. This is NEVER published or visible to other members.</li>
+        <li><strong>Public Display Identity:</strong> Your public community display name and optional bio/avatar, displayed when you choose identified posting.</li>
+        <li><strong>Anonymous Presentation:</strong> A neutral, privacy-protected presentation showing only "Anonymous Member" to ordinary users.</li>
+      </ul>
+
+      <h2>4. Reporting and Audit Accountability</h2>
+      <p>
+        Any community member can report posts that violate community guidelines. Reports are queued for pastoral review. Every action taken by a moderator—such as hiding content, issuing warnings, or resolving reports—is logged with a timestamp and stated reason to ensure pastoral accountability.
+      </p>
+
+      <h2>5. Questions and Pastoral Inquiries</h2>
+      <p>
+        If you have questions about how your privacy is handled or need pastoral support regarding a sensitive situation, please reach out to our pastoral team directly or through church leadership.
+      </p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

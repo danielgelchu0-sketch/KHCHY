@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% load discussion_tags %}
+{% load discussion_tags i18n %}
 
-{% block title %}{{ discussion.title }} | {{ topic.name }} | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{{ discussion.title }} | {% trans topic.name %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 860px;">
   <!-- Breadcrumb -->
   <div style="margin-bottom: 1rem; font-size: 0.9rem;">
-    <a href="{% url 'discussions:topic_list' %}">Topics</a>
+    <a href="{% url 'discussions:topic_list' %}">{% trans "Topics" %}</a>
     <span class="text-muted" style="margin: 0 0.4rem;">&rsaquo;</span>
-    <a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+    <a href="{{ topic.get_absolute_url }}">{% trans topic.name %}</a>
   </div>
 
   <!-- Discussion Hero Card -->
@@ -17,15 +17,15 @@
     <!-- Moderator Inspection Banner -->
     {% if discussion.is_anonymous and user.is_authenticated and user.is_moderator and not discussion.is_deleted %}
       <div class="mod-inspect-box" style="margin-bottom: 1rem; font-size: 0.85rem; padding: 0.6rem 0.85rem;">
-        <strong>&#128737; Moderator Author Inspection:</strong> This question was posted anonymously to the community.
-        Internal author: <strong>{{ discussion.author.display_name }}</strong> (<code>{{ discussion.author.email }}</code>)
+        <strong>&#128737; {% trans "Moderator Author Inspection" %}:</strong> {% trans "This question was posted anonymously to the community." %}
+        {% trans "Internal author:" %} <strong>{{ discussion.author.display_name }}</strong> (<code>{{ discussion.author.email }}</code>)
       </div>
     {% endif %}
 
     <div>
-      <a href="{{ topic.get_absolute_url }}" class="topic-badge">{{ topic.name }}</a>
+      <a href="{{ topic.get_absolute_url }}" class="topic-badge">{% trans topic.name %}</a>
       {% if discussion.status == 'locked' %}
-        <span class="topic-badge" style="background-color: #fee2e2; color: #991b1b;">&#128274; Discussion Locked</span>
+        <span class="topic-badge" style="background-color: #fee2e2; color: #991b1b;">&#128274; {% trans "Discussion Locked" %}</span>
       {% endif %}
     </div>
 
@@ -35,10 +35,10 @@
     <div class="discussion-meta-row" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
       <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
         {% if discussion.is_deleted %}
-          <span style="font-style: italic; color: var(--text-light);">Deleted</span>
+          <span style="font-style: italic; color: var(--text-light);">{% trans "Deleted" %}</span>
         {% elif discussion.is_anonymous %}
           <!-- STRICT PRIVACY: Anonymous Presentation -->
-          &#128274; Anonymous Member
+          &#128274; {% trans "Anonymous Member" %}
         {% else %}
           {% if discussion.author.profile.avatar %}
             <img src="{{ discussion.author.profile.avatar.url }}" alt="{{ discussion.author.display_name }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
@@ -51,21 +51,21 @@
             {{ discussion.author.display_name }}
           </a>
           {% if discussion.author.is_moderator %}
-            <span class="mod-tag">Mod</span>
+            <span class="mod-tag">{% trans "Mod" %}</span>
           {% endif %}
         {% endif %}
       </span>
       <span>&bull;</span>
-      <span>Asked {{ discussion.created_at|date:"F j, Y, g:i a" }}</span>
+      <span>{% trans "Asked" %} {{ discussion.created_at|date:"F j, Y, g:i a" }}</span>
       <span>&bull;</span>
-      <span>{{ discussion.views_count }} view{{ discussion.views_count|pluralize }}</span>
+      <span>{{ discussion.views_count }} {% trans "views" %}</span>
     </div>
 
     <!-- Question Content -->
     <div class="discussion-body">
       {% if discussion.is_deleted %}
         <p style="color: var(--text-muted); font-style: italic;">
-          This discussion was deleted by its author or community moderators.
+          {% trans "This discussion was deleted by its author or community moderators." %}
         </p>
       {% else %}
         {{ discussion.content|safe }}
@@ -84,17 +84,17 @@
         {% if user.is_authenticated and not discussion.is_deleted %}
           {% if user != discussion.author %}
             <a href="{% url 'moderation:report_submit' %}?type=discussion&id={{ discussion.id }}" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">
-              &#9873; Report
+              &#9873; {% trans "Report" %}
             </a>
           {% endif %}
 
           {% if discussion.author == user or user.is_moderator %}
             <a href="{% url 'discussions:discussion_edit' topic_slug=topic.slug pk=discussion.id %}" class="btn btn-secondary btn-sm">
-              Edit
+              {% trans "Edit" %}
             </a>
-            <form action="{% url 'discussions:discussion_delete' topic_slug=topic.slug pk=discussion.id %}" method="post" onsubmit="return confirmAction('Are you sure you want to delete this discussion?');" style="display: inline;">
+            <form action="{% url 'discussions:discussion_delete' topic_slug=topic.slug pk=discussion.id %}" method="post" onsubmit="return confirmAction('{% trans "Are you sure you want to delete this discussion?" %}');" style="display: inline;">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">Delete</button>
+              <button type="submit" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">{% trans "Delete" %}</button>
             </form>
           {% endif %}
 
@@ -104,16 +104,16 @@
               {% csrf_token %}
               {% if discussion.status == 'active' %}
                 <input type="hidden" name="action" value="lock">
-                <button type="submit" class="btn btn-secondary btn-sm">Lock [Mod]</button>
+                <button type="submit" class="btn btn-secondary btn-sm">{% trans "Lock [Mod]" %}</button>
               {% elif discussion.status == 'locked' %}
                 <input type="hidden" name="action" value="unlock">
-                <button type="submit" class="btn btn-secondary btn-sm">Unlock [Mod]</button>
+                <button type="submit" class="btn btn-secondary btn-sm">{% trans "Unlock [Mod]" %}</button>
               {% endif %}
             </form>
             <form action="{% url 'moderation:discussion_moderate' pk=discussion.id %}" method="post" style="display: inline;">
               {% csrf_token %}
               <input type="hidden" name="action" value="hide">
-              <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--warning-txt);">Hide [Mod]</button>
+              <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--warning-txt);">{% trans "Hide [Mod]" %}</button>
             </form>
           {% endif %}
         {% endif %}
@@ -126,7 +126,7 @@
        ============================================================================== -->
   <section id="answers-section" style="margin-top: 2.5rem;">
     <h2 class="replies-section-title">
-      <span>Community Answers & Discussion</span>
+      <span>{% trans "Community Answers & Discussion" %}</span>
       <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">({{ replies_count }})</span>
     </h2>
 
@@ -139,7 +139,7 @@
       {% else %}
         <div id="no-replies-placeholder" class="card text-center" style="padding: 2.5rem 1.5rem; background-color: var(--surface);">
           <p class="text-muted" style="margin-bottom: 0;">
-            No responses yet. Share your biblical guidance, prayerful reflection, or thoughtful answer below.
+            {% trans "No responses yet. Share your biblical guidance, prayerful reflection, or thoughtful answer below." %}
           </p>
         </div>
       {% endif %}
@@ -148,9 +148,9 @@
     <!-- Main Reply Form -->
     {% if discussion|can_reply:user %}
       <div class="card" style="padding: 2rem; margin-top: 2rem; background-color: var(--surface);">
-        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Provide an Answer or Share Your Reflection</h3>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">{% trans "Provide an Answer or Share Your Reflection" %}</h3>
         <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">
-          Your reply can be posted with your identity or anonymously.
+          {% trans "Your reply can be posted with your identity or anonymously." %}
         </p>
 
         <form id="main-reply-form" action="{% url 'discussions:reply_create' topic_slug=topic.slug pk=discussion.id %}" method="post"
@@ -165,32 +165,32 @@
 
           <!-- Explicit Anonymity Choice Selector -->
           <div class="identity-mode-selector">
-            <h4>How would you like to post this answer?</h4>
+            <h4>{% trans "How would you like to post this answer?" %}</h4>
             <div class="identity-options-grid">
               <label class="identity-option-card">
                 <input type="radio" name="post_mode" value="identified" checked>
                 <div class="identity-card-content">
-                  <strong>Post with my identity</strong>
-                  <span>Display your name (<strong>{{ user.display_name }}</strong>) to other members.</span>
+                  <strong>{% trans "Post with my identity" %}</strong>
+                  <span>{% trans "Display your name" %} (<strong>{{ user.display_name }}</strong>) {% trans "to other members." %}</span>
                 </div>
               </label>
 
               <label class="identity-option-card">
                 <input type="radio" name="post_mode" value="anonymous">
                 <div class="identity-card-content">
-                  <strong>&#128274; Post anonymously</strong>
-                  <span>Display as <strong>Anonymous Member</strong>. Your name and profile are completely hidden.</span>
+                  <strong>&#128274; {% trans "Post anonymously" %}</strong>
+                  <span>{% trans "Display as" %} <strong>{% trans "Anonymous Member" %}</strong>. {% trans "Your name and profile are completely hidden." %}</span>
                 </div>
               </label>
             </div>
             <div class="privacy-explainer-banner" style="margin-top: 0.75rem;">
-              <strong>Note:</strong> Internal account identity is preserved for church moderation and safety review.
+              <strong>{% trans "Note:" %}</strong> {% trans "Internal account identity is preserved for church moderation and safety review." %}
             </div>
           </div>
 
           <div style="text-align: right; margin-top: 1rem;">
             <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
-              Post Answer
+              {% trans "Post Answer" %}
             </button>
           </div>
         </form>
@@ -198,14 +198,14 @@
     {% elif not user.is_authenticated %}
       <div class="card text-center" style="padding: 2rem; margin-top: 2rem;">
         <p style="margin-bottom: 1rem; font-weight: 500;">
-          Please sign in to participate in the discussion and provide an answer.
+          {% trans "Please sign in to participate in the discussion and provide an answer." %}
         </p>
-        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">Sign In to Reply</a>
+        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">{% trans "Sign In to Reply" %}</a>
       </div>
     {% elif discussion.status == 'locked' %}
       <div class="card text-center" style="padding: 2rem; margin-top: 2rem; background-color: var(--primary-50);">
         <p class="text-muted" style="margin-bottom: 0;">
-          &#128274; This discussion has been locked by community moderators. No further replies can be submitted.
+          &#128274; {% trans "This discussion has been locked by community moderators. No further replies can be submitted." %}
         </p>
       </div>
     {% endif %}

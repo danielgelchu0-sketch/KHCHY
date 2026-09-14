@@ -1,26 +1,27 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Report Inappropriate Content | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Report Inappropriate Content" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 600px;">
   <div class="card" style="padding: 2.5rem 2rem;">
     <div style="margin-bottom: 1.5rem;">
-      <h2>Report to Moderators</h2>
+      <h2>{% trans "Report to Moderators" %}</h2>
       <p class="text-muted">
-        Help us maintain a safe, respectful, and biblically sound community space.
+        {% trans "Help us maintain a safe, respectful, and biblically sound community space." %}
       </p>
     </div>
 
     <div style="background-color: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
-      <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Report Target</span>
+      <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">{% trans "Report Target" %}</span>
       <p style="font-weight: 600; color: var(--primary-900); margin-top: 0.25rem; margin-bottom: 0;">
-        {% if target_type == 'discussion' %}
-          Discussion: "{{ target_obj.title }}"
-        {% elif target_type == 'reply' %}
-          Reply in "{{ target_obj.discussion.title }}"
-        {% elif target_type == 'user' %}
-          User Profile: {{ target_obj.display_name }}
+        {% if target_type == "discussion" %}
+          {% trans "Discussion:" %} "{{ target_obj.title }}"
+        {% elif target_type == "reply" %}
+          {% trans "Reply in" %} "{{ target_obj.discussion.title }}"
+        {% elif target_type == "user" %}
+          {% trans "User Profile:" %} {{ target_obj.display_name }}
         {% endif %}
       </p>
     </div>
@@ -31,7 +32,7 @@
       <input type="hidden" name="id" value="{{ target_id }}">
 
       <div class="form-group">
-        <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+        <label for="{{ form.category.id_for_label }}" class="form-label">{% trans "Report Reason" %}</label>
         {{ form.category }}
         {% if form.category.errors %}
           <div class="form-error">{{ form.category.errors.0 }}</div>
@@ -39,18 +40,18 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+        <label for="{{ form.description.id_for_label }}" class="form-label">{% trans "Additional Details" %}</label>
         {{ form.description }}
-        <span class="form-help">Please explain why this content violates community guidelines.</span>
+        <span class="form-help">{% trans "Please explain why this content violates community guidelines." %}</span>
         {% if form.description.errors %}
           <div class="form-error">{{ form.description.errors.0 }}</div>
         {% endif %}
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-        <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">{% trans "Cancel" %}</a>
         <button type="submit" class="btn btn-primary" style="background-color: var(--danger-txt);">
-          Submit Report
+          {% trans "Submit Report" %}
         </button>
       </div>
     </form>

@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Server Error (500) | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Server Error (500)" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container text-center" style="max-width: 580px; padding: 4rem 1rem;">
   <div class="card" style="padding: 3rem 2rem;">
     <h1 style="font-size: 3rem; color: var(--danger-txt); margin-bottom: 0.5rem;">500</h1>
-    <h2>Unexpected Server Error</h2>
+    <h2>{% trans "Unexpected Server Error" %}</h2>
     <p class="text-muted" style="margin-top: 1rem; margin-bottom: 2rem;">
-      We encountered an unexpected issue while processing your request. Our technical team has been alerted. Please try again shortly.
+      {% trans "We encountered an unexpected issue while processing your request. Our technical team has been alerted. Please try again shortly." %}
     </p>
-    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">Return to Community Home</a>
+    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">{% trans "Return to Community Home" %}</a>
   </div>
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load discussion_tags %}
+{% load discussion_tags i18n %}
 
-{% block title %}{{ topic.name }} | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans topic.name %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -9,28 +9,28 @@
   <div class="card" style="padding: 2.5rem 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
       <div style="max-width: 720px;">
-        <a href="{% url 'discussions:topic_list' %}" style="font-size: 0.85rem; display: inline-block; margin-bottom: 0.5rem;">&larr; All Discussion Rooms</a>
-        <h1 style="margin-bottom: 0.5rem;">{{ topic.name }}</h1>
-        <p class="text-muted" style="font-size: 1.05rem; margin-bottom: 0;">{{ topic.description }}</p>
+        <a href="{% url 'discussions:topic_list' %}" style="font-size: 0.85rem; display: inline-block; margin-bottom: 0.5rem;">&larr; {% trans "All Discussion Rooms" %}</a>
+        <h1 style="margin-bottom: 0.5rem;">{% trans topic.name %}</h1>
+        <p class="text-muted" style="font-size: 1.05rem; margin-bottom: 0;">{% trans topic.description %}</p>
       </div>
 
       {% if not topic.is_archived %}
         <a href="{% url 'discussions:discussion_create' topic_slug=topic.slug %}" class="btn btn-primary">
-          + Ask a Question
+          + {% trans "Ask a Question" %}
         </a>
       {% else %}
-        <span class="topic-badge" style="background-color: #fee2e2; color: #991b1b;">Archived Topic Room</span>
+        <span class="topic-badge" style="background-color: #fee2e2; color: #991b1b;">{% trans "Archived Topic Room" %}</span>
       {% endif %}
     </div>
   </div>
 
   <!-- Filters / Sorting -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
-    <h2 style="font-size: 1.25rem; margin-bottom: 0;">Questions & Discussions</h2>
+    <h2 style="font-size: 1.25rem; margin-bottom: 0;">{% trans "Questions & Discussions" %}</h2>
     <div style="display: flex; gap: 0.5rem; font-size: 0.85rem;">
-      <a href="?sort=recent" class="btn btn-sm {% if sort_mode == 'recent' %}btn-primary{% else %}btn-secondary{% endif %}">Recent Activity</a>
-      <a href="?sort=newest" class="btn btn-sm {% if sort_mode == 'newest' %}btn-primary{% else %}btn-secondary{% endif %}">Newest</a>
-      <a href="?sort=replies" class="btn btn-sm {% if sort_mode == 'replies' %}btn-primary{% else %}btn-secondary{% endif %}">Most Replies</a>
+      <a href="?sort=recent" class="btn btn-sm {% if sort_mode == 'recent' %}btn-primary{% else %}btn-secondary{% endif %}">{% trans "Recent Activity" %}</a>
+      <a href="?sort=newest" class="btn btn-sm {% if sort_mode == 'newest' %}btn-primary{% else %}btn-secondary{% endif %}">{% trans "Newest" %}</a>
+      <a href="?sort=replies" class="btn btn-sm {% if sort_mode == 'replies' %}btn-primary{% else %}btn-secondary{% endif %}">{% trans "Most Replies" %}</a>
     </div>
   </div>
 
@@ -40,7 +40,7 @@
       <div class="discussion-item">
         <div class="discussion-main">
           <a href="{{ discussion.get_absolute_url }}" class="discussion-title-link">
-            {% if discussion.status == 'locked' %}&#128274; [Locked]{% endif %}
+            {% if discussion.status == 'locked' %}&#128274; [{% trans "Locked" %}]{% endif %}
             {{ discussion.title }}
           </a>
           <div class="discussion-meta-row">
@@ -52,16 +52,16 @@
               {% endif %}
             </span>
             <span>&bull;</span>
-            <span>Posted {{ discussion.created_at|timesince }} ago</span>
+            <span>{% trans "Posted" %} {{ discussion.created_at|timesince }} {% trans "ago" %}</span>
             <span>&bull;</span>
-            <span>Last activity {{ discussion.last_activity_at|timesince }} ago</span>
+            <span>{% trans "Last activity" %} {{ discussion.last_activity_at|timesince }} {% trans "ago" %}</span>
           </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 90px;">
           <span class="stat-chip" style="font-weight: 700; color: var(--primary-800); font-size: 1rem;">
             {{ discussion.active_replies_count }}
           </span>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">answers</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">{% trans "answers" %}</span>
         </div>
       </div>
     {% endfor %}
@@ -70,13 +70,13 @@
     {% if page_obj.has_other_pages %}
       <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
         {% if page_obj.has_previous %}
-          <a href="?sort={{ sort_mode }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&larr; Previous</a>
+          <a href="?sort={{ sort_mode }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&larr; {% trans "Previous" %}</a>
         {% endif %}
         <span style="padding: 0.35rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+          {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
         </span>
         {% if page_obj.has_next %}
-          <a href="?sort={{ sort_mode }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">Next &rarr;</a>
+          <a href="?sort={{ sort_mode }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">{% trans "Next" %} &rarr;</a>
         {% endif %}
       </div>
     {% endif %}
@@ -84,11 +84,11 @@
   {% else %}
     <div class="card text-center" style="padding: 3rem 2rem;">
       <p class="text-muted" style="font-size: 1.05rem; margin-bottom: 1.5rem;">
-        No discussions have been started in this room yet.
+        {% trans "No discussions have been started in this room yet." %}
       </p>
       {% if not topic.is_archived %}
         <a href="{% url 'discussions:discussion_create' topic_slug=topic.slug %}" class="btn btn-primary">
-          Ask the First Question
+          {% trans "Ask the First Question" %}
         </a>
       {% endif %}
     </div>

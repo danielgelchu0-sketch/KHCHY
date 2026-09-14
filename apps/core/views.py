@@ -1,7 +1,11 @@
 import logging
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.utils import translation
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import View
 
 from apps.discussions.models import Discussion, Topic
@@ -102,3 +106,56 @@ def server_error_view(request):
 
 def rate_limited_view(request, exception=None):
     return render(request, "errors/429.html", status=429)
+
+
+def toggle_language(request):
+    """
+    Toggle or switch UI language between English ('en') and Amharic ('am').
+    Handles both GET and POST requests gracefully.
+    """
+    target_language = (
+        request.POST.get("language")
+        or request.GET.get("language")
+        or request.GET.get("lang")
+    )
+
+    current_language = translation.get_language() or "en"
+
+    if not target_language:
+        target_language = "am" if current_language.startswith("en") else "en"
+    elif target_language.startswith("am"):
+        target_language = "am"
+    else:
+        target_language = "en"
+
+    next_url = (
+        request.POST.get("next")
+        or request.GET.get("next")
+        or request.META.get("HTTP_REFERER")
+        or "/"
+    )
+
+    if not url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = "/"
+
+    response = HttpResponseRedirect(next_url)
+
+    if hasattr(request, "session"):
+        request.session["django_language"] = target_language
+
+    response.set_cookie(
+        settings.LANGUAGE_COOKIE_NAME,
+        target_language,
+        max_age=getattr(settings, "LANGUAGE_COOKIE_AGE", 365 * 24 * 60 * 60),
+        path=getattr(settings, "LANGUAGE_COOKIE_PATH", "/"),
+        samesite=getattr(settings, "LANGUAGE_COOKIE_SAMESITE", "Lax"),
+    )
+
+    translation.activate(target_language)
+    return response
+
+

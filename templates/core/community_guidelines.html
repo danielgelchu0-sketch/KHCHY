@@ -1,55 +1,103 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Community Guidelines | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Community Guidelines" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 860px;">
   <div class="card" style="padding: 2.5rem;">
-    <h1>Community Guidelines</h1>
-    <p class="text-muted" style="margin-bottom: 2rem;">
-      Fostering a Christ-centered environment of grace, honesty, and psychological safety.
-    </p>
+    {% if LANGUAGE_CODE == 'am' %}
+      <h1>የማህበረሰብ ደንቦችና መመሪያዎች</h1>
+      <p class="text-muted" style="margin-bottom: 2rem;">
+        በጸጋ፣ በቅንነት እና በመንፈሳዊ ደህንነት ላይ የተመሠረተ ክርስቶስን ማዕከል ያደረገ ህብረት።
+      </p>
 
-    <h2>1. The Spirit of Grace and Truth</h2>
-    <p>
-      <em>"Let your speech always be gracious, seasoned with salt, so that you may know how you ought to answer each person."</em> &mdash; Colossians 4:6
-    </p>
-    <p>
-      Our community exists to allow teens, youths, and adults to ask the questions they might feel embarrassed or anxious to voice in public. Treat every question with gentleness, patience, and biblical love.
-    </p>
+      <h2>1. የጸጋ እና የእውነት መንፈስ</h2>
+      <p>
+        <em>"ለእያንዳንዱ ሰው እንዴት መልስ መስጠት እንደሚገባችሁ ታውቁ ዘንድ ንግግራችሁ ሁልጊዜ በጨው የተቀመመ በጸጋ ይሁን።"</em> &mdash; ቆላስይስ 4:6
+      </p>
+      <p>
+        የማህበረሰባችን ዋነኛ ዓላማ ታዳጊዎች፣ ወጣቶችና ጎልማሶች በይፋ ለመጠየቅ የሚያሳቅቋቸውን ወይም የሚያስጨንቋቸውን ጥያቄዎች በነፃነት እንዲያቀርቡ ማስቻል ነው። እያንዳንዱን ጥያቄ በየዋህነት፣ በትዕግሥት እና በመጽሐፍ ቅዱሳዊ ፍቅር ተቀበሉ።
+      </p>
 
-    <h2>2. Respect the Courage to Ask</h2>
-    <p>
-      Vulnerability takes immense bravery. Never mock, belittle, dismiss, or patronize anyone who is asking about doubts, temptations, family struggles, or emotional pain. If you cannot offer constructive, compassionate fellowship, do not reply.
-    </p>
+      <h2>2. የመጠየቅን ድፍረት ማክበር</h2>
+      <p>
+        የልብን ስሜትና ጥያቄ አውጥቶ መናገር ትልቅ ድፍረት ይጠይቃል። ስለ መጠራጠር፣ ፈተናዎች፣ የቤተሰብ ችግሮች ወይም ስሜታዊ ስብራት የሚጠይቅን ማንኛውንም ሰው ፈጽሞ አያሾፉ፣ አያጣጥሉ ወይም አይናቁ። ገንቢና አጽናኝ የሆነ መንፈሳዊ ህብረት ማካፈል ካልቻሉ መልስ ከመስጠት ይቆጠቡ።
+      </p>
 
-    <h2>3. Zero Tolerance for Harassment & Bullying</h2>
-    <p>
-      We strictly prohibit:
-    </p>
-    <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
-      <li>Name-calling, personal insults, derogatory remarks, or abusive language.</li>
-      <li>Attempting to unmask or speculate on the identity of anonymous posters ("doxxing").</li>
-      <li>Sharing screenshots of private community discussions outside our church platform.</li>
-      <li>Sexually explicit content, solicitations, or inappropriate advances.</li>
-      <li>Hate speech or threats of any kind.</li>
-    </ul>
+      <h2>3. ለትንኮሳ እና ማዋረድ ምንም ዓይነት ዕድል አለመስጠት</h2>
+      <p>
+        የሚከተሉት ድርጊቶች በጥብቅ የተከለከሉ ናቸው፡
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>ስም ማጥፋት፣ የግል ስድብ፣ ዝቅ የሚያደርጉ ንግግሮች ወይም የስድብ ቃላት መጠቀም።</li>
+        <li>በሚስጥር የጻፉ ሰዎችን ማንነት ለማጋለጥ ወይም ለመገመት መሞከር።</li>
+        <li>የማህበረሰቡን ሚስጥራዊ ውይይቶች ፎቶ በማንሳት ከመድረኩ ውጭ ማሰራጨት።</li>
+        <li>የጾታ ብልግና ያላቸው ይዘቶች ወይም ተገቢ ያልሆኑ ግብዣዎች።</li>
+        <li>የጥላቻ ንግግር ወይም ማንኛውም ዓይነት ዛቻ።</li>
+      </ul>
 
-    <h2>4. Safety and Self-Harm Protocol</h2>
-    <p>
-      If you or someone in the community is experiencing severe crisis, despair, or thoughts of self-harm, please know that you are deeply loved and help is immediately available:
-    </p>
-    <div style="background-color: var(--danger-bg); border-left: 4px solid #e11d48; padding: 1rem 1.5rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
-      <strong>Emergency Crisis Resources:</strong><br>
-      National Suicide & Crisis Lifeline: Call or text <strong>988</strong> (Available 24/7, free & confidential).<br>
-      Crisis Text Line: Text HOME to 741741.<br>
-      Please notify church pastoral staff immediately if someone is in urgent danger.
-    </div>
+      <h2>4. የደህንነት እና ራስን ከመጉዳት የመጠበቅ ደንብ</h2>
+      <p>
+        እርስዎ ወይም በማህበረሰቡ ውስጥ ያለ ማንኛውም ሰው ከባድ ጭንቀት፣ የተስፋ መቁረጥ ስሜት ወይም ራስን የመጉዳት ሐሳብ ካለበት፣ በጣም የተወደዱ መሆንዎን እና አፋጣኝ እርዳታ ማግኘት እንደሚችሉ ይወቁ፡
+      </p>
+      <div style="background-color: var(--danger-bg); border-left: 4px solid #e11d48; padding: 1rem 1.5rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+        <strong>የአደጋ ጊዜ ድጋፍ ሰጪዎች፡</strong><br>
+        አስቸኳይ አደጋ ካጋጠመ እባክዎን ወዲያውኑ የቤተክርስቲያኑን መጋቢዎች ወይም የቅርብ የሕክምና ባለሙያዎችን ያነጋግሩ።<br>
+        በጸሎት እና በማማከር እርዳታ ለመስጠት አገልጋዮቻችን ሁልጊዜ ዝግጁ ናቸው።
+      </div>
 
-    <h2>5. Moderation and Enforcement</h2>
-    <p>
-      Pastoral moderators review reported discussions. Violations may result in content removal, warnings, temporary suspensions, or permanent bans.
-    </p>
+      <h2>5. ክትትል እና እርምጃዎች</h2>
+      <p>
+        የቤተክርስቲያን አወያዮች ጥቆማ የቀረበባቸውን ውይይቶች ይመረምራሉ። መመሪያን መጣስ ጽሑፍን ማስወገድ፣ ማስጠንቀቂያ መስጠት፣ ጊዜያዊ እገዳ ወይም ዘላቂ ስንብት ሊያስከትል ይችላል።
+      </p>
+    {% else %}
+      <h1>Community Guidelines</h1>
+      <p class="text-muted" style="margin-bottom: 2rem;">
+        Fostering a Christ-centered environment of grace, honesty, and psychological safety.
+      </p>
+
+      <h2>1. The Spirit of Grace and Truth</h2>
+      <p>
+        <em>"Let your speech always be gracious, seasoned with salt, so that you may know how you ought to answer each person."</em> &mdash; Colossians 4:6
+      </p>
+      <p>
+        Our community exists to allow teens, youths, and adults to ask the questions they might feel embarrassed or anxious to voice in public. Treat every question with gentleness, patience, and biblical love.
+      </p>
+
+      <h2>2. Respect the Courage to Ask</h2>
+      <p>
+        Vulnerability takes immense bravery. Never mock, belittle, dismiss, or patronize anyone who is asking about doubts, temptations, family struggles, or emotional pain. If you cannot offer constructive, compassionate fellowship, do not reply.
+      </p>
+
+      <h2>3. Zero Tolerance for Harassment & Bullying</h2>
+      <p>
+        We strictly prohibit:
+      </p>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>Name-calling, personal insults, derogatory remarks, or abusive language.</li>
+        <li>Attempting to unmask or speculate on the identity of anonymous posters ("doxxing").</li>
+        <li>Sharing screenshots of private community discussions outside our church platform.</li>
+        <li>Sexually explicit content, solicitations, or inappropriate advances.</li>
+        <li>Hate speech or threats of any kind.</li>
+      </ul>
+
+      <h2>4. Safety and Self-Harm Protocol</h2>
+      <p>
+        If you or someone in the community is experiencing severe crisis, despair, or thoughts of self-harm, please know that you are deeply loved and help is immediately available:
+      </p>
+      <div style="background-color: var(--danger-bg); border-left: 4px solid #e11d48; padding: 1rem 1.5rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+        <strong>Emergency Crisis Resources:</strong><br>
+        National Suicide & Crisis Lifeline: Call or text <strong>988</strong> (Available 24/7, free & confidential).<br>
+        Crisis Text Line: Text HOME to 741741.<br>
+        Please notify church pastoral staff immediately if someone is in urgent danger.
+      </div>
+
+      <h2>5. Moderation and Enforcement</h2>
+      <p>
+        Pastoral moderators review reported discussions. Violations may result in content removal, warnings, temporary suspensions, or permanent bans.
+      </p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

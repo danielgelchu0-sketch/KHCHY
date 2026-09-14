@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}{{ member.display_name }} | {{ COMMUNITY_NAME }}{% endblock %}
 
@@ -20,11 +21,11 @@
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <h2 style="margin-bottom: 0;">{{ member.display_name }}</h2>
           {% if member.is_moderator %}
-            <span class="mod-tag">Moderator</span>
+            <span class="mod-tag">{% trans "Moderator" %}</span>
           {% endif %}
         </div>
         <p class="text-muted" style="margin-top: 0.25rem; margin-bottom: 0.5rem; font-size: 0.9rem;">
-          Member since {{ member.date_joined|date:"F Y" }}
+          {% trans "Member since" %} {{ member.date_joined|date:"F Y" }}
         </p>
         {% if member.profile.bio %}
           <p style="color: var(--primary-800); margin-bottom: 0; font-size: 0.95rem;">
@@ -37,35 +38,35 @@
     {% if user.is_authenticated and user != member %}
       <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; text-align: right;">
         <a href="{% url 'moderation:report_submit' %}?type=user&id={{ member.id }}" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">
-          Report Profile
+          &#9873; {% trans "Report Profile" %}
         </a>
       </div>
     {% endif %}
   </div>
 
   <!-- Member's Identified Discussions -->
-  <h3>Discussions Started by {{ member.display_name }}</h3>
+  <h3>{% trans "Discussions Started by" %} {{ member.display_name }}</h3>
   <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
-    Only questions published with this member's identity are shown here.
+    {% trans "Only questions published with this member's identity are shown here." %}
   </p>
 
   {% if discussions %}
     {% for disc in discussions %}
       <div class="discussion-item">
         <div class="discussion-main">
-          <a href="{{ disc.topic.get_absolute_url }}" class="topic-badge">{{ disc.topic.name }}</a>
+          <a href="{{ disc.topic.get_absolute_url }}" class="topic-badge">{% trans disc.topic.name %}</a>
           <a href="{{ disc.get_absolute_url }}" class="discussion-title-link">{{ disc.title }}</a>
           <div class="discussion-meta-row">
             <span>{{ disc.created_at|date:"M d, Y" }}</span>
             <span>&bull;</span>
-            <span>{{ disc.replies.count }} replies</span>
+            <span>{{ disc.active_replies_count }} {% trans "answers" %}</span>
           </div>
         </div>
       </div>
     {% endfor %}
   {% else %}
     <div class="card text-center" style="padding: 2rem;">
-      <p class="text-muted" style="margin-bottom: 0;">No public discussions have been posted by this member.</p>
+      <p class="text-muted" style="margin-bottom: 0;">{% trans "No identified public discussions yet." %}</p>
     </div>
   {% endif %}
 </div>

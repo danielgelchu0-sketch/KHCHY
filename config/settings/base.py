@@ -5,6 +5,7 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -74,6 +76,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
                 "apps.core.context_processors.community_context",
             ],
         },
@@ -151,10 +154,24 @@ if "test" in sys.argv:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 # Internationalization
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("am", _("Amharic")),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale",
+]
+
+LANGUAGE_COOKIE_NAME = "django_language"
+LANGUAGE_COOKIE_AGE = 365 * 24 * 60 * 60  # 1 year
+LANGUAGE_COOKIE_PATH = "/"
+LANGUAGE_COOKIE_SAMESITE = "Lax"
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Edit Discussion | {{ discussion.title }}{% endblock %}
+{% block title %}{% trans "Edit Discussion" %} | {{ discussion.title }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 800px;">
   <div style="margin-bottom: 1.5rem;">
-    <a href="{{ discussion.get_absolute_url }}">&larr; Back to discussion</a>
-    <h1 style="margin-top: 0.5rem;">Edit Discussion</h1>
+    <a href="{{ discussion.get_absolute_url }}">&larr; {% trans "Back to discussion" %}</a>
+    <h1 style="margin-top: 0.5rem;">{% trans "Edit Discussion" %}</h1>
   </div>
 
   <div class="card" style="padding: 2rem;">
@@ -22,7 +23,7 @@
       {% endif %}
 
       <div class="form-group">
-        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+        <label for="{{ form.title.id_for_label }}" class="form-label">{% trans form.title.label %}</label>
         {{ form.title }}
         {% if form.title.errors %}
           <div class="form-error">{{ form.title.errors.0 }}</div>
@@ -30,7 +31,7 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+        <label for="{{ form.content.id_for_label }}" class="form-label">{% trans form.content.label %}</label>
         {{ form.content }}
         {% if form.content.errors %}
           <div class="form-error">{{ form.content.errors.0 }}</div>
@@ -39,28 +40,28 @@
 
       <!-- Identity selector -->
       <div class="identity-mode-selector">
-        <h4>Posting Identity Mode</h4>
+        <h4>{% trans "Posting Identity Mode" %}</h4>
         <div class="identity-options-grid">
           <label class="identity-option-card">
             <input type="radio" name="post_mode" value="identified" {% if not discussion.is_anonymous %}checked{% endif %}>
             <div class="identity-card-content">
-              <strong>Post with my identity</strong>
-              <span>Displays your name (<strong>{{ user.display_name }}</strong>) to community members.</span>
+              <strong>{% trans "Post with my identity" %}</strong>
+              <span>{% trans "Displays your name" %} (<strong>{{ user.display_name }}</strong>) {% trans "to community members." %}</span>
             </div>
           </label>
           <label class="identity-option-card">
             <input type="radio" name="post_mode" value="anonymous" {% if discussion.is_anonymous %}checked{% endif %}>
             <div class="identity-card-content">
-              <strong>&#128274; Post anonymously</strong>
-              <span>Displays as <strong>Anonymous Member</strong>.</span>
+              <strong>&#128274; {% trans "Post anonymously" %}</strong>
+              <span>{% trans "Displays as" %} <strong>{% trans "Anonymous Member" %}</strong>.</span>
             </div>
           </label>
         </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-        <a href="{{ discussion.get_absolute_url }}" class="btn btn-secondary">Cancel</a>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ discussion.get_absolute_url }}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        <button type="submit" class="btn btn-primary">{% trans "Save Changes" %}</button>
       </div>
     </form>
   </div>

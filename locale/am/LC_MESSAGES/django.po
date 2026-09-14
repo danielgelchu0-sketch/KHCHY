@@ -1,0 +1,770 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: HKHC Community 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 18:30+0300\n"
+"PO-Revision-Date: 2026-09-08 18:30+0300\n"
+"Last-Translator: HKHC Team\n"
+"Language-Team: Amharic\n"
+"Language: am\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "English"
+msgstr "English"
+
+msgid "Amharic"
+msgstr "አማርኛ"
+
+# Brand & General Interface
+msgid "HKHC Community"
+msgstr "የHKHC ማህበረሰብ"
+
+msgid "Church Community Discussion"
+msgstr "የቤተክርስቲያን ማህበረሰብ ውይይት"
+
+msgid "Safe, Honest, Biblical Fellowship"
+msgstr "አስተማማኝ፣ ቅንና መጽሐፍ ቅዱሳዊ ህብረት"
+
+msgid "A safe, moderated church community space for honest questions, biblical fellowship, and thoughtful discussion."
+msgstr "ለቅን ጥያቄዎች፣ ለመጽሐፍ ቅዱሳዊ ህብረት እና ለአሳቢ ውይይት የተዘጋጀ የተጠበቀ የቤተክርስቲያን ማህበረሰብ መድረክ።"
+
+msgid "Home"
+msgstr "መነሻ"
+
+msgid "Main Navigation"
+msgstr "ዋና ማውጫ"
+
+msgid "Topics & Rooms"
+msgstr "የውይይት መድረኮች"
+
+msgid "Guidelines"
+msgstr "መመሪያዎች"
+
+msgid "Privacy & Safety"
+msgstr "ደህንነትና ግላዊነት"
+
+msgid "Moderator Hub"
+msgstr "የአወያዮች ማዕከል"
+
+msgid "Search questions..."
+msgstr "ጥያቄዎችን ይፈልጉ..."
+
+msgid "Search discussions"
+msgstr "ውይይቶችን ይፈልጉ"
+
+msgid "Language Selector"
+msgstr "ቋንቋ ይምረጡ"
+
+msgid "Notifications"
+msgstr "ማሳወቂያዎች"
+
+msgid "Mod"
+msgstr "አወያይ"
+
+msgid "Settings"
+msgstr "ቅንብሮች"
+
+msgid "Log out"
+msgstr "ይውጡ"
+
+msgid "Log in"
+msgstr "ይግቡ"
+
+msgid "Join Community"
+msgstr "ማህበረሰቡን ይቀላቀሉ"
+
+# Landing Page
+msgid "Welcome"
+msgstr "እንኳን ደህና መጡ"
+
+msgid "A Protected Space for Honest Dialogue"
+msgstr "ለቅን እና ግልጽ ውይይት የተዘጋጀ የተጠበቀ መድረክ"
+
+msgid "Ask difficult questions about faith, struggles, and life without social fear."
+msgstr "ስለ እምነት፣ ፈተናዎች እና የሕይወት ውጣ ውረዶች ያለ ማኅበራዊ ስጋት በግልጽ ይጠይቁ።"
+
+msgid "Growing in Christ means wrestling with hard questions. We provide our church family—teens, youths, and adults—a psychologically safe, structured, and carefully moderated community platform where you can choose to participate under your identity or post anonymously."
+msgstr "በክርስቶስ ማደግ ውስብስብ ጥያቄዎችን በግልጽ መጋፈጥን ይጠይቃል። ለቤተክርስቲያናችን ቤተሰቦች — ታዳጊዎች፣ ወጣቶችና ጎልማሶች — በስምዎ ወይም ማንነትዎን ሳይገልጹ (በሚስጥር) የሚሳተፉበት አስተማማኝ፣ ሥርዓት ያለውና ኃላፊነት የተሞላበት የውይይት መድረክ አዘጋጅተናል።"
+
+msgid "Join Our Community"
+msgstr "ማህበረሰቡን ይቀላቀሉ"
+
+msgid "Browse Discussion Rooms"
+msgstr "የውይይት መድረኮችን ይመልከቱ"
+
+msgid "Built on Care, Privacy, and Biblical Accountability"
+msgstr "በፍቅር፣ በሚስጥራዊነት እና በመጽሐፍ ቅዱሳዊ ተጠያቂነት ላይ የተመሠረተ"
+
+msgid "True Post-by-Post Privacy"
+msgstr "በእያንዳንዱ ጽሑፍ የሚመረጥ ሙሉ ሚስጥራዊነት"
+
+msgid "Choose before submitting every single question or reply whether to share your name or post anonymously. Your anonymity choice is completely flexible and never permanent."
+msgstr "እያንዳንዱን ጥያቄ ወይም ምላሽ ከማስገባትዎ በፊት ስምዎ እንዲታይ ወይም ማንነትዎ እንዳይታወቅ መምረጥ ይችላሉ። ይህ ምርጫ ለእያንዳንዱ ጽሑፍ የሚደረግ እንጂ ቋሚ አይደለም።"
+
+msgid "First-Class Safety & Moderation"
+msgstr "አስተማማኝ ደህንነት እና ኃላፊነት የተሞላበት ክትትል"
+
+msgid "Our church moderators review community reports, prevent bullying, and safeguard members while upholding a safe space for vulnerable sharing."
+msgstr "የቤተክርስቲያናችን አወያዮች የሚቀርቡ ጥቆማዎችን ይመረምራሉ፣ ትንኮሳን ይከላከላሉ፣ እንዲሁም ግልጽ እና ታማኝ ውይይት እንዲኖር የአባላትን ደህንነት ይጠብቃሉ።"
+
+msgid "Structured, Thoughtful Dialogue"
+msgstr "ሥርዓት ያለውና አሳቢ ውይይት"
+
+msgid "Organized by specific topics and threaded questions rather than chaotic chat streams, giving questions the deep, prayerful reflection they deserve."
+msgstr "ውይይቶች ባልተደራጀ የውይይት ፍሰት ፋንታ በርዕስና በቅደም ተከተል ስለሚደራጁ፣ ለቀረቡት ጥያቄዎች በቂና በጸሎት የተሞላ ምላሽ እንዲሰጥ ያስችላል።"
+
+msgid "Discussion Rooms"
+msgstr "የውይይት ክፍሎች"
+
+msgid "Explore conversations across dedicated topic areas"
+msgstr "በተዘጋጁ የተለያዩ ርዕሶች ዙሪያ ያሉ ውይይቶችን ይመልከቱ"
+
+msgid "View All Rooms"
+msgstr "ሁሉንም ክፍሎች ይመልከቱ"
+
+msgid "Enter Room"
+msgstr "ወደ ክፍሉ ይግቡ"
+
+msgid "questions"
+msgstr "ጥያቄዎች"
+
+msgid "answers"
+msgstr "ምላሾች"
+
+msgid "replies"
+msgstr "ምላሾች"
+
+msgid "views"
+msgstr "እይታዎች"
+
+msgid "view"
+msgstr "እይታ"
+
+# Discussion Topics
+msgid "Faith & Spiritual Life"
+msgstr "እምነትና መንፈሳዊ ሕይወት"
+
+msgid "Questions about prayer, spiritual doubts, personal devotion, hearing God's voice, and growing in Christ."
+msgstr "ስለ ጸሎት፣ መንፈሳዊ ጥርጣሬዎች፣ የግል የጸሎት ሕይወት፣ የእግዚአብሔርን ድምጽ ስለመስማትና በክርስቶስ ስለማደግ የሚነሱ ጥያቄዎች።"
+
+msgid "Youth Questions"
+msgstr "የወጣቶች ጥያቄዎች"
+
+msgid "A dedicated, supportive room for teens, youths, and young adults tackling peer pressure, identity, and life choices."
+msgstr "ለታዳጊዎች፣ ወጣቶችና ወጣት ጎልማሶች ስለ ጓደኛ ተፅዕኖ፣ ማንነትና የሕይወት ውሳኔዎች በግልጽ የሚወያዩበት የተዘጋጀ ክፍል።"
+
+msgid "Mental & Emotional Struggles"
+msgstr "አእምሮአዊና ስሜታዊ ፈተናዎች"
+
+msgid "Safe, compassionate discussions regarding anxiety, depression, burnout, grief, loneliness, and emotional well-being."
+msgstr "ስለ ጭንቀት፣ ድብርት፣ ድካም፣ ሐዘን፣ ብቸኝነት እና ስሜታዊ ደህንነት ርኅራኄ የተሞላበት አስተማማኝ ውይይት።"
+
+msgid "Sexuality & Boundaries"
+msgstr "ጾታዊነትና ክርስቲያናዊ ወሰኖች"
+
+msgid "Confidential, biblical, and sensitive dialogue on purity, dating boundaries, temptations, attraction, and healing."
+msgstr "ስለ ንጽሕና፣ የፍቅር ጓደኝነት ወሰኖች፣ ፈተናዎች፣ ስሜቶችና ፈውስ በሚስጥርና በመጽሐፍ ቅዱሳዊ አመለካከት የሚደረግ ውይይት።"
+
+msgid "Relationships & Dating"
+msgstr "ግንኙነትና የፍቅር ጓደኝነት"
+
+msgid "Navigating friendships, godly dating, courtship, heartbreaks, and healthy relationship patterns."
+msgstr "ስለ እውነተኛ ጓደኝነት፣ እግዚአብሔርን ስለሚያከብር የፍቅር ግንኙነት፣ የመለያየት ፈተናዎችና ጤናማ ግንኙነቶች የሚደረግ ውይይት።"
+
+msgid "Marriage & Family"
+msgstr "ጋብቻና የቤተሰብ ሕይወት"
+
+msgid "Couples, parents, and families discussing marriage challenges, parenting, communication, and home life."
+msgstr "ስለ ባለትዳሮችና ወላጆች የጋብቻ ፈተናዎች፣ ልጆችን ማሳደግ፣ ግንኙነትና የቤተሰብ ሕይወት የሚደረግ ውይይት።"
+
+msgid "Bible Questions & Theology"
+msgstr "መጽሐፍ ቅዱሳዊ ጥያቄዎችና ትምህርተ መለኮት"
+
+msgid "Scripture interpretation, difficult biblical passages, theology questions, and apologetics."
+msgstr "ስለ ቅዱሳት መጻሕፍት ማብራሪያ፣ አስቸጋሪ የመጽሐፍ ቅዱስ ክፍሎች፣ የነገረ መለኮት ጥያቄዎችና እምነትን መከላከል (አፖሎጄቲክስ)።"
+
+msgid "Education & Career"
+msgstr "ትምህርትና የሥራ ሕይወት"
+
+msgid "School, college decisions, workplace integrity, career discernment, and balancing work with Christian faith."
+msgstr "ስለ ትምህርት፣ የዩኒቨርሲቲ ውሳኔዎች፣ በሥራ ቦታ ስለሚኖር ታማኝነት፣ የሙያ ምርጫና እምነትን ከሥራ ጋር ስለማጣጣም።"
+
+msgid "Church Life & Community"
+msgstr "የቤተክርስቲያን ሕይወትና ህብረት"
+
+msgid "Ministry involvement, serving in church, resolving interpersonal friction, and building authentic community fellowship."
+msgstr "ስለ አገልግሎት ተሳትፎ፣ በቤተክርስቲያን ስለማገልገል፣ አለመግባባቶችን ስለመፍታትና እውነተኛ የወንድማማችነት ህብረትን ስለመገንባት።"
+
+msgid "General Discussion"
+msgstr "አጠቃላይ ውይይት"
+
+msgid "Open fellowship, encouraging testimonies, books, hobbies, and everyday community conversations."
+msgstr "አጠቃላይ ህብረት፣ የሚያበረታቱ ምስክርነቶች፣ መጻሕፍት፣ እና የዕለት ተዕለት የማህበረሰብ ውይይቶች።"
+
+# Discussion Lists and Views
+msgid "Discussion Topics & Rooms"
+msgstr "የውይይት ርዕሶችና መድረኮች"
+
+msgid "Choose a dedicated topic room to explore discussions or ask sensitive questions in a safe environment."
+msgstr "ውይይቶችን ለመከታተል ወይም ሚስጥራዊ ጥያቄዎችን በተጠበቀ ሁኔታ ለመጠየቅ ከተዘጋጁት ክፍሎች አንዱን ይምረጡ።"
+
+msgid "active threads"
+msgstr "ንቁ ውይይቶች"
+
+msgid "Recent Community Discussions"
+msgstr "የቅርብ ጊዜ የማህበረሰብ ውይይቶች"
+
+msgid "Anonymous Member"
+msgstr "ማንነቱ ያልተገለጸ አባል"
+
+msgid "Last active"
+msgstr "የመጨረሻ እንቅስቃሴ"
+
+msgid "ago"
+msgstr "በፊት"
+
+msgid "No discussions yet. Be the first to start a conversation in one of the rooms above!"
+msgstr "እስካሁን ምንም ውይይት አልተጀመረም። ከላይ ካሉት ክፍሎች በአንዱ ውይይት በመክፈት የመጀመሪያው ይሁኑ!"
+
+msgid "All Discussion Rooms"
+msgstr "ሁሉም የውይይት ክፍሎች"
+
+msgid "Ask a Question"
+msgstr "ጥያቄ ያቅርቡ"
+
+msgid "Archived Topic Room"
+msgstr "ይህ ክፍል በማህደር ተቀምጧል"
+
+msgid "Questions & Discussions"
+msgstr "ጥያቄዎችና ውይይቶች"
+
+msgid "Recent Activity"
+msgstr "የቅርብ ጊዜ እንቅስቃሴ"
+
+msgid "Newest"
+msgstr "አዳዲስ"
+
+msgid "Most Replies"
+msgstr "ብዙ ምላሽ ያገኙ"
+
+msgid "Locked"
+msgstr "የተዘጋ"
+
+msgid "Posted"
+msgstr "የቀረበው"
+
+msgid "Previous"
+msgstr "ቀዳሚ"
+
+msgid "Page"
+msgstr "ገጽ"
+
+msgid "of"
+msgstr "ከ"
+
+msgid "Next"
+msgstr "ቀጣይ"
+
+msgid "No discussions have been started in this room yet."
+msgstr "በዚህ ክፍል ውስጥ እስካሁን ምንም ውይይት አልተጀመረም።"
+
+msgid "Ask the First Question"
+msgstr "የመጀመሪያውን ጥያቄ ያቅርቡ"
+
+# Discussion Detail
+msgid "Topics"
+msgstr "ርዕሶች"
+
+msgid "Moderator Author Inspection"
+msgstr "የአወያይ ደራሲ ምርመራ"
+
+msgid "This question was posted anonymously to the community."
+msgstr "ይህ ጥያቄ ለማህበረሰቡ የቀረበው ማንነት ሳይገለጽ (በሚስጥር) ነው።"
+
+msgid "Internal author:"
+msgstr "እውነተኛ ጸሐፊ፡"
+
+msgid "Discussion Locked"
+msgstr "ውይይቱ ተዘግቷል"
+
+msgid "Deleted"
+msgstr "የተሰረዘ"
+
+msgid "Asked"
+msgstr "የተጠየቀው"
+
+msgid "This discussion was deleted by its author or community moderators."
+msgstr "ይህ ውይይት በጸሐፊው ወይም በማህበረሰብ አወያዮች ተሰርዟል።"
+
+msgid "Follow this discussion for updates"
+msgstr "አዳዲስ ምላሾችን ለመከታተል ይህንን ውይይት ይከተሉ"
+
+msgid "Following Discussion"
+msgstr "ውይይቱን እየተከታተሉ ነው"
+
+msgid "Follow Discussion"
+msgstr "ውይይቱን ተከተል"
+
+msgid "Report"
+msgstr "ጠቁም"
+
+msgid "Report this reply"
+msgstr "ይህንን ምላሽ ጠቁም"
+
+msgid "Edit"
+msgstr "አርትዕ"
+
+msgid "Delete"
+msgstr "ሰርዝ"
+
+msgid "Are you sure you want to delete this discussion?"
+msgstr "እርግጠኛ ነዎት ይህንን ውይይት መሰረዝ ይፈልጋሉ?"
+
+msgid "Lock [Mod]"
+msgstr "ዝጋ [አወያይ]"
+
+msgid "Unlock [Mod]"
+msgstr "ክፈት [አወያይ]"
+
+msgid "Hide [Mod]"
+msgstr "ደብቅ [አወያይ]"
+
+msgid "Community Answers & Discussion"
+msgstr "የማህበረሰብ ምላሾችና ውይይት"
+
+msgid "No responses yet. Share your biblical guidance, prayerful reflection, or thoughtful answer below."
+msgstr "እስካሁን ምንም ምላሽ አልተሰጠም። የመጽሐፍ ቅዱስ ምክርዎን፣ ጸሎትዎን ወይም አሳቢ ምላሽዎን ከዚህ በታች ያጋሩ።"
+
+msgid "Provide an Answer or Share Your Reflection"
+msgstr "መልስ ይስጡ ወይም ሐሳብዎን ያካፍሉ"
+
+msgid "Your reply can be posted with your identity or anonymously."
+msgstr "ምላሽዎን በስምዎ ወይም ማንነትዎን ሳይገልጹ (በሚስጥር) ማቅረብ ይችላሉ።"
+
+msgid "How would you like to post this answer?"
+msgstr "ይህንን ምላሽ እንዴት ማቅረብ ይፈልጋሉ?"
+
+msgid "Post with my identity"
+msgstr "በመገለጫ ስሜ ልጻፍ"
+
+msgid "Display your name"
+msgstr "ስምዎ እንዲታይ"
+
+msgid "to other members."
+msgstr "ለሌሎች አባላት።"
+
+msgid "Post anonymously"
+msgstr "ማንነቴ ሳይገለጽ (በሚስጥር) ልጻፍ"
+
+msgid "Your name and profile are completely hidden."
+msgstr "ስምዎና መገለጫዎ ሙሉ በሙሉ ይደበቃል።"
+
+msgid "Note:"
+msgstr "ማስታወሻ፡"
+
+msgid "Internal account identity is preserved for church moderation and safety review."
+msgstr "የደህንነት ምርመራ ለማካሄድ የመለያው እውነተኛ ማንነት በውስጥ ሥርዓት ውስጥ ይጠበቃል።"
+
+msgid "Post Answer"
+msgstr "ምላሽ ይላኩ"
+
+msgid "Please sign in to participate in the discussion and provide an answer."
+msgstr "በውይይቱ ለመሳተፍና ምላሽ ለመስጠት እባክዎን ወደ መለያዎ ይግቡ።"
+
+msgid "Sign In to Reply"
+msgstr "ምላሽ ለመስጠት ይግቡ"
+
+msgid "This discussion has been locked by community moderators. No further replies can be submitted."
+msgstr "ይህ ውይይት በአወያዮች ተዘግቷል። ተጨማሪ ምላሾችን ማስገባት አይቻልም።"
+
+msgid "Moderator Inspection"
+msgstr "የአወያይ ምርመራ"
+
+msgid "This post is anonymous to members. True author:"
+msgstr "ይህ ጽሑፍ ለአባላት ማንነቱ የተደበቀ ነው። እውነተኛ ጸሐፊ፡"
+
+msgid "This reply was removed."
+msgstr "ይህ ምላሽ ተወግዷል።"
+
+msgid "Reply"
+msgstr "ምላሽ"
+
+msgid "Delete this reply?"
+msgstr "ይህንን ምላሽ መሰረዝ ይፈልጋሉ?"
+
+msgid "Write a reply to this comment..."
+msgstr "ለዚህ አስተያየት ምላሽ ይጻፉ..."
+
+msgid "Post as:"
+msgstr "የሚቀርብበት ማንነት፡"
+
+msgid "Cancel"
+msgstr "ሰርዝ"
+
+msgid "Submit Reply"
+msgstr "ምላሹን ላክ"
+
+msgid "Back to"
+msgstr "ተመለስ ወደ"
+
+msgid "Room:"
+msgstr "ክፍል፡"
+
+msgid "Feel free to share context, personal background, scripture, or specific doubts."
+msgstr "ስለ ሁኔታው ማብራሪያ፣ የግል ልምድ፣ የመጽሐፍ ቅዱስ ጥቅስ ወይም ጥርጣሬዎችን በነፃነት ማካፈል ይችላሉ።"
+
+msgid "How would you like to post?"
+msgstr "እንዴት መጻፍ ይፈልጋሉ?"
+
+msgid "Make an intentional choice for this specific question. Your decision applies to this question independently."
+msgstr "ለዚህ ጥያቄ ተገቢውን ምርጫ ያድርጉ። ይህ ውሳኔ ለዚህ ጥያቄ ብቻ የሚሰራ ነው።"
+
+msgid "Displays your name"
+msgstr "ስምዎ እንዲታይ ያደርጋል"
+
+msgid "and profile photo to all members."
+msgstr "እንዲሁም የመገለጫ ፎቶዎ ለሁሉም አባላት።"
+
+msgid "Your name, email, and user ID are strictly hidden from other members."
+msgstr "ስምዎ፣ ኢሜይልዎና መለያ ቁጥርዎ ከሌሎች አባላት በጥብቅ ይደበቃል።"
+
+msgid "Privacy Safeguard Disclosure:"
+msgstr "የግላዊነትና የደህንነት ማረጋገጫ፡"
+
+msgid "Your identity will be hidden from other community members, but church moderators may be able to identify the account associated with this post when investigating severe abuse, safety concerns, or harassment reports."
+msgstr "ማንነትዎ ለሌሎች የማህበረሰብ አባላት የማይታይ ቢሆንም፣ ከባድ ጥፋት፣ የደህንነት ስጋት ወይም ትንኮሳ ሲያጋጥም የቤተክርስቲያን አወያዮች ጽሑፉ የተጻፈበትን መለያ መመርመር ይችላሉ።"
+
+msgid "Publish Question"
+msgstr "ጥያቄውን ያቅርቡ"
+
+msgid "Back to discussion"
+msgstr "ወደ ውይይቱ ተመለስ"
+
+msgid "Edit Discussion"
+msgstr "ውይይቱን አርትዕ"
+
+msgid "Posting Identity Mode"
+msgstr "የአጻጻፍ ማንነት ምርጫ"
+
+msgid "Save Changes"
+msgstr "ለውጦችን አስቀምጥ"
+
+msgid "Edit Reply"
+msgstr "ምላሹን አርትዕ"
+
+msgid "In discussion:"
+msgstr "በውይይት ውስጥ፡"
+
+# Authentication & Accounts
+msgid "Log In"
+msgstr "ይግቡ"
+
+msgid "Welcome Back"
+msgstr "እንኳን ደህና መጡ"
+
+msgid "Sign in to your church community account"
+msgstr "ወደ ቤተክርስቲያን ማህበረሰብ መለያዎ ይግቡ"
+
+msgid "Security Protection:"
+msgstr "የደህንነት ጥበቃ፡"
+
+msgid "Too many failed login attempts from your IP address. Please wait 5 minutes before trying again."
+msgstr "ከእርስዎ አድራሻ በርካታ ያልተሳኩ የመግባት ሙከራዎች ተደርገዋል። እባክዎን ከ5 ደቂቃ በኋላ እንደገና ይሞክሩ።"
+
+msgid "Email Address"
+msgstr "የኢሜይል አድራሻ"
+
+msgid "Password"
+msgstr "የይለፍ ቃል"
+
+msgid "Forgot password?"
+msgstr "የይለፍ ቃል ረሱ?"
+
+msgid "Sign In"
+msgstr "ይግቡ"
+
+msgid "New to our church platform?"
+msgstr "ወደ ማህበረሰባችን አዲስ ነዎት?"
+
+msgid "Create an Account"
+msgstr "አዲስ መለያ ይክፈቱ"
+
+msgid "Create Community Account"
+msgstr "የማህበረሰብ መለያ ይክፈቱ"
+
+msgid "Already have an account?"
+msgstr "መለያ አለዎት?"
+
+msgid "Community Display Name"
+msgstr "የማህበረሰብ መገለጫ ስም"
+
+msgid "Confirm Password"
+msgstr "የይለፍ ቃል ያረጋግጡ"
+
+msgid "Your email will never be displayed publicly to other members."
+msgstr "የኢሜይል አድራሻዎ ለሌሎች አባላት ፈጽሞ በይፋ አይታይም።"
+
+msgid "This name is shown when you choose to post with your identity."
+msgstr "ይህ ስም በስምዎ ለመጻፍ ሲመርጡ የሚታይ ነው።"
+
+msgid "I agree to the Community Guidelines & Privacy Disclosure"
+msgstr "የማህበረሰብ ደንቦችንና የግላዊነት መመሪያዎችን ተስማምቻለሁ"
+
+msgid "I understand that sensitive questions can be posted anonymously to other members, while moderators retain internal safety review capabilities."
+msgstr "ስሜታዊ ጥያቄዎች ለሌሎች አባላት ማንነት ሳይገለጽ መቅረብ እንደሚችሉና አወያዮች ለደህንነት ሲባል የውስጥ ክትትል የማድረግ ኃላፊነት እንዳላቸው ተረድቻለሁ።"
+
+msgid "Reset Password"
+msgstr "የይለፍ ቃል ይቀይሩ"
+
+msgid "Reset Your Password"
+msgstr "የይለፍ ቃልዎን ይቀይሩ"
+
+msgid "Enter your account email address and we will send you secure instructions to reset your password."
+msgstr "የመለያዎን የኢሜይል አድራሻ ያስገቡ፤ የይለፍ ቃልዎን ለመቀየር የሚያስችል ደህንነቱ የተጠበቀ መመሪያ እንልክልዎታለን።"
+
+msgid "Send Password Reset Link"
+msgstr "የይለፍ ቃል መቀየሪያ አገናኝ ላክ"
+
+msgid "Back to Log In"
+msgstr "ወደ መግቢያው ተመለስ"
+
+msgid "Profile Settings"
+msgstr "የመገለጫ ቅንብሮች"
+
+msgid "Community Profile Settings"
+msgstr "የማህበረሰብ መገለጫ ቅንብሮች"
+
+msgid "Manage your public display name, biography, and profile photo."
+msgstr "የመገለጫ ስምዎን፣ ስለ እርስዎ አጭር መግለጫ እና ፎቶዎን ያስተካክሉ።"
+
+msgid "Identity Notice:"
+msgstr "የማንነት ማስታወሻ፡"
+
+msgid "Your email address"
+msgstr "የኢሜይል አድራሻዎ"
+
+msgid "is strictly private and never shown to other members. Only your Display Name and Avatar are shown when you choose to post with your identity."
+msgstr "በጥብቅ ሚስጥራዊ ነው፤ ለሌሎች አባላት አይታይም። በስምዎ ለመጻፍ ሲመርጡ የሚታዩት የመገለጫ ስምዎና ፎቶዎ ብቻ ናቸው።"
+
+msgid "Current profile photo"
+msgstr "የአሁኑ የመገለጫ ፎቶ"
+
+msgid "Save Profile Changes"
+msgstr "የመገለጫ ለውጦችን አስቀምጥ"
+
+msgid "View Public Profile"
+msgstr "ይፋዊ መገለጫን ተመልከት"
+
+msgid "Moderator"
+msgstr "አወያይ"
+
+msgid "Member since"
+msgstr "አባል የሆኑት ከ"
+
+msgid "Report Profile"
+msgstr "መገለጫውን ጠቁም"
+
+msgid "Discussions Started by"
+msgstr "የተጀመሩ ውይይቶች በ"
+
+msgid "Only questions published with this member's identity are shown here."
+msgstr "በዚህ አባል ስም በይፋ የቀረቡ ጥያቄዎች ብቻ እዚህ ይታያሉ።"
+
+msgid "No identified public discussions yet."
+msgstr "እስካሁን በይፋ የቀረቡ ውይይቶች የሉም።"
+
+# Notifications
+msgid "Updates on your questions, replies, and followed conversations."
+msgstr "ስለ ጥያቄዎችዎ፣ ምላሾችዎ እና ስለሚከታተሏቸው ውይይቶች የተሰጡ አዳዲስ መረጃዎች።"
+
+msgid "Mark All as Read"
+msgstr "ሁሉንም እንደተነበቡ ምልክት አድርግ"
+
+msgid "All Notifications"
+msgstr "ሁሉም ማሳወቂያዎች"
+
+msgid "Unread"
+msgstr "ያልተነበቡ"
+
+msgid "View Discussion"
+msgstr "ውይይቱን ተመልከት"
+
+msgid "You have no unread notifications."
+msgstr "ምንም ያልተነበበ ማሳወቂያ የለዎትም።"
+
+msgid "You don't have any notifications yet."
+msgstr "እስካሁን ምንም ማሳወቂያ የለዎትም።"
+
+# Search
+msgid "Search"
+msgstr "ፈልግ"
+
+msgid "Search Community Discussions"
+msgstr "የማህበረሰብ ውይይቶችን ይፈልጉ"
+
+msgid "Find questions, answers, and discussions across all church topic rooms."
+msgstr "በሁሉም የቤተክርስቲያን ክፍሎች ውስጥ ያሉ ጥያቄዎችን፣ ምላሾችንና ውይይቶችን ይፈልጉ።"
+
+msgid "Search by keyword, topic, or question..."
+msgstr "በቃል፣ በርዕስ ወይም በጥያቄ ይፈልጉ..."
+
+msgid "Matched Discussion Rooms"
+msgstr "የተገኙ የውይይት ክፍሎች"
+
+msgid "Discussion Results for"
+msgstr "የውይይት ውጤቶች ለ"
+
+msgid "No discussions found matching your search."
+msgstr "ከፍለጋዎ ጋር የሚዛመድ ምንም ውይይት አልተገኘም።"
+
+msgid "Explore Topics"
+msgstr "ርዕሶችን ይመልከቱ"
+
+# Footer
+msgid "Providing teens, youths, and adults a psychologically safer, moderated space to explore difficult questions about faith, relationships, and struggles in biblical fellowship."
+msgstr "ታዳጊዎች፣ ወጣቶችና ጎልማሶች ስለ እምነት፣ ግንኙነቶች እና ፈተናዎች ያሉባቸውን አስቸጋሪ ጥያቄዎች በመጽሐፍ ቅዱሳዊ ህብረት ውስጥ በነፃነት እንዲጠይቁ አስተማማኝና የተጠበቀ መድረክ ማዘጋጀት።"
+
+msgid "Topic Rooms"
+msgstr "የውይይት ክፍሎች"
+
+msgid "Community Guidelines"
+msgstr "የማህበረሰብ ደንቦችና መመሪያዎች"
+
+msgid "Privacy & Anonymity Policy"
+msgstr "የግላዊነትና ሚስጥራዊነት መመሪያ"
+
+msgid "Audit Logs"
+msgstr "የክትትል ምዝግብ ማስታወሻዎች"
+
+# Errors
+msgid "Page Not Found (404)"
+msgstr "ገጹ አልተገኘም (404)"
+
+msgid "Discussion or Page Not Found"
+msgstr "የተፈለገው ውይይት ወይም ገጽ አልተገኘም"
+
+msgid "The discussion, room, or page you are looking for might have been moved, deleted, or does not exist."
+msgstr "የፈለጉት ውይይት፣ ክፍል ወይም ገጽ ተዛውሮ፣ ተሰርዞ ወይም የሌለ ሊሆን ይችላል።"
+
+msgid "Browse Active Discussion Rooms"
+msgstr "ንቁ የውይይት ክፍሎችን ይመልከቱ"
+
+msgid "Report Inappropriate Content"
+msgstr "ተገቢ ያልሆነ ይዘትን ሪፖርት ያድርጉ"
+
+msgid "Report to Moderators"
+msgstr "ለአስተዳዳሪዎች ሪፖርት ያድርጉ"
+
+msgid "Help us maintain a safe, respectful, and biblically sound community space."
+msgstr "አስተማማኝ፣ የተከበረና መጽሐፍ ቅዱሳዊ የሆነ የማህበረሰብ ምኅዳር እንድንጠብቅ ይርዱን።"
+
+msgid "Report Target"
+msgstr "የሪፖርቱ ዒላማ"
+
+msgid "Discussion:"
+msgstr "ውይይት፦"
+
+msgid "Reply in"
+msgstr "በዚህ ውስጥ የተሰጠ ምላሽ፦"
+
+msgid "User Profile:"
+msgstr "የአባል መገለጫ፦"
+
+msgid "Report Reason"
+msgstr "የሪፖርቱ ምክንያት"
+
+msgid "Additional Details"
+msgstr "ተጨማሪ ማብራሪያ"
+
+msgid "Please explain why this content violates community guidelines."
+msgstr "ይህ ይዘት የማህበረሰቡን መመሪያ እንዴት እንደሚጥስ እባክዎ ያብራሩ።"
+
+msgid "Submit Report"
+msgstr "ሪፖርቱን ላክ"
+
+msgid "Password Reset Sent"
+msgstr "የይለፍ ቃል መቀየሪያ ተልኳል"
+
+msgid "Check Your Email"
+msgstr "ኢሜይልዎን ይመልከቱ"
+
+msgid "If an account exists with the email you entered, you will shortly receive an email with instructions for resetting your password."
+msgstr "በአስገቡት ኢሜይል የተመዘገበ አካውንት ካለ፣ የይለፍ ቃልዎን ለመቀየር የሚያስችል መመሪያ የያዘ ኢሜይል በቅርቡ ይደርስዎታል።"
+
+msgid "Return to Log In"
+msgstr "ወደ መግቢያው ተመለስ"
+
+msgid "Set New Password"
+msgstr "አዲስ የይለፍ ቃል ያዘጋጁ"
+
+msgid "Set a New Password"
+msgstr "አዲስ የይለፍ ቃል ያዘጋጁ"
+
+msgid "Please enter your new password below."
+msgstr "እባክዎ አዲሱን የይለፍ ቃልዎን ከዚህ በታች ያስገቡ።"
+
+msgid "Confirm New Password"
+msgstr "አዲሱን የይለፍ ቃል ያረጋግጡ"
+
+msgid "Change Password"
+msgstr "የይለፍ ቃል ቀይር"
+
+msgid "Password Reset Link Expired"
+msgstr "የይለፍ ቃል መቀየሪያው አገናኝ ጊዜው አልፏል"
+
+msgid "The password reset link was invalid, possibly because it has already been used or has expired."
+msgstr "የይለፍ ቃል መቀየሪያው አገናኝ ልክ አይደለም፤ ምናልባት ቀደም ሲል አገልግሎት ላይ ውሏል ወይም ጊዜው አልፏል።"
+
+msgid "Request New Reset Link"
+msgstr "አዲስ የመቀየሪያ አገናኝ ይጠይቁ"
+
+msgid "Password Reset Complete"
+msgstr "የይለፍ ቃል ለውጥ ተጠናቋል"
+
+msgid "Password Successfully Reset"
+msgstr "የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል"
+
+msgid "Your password has been changed. You may now sign in using your new credentials."
+msgstr "የይለፍ ቃልዎ ተቀይሯል። አሁን በአዲሱ መረጃዎ መግባት ይችላሉ።"
+
+msgid "Bad Request (400)"
+msgstr "ልክ ያልሆነ ጥያቄ (400)"
+
+msgid "Bad Request"
+msgstr "ልክ ያልሆነ ጥያቄ"
+
+msgid "The server was unable to understand the request sent by your browser."
+msgstr "አስተናጋጁ አገልጋይ አሳሽዎ የላከውን ጥያቄ መረዳት አልቻለም።"
+
+msgid "Access Denied (403)"
+msgstr "መዳረሻ ተከልክሏል (403)"
+
+msgid "Access Restricted"
+msgstr "የተገደበ መዳረሻ"
+
+msgid "You do not have the required permissions to view this resource or perform this action. If you believe this is in error, please contact a community administrator."
+msgstr "ይህን ገጽ ለማየት ወይም ይህን ተግባር ለማከናወን የሚያስፈልገው ፈቃድ የለዎትም። ስህተት ነው ብለው ካሰቡ እባክዎ የማህበረሰብ አስተዳዳሪዎችን ያነጋግሩ።"
+
+msgid "Return to Community Home"
+msgstr "ወደ ማህበረሰቡ መነሻ ገጽ ተመለስ"
+
+msgid "Too Many Requests (429)"
+msgstr "በጣም የበዙ ጥያቄዎች (429)"
+
+msgid "Too Many Requests"
+msgstr "በጣም የበዙ ጥያቄዎች"
+
+msgid "You have submitted requests too rapidly. To protect community servers and ensure psychological safety from spam, please pause a moment before trying again."
+msgstr "ጥያቄዎችን በጣም በተከታታይ ልከዋል። የአገልጋዩን ደህንነት ለመጠበቅና ከአላስፈላጊ መልእክቶች ለመከላከል እባክዎ ድጋሚ ከመሞከርዎ በፊት ጥቂት ቆይተው ይሞክሩ።"
+
+msgid "Server Error (500)"
+msgstr "የአገልጋይ ስህተት (500)"
+
+msgid "Unexpected Server Error"
+msgstr "ያልተጠበቀ የአገልጋይ ስህተት"
+
+msgid "We encountered an unexpected issue while processing your request. Our technical team has been alerted. Please try again shortly."
+msgstr "ጥያቄዎን ስናስተናግድ ያልተጠበቀ ችግር አጋጥሞናል። ለቴክኒክ ክፍላችን መልእክት ደርሷል። እባክዎ ከጥቂት ቆይታ በኋላ እንደገና ይሞክሩ።"

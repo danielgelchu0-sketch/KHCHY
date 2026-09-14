@@ -1,12 +1,13 @@
+{% load i18n %}
 <form action="{% url 'discussions:bookmark_toggle' pk=discussion.id %}" method="post"
       hx-post="{% url 'discussions:bookmark_toggle' pk=discussion.id %}"
       hx-swap="outerHTML" style="display: inline;">
   {% csrf_token %}
-  <button type="submit" class="btn btn-sm {% if is_bookmarked %}btn-primary{% else %}btn-secondary{% endif %}" title="Follow this discussion for updates">
+  <button type="submit" class="btn btn-sm {% if is_bookmarked %}btn-primary{% else %}btn-secondary{% endif %}" title="{% trans "Follow this discussion for updates" %}">
     {% if is_bookmarked %}
-      &#9733; Following Discussion
+      &#9733; {% trans "Following Discussion" %}
     {% else %}
-      &#9734; Follow Discussion
+      &#9734; {% trans "Follow Discussion" %}
     {% endif %}
   </button>
 </form>

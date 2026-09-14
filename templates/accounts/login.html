@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Log In | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Log In" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 480px;">
   <div class="card" style="padding: 2.5rem 2rem;">
     <div class="text-center" style="margin-bottom: 2rem;">
       <div class="brand-logo-icon" style="margin: 0 auto 1rem; width: 3rem; height: 3rem; font-size: 1.5rem;">&#10013;</div>
-      <h2>Welcome Back</h2>
-      <p class="text-muted">Sign in to your church community account</p>
+      <h2>{% trans "Welcome Back" %}</h2>
+      <p class="text-muted">{% trans "Sign in to your church community account" %}</p>
     </div>
 
     <form method="post" novalidate>
@@ -16,7 +17,7 @@
 
       {% if rate_limited %}
         <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
-          <p style="margin-bottom: 0;"><strong>Security Protection:</strong> Too many failed login attempts from your IP address. Please wait 5 minutes before trying again.</p>
+          <p style="margin-bottom: 0;"><strong>{% trans "Security Protection:" %}</strong> {% trans "Too many failed login attempts from your IP address. Please wait 5 minutes before trying again." %}</p>
         </div>
       {% elif form.non_field_errors %}
         <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
@@ -27,7 +28,7 @@
       {% endif %}
 
       <div class="form-group">
-        <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+        <label for="{{ form.email.id_for_label }}" class="form-label">{% trans form.email.label %}</label>
         {{ form.email }}
         {% if form.email.errors %}
           <div class="form-error">{{ form.email.errors.0 }}</div>
@@ -36,8 +37,8 @@
 
       <div class="form-group">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-          <label for="{{ form.password.id_for_label }}" class="form-label" style="margin-bottom: 0;">{{ form.password.label }}</label>
-          <a href="{% url 'accounts:password_reset' %}" style="font-size: 0.85rem;">Forgot password?</a>
+          <label for="{{ form.password.id_for_label }}" class="form-label" style="margin-bottom: 0;">{% trans form.password.label %}</label>
+          <a href="{% url 'accounts:password_reset' %}" style="font-size: 0.85rem;">{% trans "Forgot password?" %}</a>
         </div>
         {{ form.password }}
         {% if form.password.errors %}
@@ -46,13 +47,13 @@
       </div>
 
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.85rem;">
-        Sign In
+        {% trans "Sign In" %}
       </button>
     </form>
 
     <div class="text-center" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; font-size: 0.9rem;">
-      <span class="text-muted">New to our church platform?</span>
-      <a href="{% url 'accounts:register' %}" style="font-weight: 600; margin-left: 0.25rem;">Create an Account</a>
+      <span class="text-muted">{% trans "New to our church platform?" %}</span>
+      <a href="{% url 'accounts:register' %}" style="font-weight: 600; margin-left: 0.25rem;">{% trans "Create an Account" %}</a>
     </div>
   </div>
 </div>

@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Bad Request (400) | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Bad Request (400)" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container text-center" style="max-width: 580px; padding: 4rem 1rem;">
   <div class="card" style="padding: 3rem 2rem;">
     <h1 style="font-size: 3rem; color: var(--primary-700); margin-bottom: 0.5rem;">400</h1>
-    <h2>Bad Request</h2>
+    <h2>{% trans "Bad Request" %}</h2>
     <p class="text-muted" style="margin-top: 1rem; margin-bottom: 2rem;">
-      The server was unable to understand the request sent by your browser.
+      {% trans "The server was unable to understand the request sent by your browser." %}
     </p>
-    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">Return to Community Home</a>
+    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">{% trans "Browse Active Discussion Rooms" %}</a>
   </div>
 </div>
 {% endblock %}

@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Too Many Requests (429) | {{ COMMUNITY_NAME }}{% endblock %}
+{% block title %}{% trans "Too Many Requests (429)" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container text-center" style="max-width: 580px; padding: 4rem 1rem;">
   <div class="card" style="padding: 3rem 2rem;">
     <h1 style="font-size: 3rem; color: #d97706; margin-bottom: 0.5rem;">429</h1>
-    <h2>Too Many Requests</h2>
+    <h2>{% trans "Too Many Requests" %}</h2>
     <p class="text-muted" style="margin-top: 1rem; margin-bottom: 2rem;">
-      You have submitted requests too rapidly. To protect community servers and ensure psychological safety from spam, please pause a moment before trying again.
+      {% trans "You have submitted requests too rapidly. To protect community servers and ensure psychological safety from spam, please pause a moment before trying again." %}
     </p>
-    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">Return to Community Home</a>
+    <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary">{% trans "Return to Community Home" %}</a>
   </div>
 </div>
 {% endblock %}
