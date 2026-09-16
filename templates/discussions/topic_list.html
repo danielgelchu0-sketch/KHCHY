@@ -1,18 +1,32 @@
 {% extends "base.html" %}
-{% load discussion_tags i18n %}
+{% load static discussion_tags i18n %}
 
 {% block title %}{% trans "Discussion Topics & Rooms" %} | {{ COMMUNITY_NAME }}{% endblock %}
 
 {% block content %}
 <div class="container">
-  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h1>{% trans "Discussion Rooms" %}</h1>
-      <p class="text-muted" style="margin-bottom: 0;">
-        {% trans "Choose a dedicated topic room to explore discussions or ask sensitive questions in a safe environment." %}
-      </p>
+  <!-- Community Topic Rooms Banner with Avatar Emblem -->
+  <section class="topic-welcome-banner">
+    <div class="topic-welcome-content">
+      <img src="{% static 'img/community_avatar.svg' %}" alt="{{ COMMUNITY_NAME }}" class="topic-welcome-avatar" width="62" height="62" loading="eager">
+      <div class="topic-welcome-text">
+        <h1>{% trans "Discussion Topics & Rooms" %}</h1>
+        <p>
+          {% trans "Welcome to your church community discussion home. Choose a dedicated room below to explore questions, share encouragement, or post in safe biblical fellowship." %}
+        </p>
+      </div>
     </div>
-  </div>
+    <div class="topic-welcome-actions">
+      <a href="{% url 'core:how_to_use' %}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
+        📖 {% trans "User Guide" %}
+      </a>
+      <a href="{% url 'core:guidelines' %}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
+        {% trans "Guidelines" %}
+      </a>
+    </div>
+  </section>
+
+
 
   <!-- Topics Grid -->
   <div class="topics-grid">
@@ -47,7 +61,8 @@
             <div class="discussion-meta-row">
               <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
                 {% if discussion.is_anonymous %}
-                  &#128274; {% trans "Anonymous Member" %}
+                  <img src="{% static 'img/anonymous_avatar.svg' %}" alt="" width="16" height="16" style="width: 16px; height: 16px; border-radius: 50%;">
+                  {% trans "Anonymous Member" %}
                 {% else %}
                   {{ discussion.author.display_name }}
                 {% endif %}

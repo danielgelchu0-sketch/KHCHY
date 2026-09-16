@@ -106,3 +106,42 @@ class InternationalizationTests(TestCase):
         self.assertEqual(register_res.status_code, 200)
         self.assertContains(register_res, "ማህበረሰቡን ይቀላቀሉ")
         self.assertContains(register_res, "የማህበረሰብ መገለጫ ስም")
+
+    def test_how_to_use_renders_in_english_and_amharic(self):
+        """User guide page renders successfully in English and Amharic with navigation links."""
+        # English view
+        en_res = self.client.get(reverse("core:how_to_use"))
+        self.assertEqual(en_res.status_code, 200)
+        self.assertContains(en_res, "How to Use the HKHC Community Platform")
+        self.assertContains(en_res, "Choosing Your Identity: With Your Name vs. Anonymous")
+        self.assertContains(en_res, "Reacting with Likes & Dislikes (On Posts and Replies)")
+
+        # Amharic view
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "am"
+        am_res = self.client.get(reverse("core:how_to_use"))
+        self.assertEqual(am_res.status_code, 200)
+        self.assertContains(am_res, "የHKHC ማህበረሰብ መድረክ አጠቃቀም መመሪያ")
+        self.assertContains(am_res, "ማንነትን መምረጥ፡ በግልጽ ስም ወይስ በሚስጥር")
+        self.assertContains(am_res, "Like እና Dislike")
+
+    def test_navbar_and_footer_contain_user_guide_links(self):
+        """Base layout navbar and footer include user guide links."""
+        response = self.client.get(reverse("core:home"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("core:how_to_use"))
+
+    def test_homepage_renders_community_hero_banner(self):
+        """Home page displays the non-distracting community hero banner artwork."""
+        response = self.client.get(reverse("core:home"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "community-hero-banner")
+        self.assertContains(response, "community_banner_art.svg")
+
+    def test_topic_list_renders_welcome_banner_and_avatar(self):
+        """Topic list page displays the community avatar emblem welcome banner."""
+        response = self.client.get(reverse("discussions:topic_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "topic-welcome-banner")
+        self.assertContains(response, "community_avatar.svg")
+
+

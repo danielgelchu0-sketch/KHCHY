@@ -167,8 +167,8 @@ class Discussion(models.Model):
         return self.reactions.filter(vote_type="dislike").count()
 
     def get_user_reaction(self, user):
-        if hasattr(self, "_user_reaction") and self._user_reaction is not None:
-            return self._user_reaction or None
+        if hasattr(self, "_user_reaction"):
+            return self._user_reaction
         if not user or not user.is_authenticated:
             return None
         reaction = self.reactions.filter(user=user).first()
@@ -270,6 +270,26 @@ class Reply(models.Model):
             return True
         return self.author_id == user.id
 
+    @property
+    def likes_count(self):
+        if hasattr(self, "_likes_count"):
+            return self._likes_count
+        return self.reactions.filter(vote_type="like").count()
+
+    @property
+    def dislikes_count(self):
+        if hasattr(self, "_dislikes_count"):
+            return self._dislikes_count
+        return self.reactions.filter(vote_type="dislike").count()
+
+    def get_user_reaction(self, user):
+        if hasattr(self, "_user_reaction"):
+            return self._user_reaction
+        if not user or not user.is_authenticated:
+            return None
+        reaction = self.reactions.filter(user=user).first()
+        return reaction.vote_type if reaction else None
+
 
 class Bookmark(models.Model):
     """Allows members to follow/bookmark discussions to receive updates."""
@@ -332,3 +352,49 @@ class Reaction(models.Model):
 
     def __str__(self):
         return f"{self.user.email} -> {self.vote_type} on '{self.discussion.title}'"
+
+
+class ReplyReaction(models.Model):
+    """
+    User reaction (like or dislike) on a reply.
+    Each user can have at most one reaction per reply (like OR dislike).
+    """
+
+    class VoteType(models.TextChoices):
+        LIKE = "like", "Like"
+        DISLIKE = "dislike", "Dislike"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reply_reactions",
+    )
+    reply = models.ForeignKey(
+        Reply,
+        on_delete=models.CASCADE,
+        related_name="reactions",
+    )
+    vote_type = models.CharField(
+        max_length=10,
+        choices=VoteType.choices,
+        db_index=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Reply Reaction"
+        verbose_name_plural = "Reply Reactions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "reply"],
+                name="unique_user_reply_reaction",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["reply", "vote_type"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user.email} -> {self.vote_type} on Reply {self.reply_id}"
+

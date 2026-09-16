@@ -1,0 +1,708 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if LANGUAGE_CODE == 'am' %}የአጠቃቀም መመሪያ{% else %}How to Use the Platform{% endif %} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 960px;">
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1.25rem; font-size: 0.9rem;">
+    <a href="{% url 'core:home' %}">{% trans "Home" %}</a>
+    <span class="text-muted" style="margin: 0 0.4rem;">&rsaquo;</span>
+    <span class="text-muted">{% if LANGUAGE_CODE == 'am' %}የአጠቃቀም መመሪያ{% else %}User Guide{% endif %}</span>
+  </div>
+
+  <!-- Hero Banner -->
+  <div class="card" style="padding: 2.25rem; background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%); border-color: #99f6e4; margin-bottom: 1.75rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem;">
+      <div>
+        <span class="topic-badge" style="background-color: var(--accent-100); color: var(--accent-700); font-weight: 700; margin-bottom: 0.5rem; display: inline-block;">
+          📖 {% if LANGUAGE_CODE == 'am' %}የመድረኩ ሙሉ መመሪያ{% else %}Complete Platform Guide{% endif %}
+        </span>
+        <h1 style="font-size: 2rem; color: var(--primary-900); margin: 0.5rem 0 0.75rem;">
+          {% if LANGUAGE_CODE == 'am' %}
+            የHKHC ማህበረሰብ መድረክ አጠቃቀም መመሪያ
+          {% else %}
+            How to Use the HKHC Community Platform
+          {% endif %}
+        </h1>
+        <p style="color: var(--primary-800); margin: 0; font-size: 1.05rem; max-width: 680px; line-height: 1.6;">
+          {% if LANGUAGE_CODE == 'am' %}
+            ለሁሉም የዕድሜ ክልል ለሆኑ የቤተክርስቲያን አባላት (ታዳጊዎች፣ ወጣቶችና ጎልማሶች) በቀላሉ የተዘጋጀ ግልጽና ደረጃ በደረጃ የቀረበ ማብራሪያ።
+          {% else %}
+            A friendly, simple step-by-step guide designed for members of all ages — teens, youths, and adults — to comfortably explore and participate.
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- Quick Language Mode Selector within the Guide -->
+      <div style="background-color: var(--surface); padding: 0.85rem 1.1rem; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+          🌐 {% trans "Guide Language / የንባብ ቋንቋ" %}
+        </div>
+        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-sm guide-lang-btn" id="btn-lang-am" onclick="switchGuideLang('am')">
+            🇪🇹 አማርኛ
+          </button>
+          <button type="button" class="btn btn-sm guide-lang-btn" id="btn-lang-en" onclick="switchGuideLang('en')">
+            🇬🇧 English
+          </button>
+          <button type="button" class="btn btn-sm guide-lang-btn" id="btn-lang-both" onclick="switchGuideLang('both')">
+            📑 Dual / ሁለቱንም
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table of Contents Jump Bar -->
+  <div class="card" style="padding: 1rem 1.5rem; margin-bottom: 2rem; background-color: var(--surface);">
+    <strong style="font-size: 0.9rem; color: var(--primary-900);">
+      {% if LANGUAGE_CODE == 'am' %}ፈጣን ማውጫ፡{% else %}Quick Navigation:{% endif %}
+    </strong>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem;">
+      <a href="#section-overview" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">1. {% if LANGUAGE_CODE == 'am' %}ዓላማ{% else %}Overview{% endif %}</a>
+      <a href="#section-account" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">2. {% if LANGUAGE_CODE == 'am' %}መመዝገብና መግባት{% else %}Account & Login{% endif %}</a>
+      <a href="#section-topics" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">3. {% if LANGUAGE_CODE == 'am' %}የውይይት ክፍሎች{% else %}Topic Rooms{% endif %}</a>
+      <a href="#section-identity" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">4. {% if LANGUAGE_CODE == 'am' %}በስም ወይስ በሚስጥር?{% else %}Identity & Privacy{% endif %}</a>
+      <a href="#section-ask" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">5. {% if LANGUAGE_CODE == 'am' %}ጥያቄ መጠየቅ{% else %}Asking Questions{% endif %}</a>
+      <a href="#section-replies" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">6. {% if LANGUAGE_CODE == 'am' %}መልስ መስጠት{% else %}Replying{% endif %}</a>
+      <a href="#section-reactions" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">7. {% if LANGUAGE_CODE == 'am' %}Like & Dislike መስጠት{% else %}Reacting (Like/Dislike){% endif %}</a>
+      <a href="#section-bookmarks" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">8. {% if LANGUAGE_CODE == 'am' %}ማስታወሻና ማሳወቂያዎች{% else %}Bookmarks & Alerts{% endif %}</a>
+      <a href="#section-safety" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">9. {% if LANGUAGE_CODE == 'am' %}ደህንነትና ሪፖርት{% else %}Safety & Report{% endif %}</a>
+      <a href="#section-faq" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">10. {% if LANGUAGE_CODE == 'am' %}ተደጋጋሚ ጥያቄዎች{% else %}FAQ{% endif %}</a>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MAIN GUIDE CONTAINER WITH BILINGUAL SUPPORT
+       ========================================================================= -->
+  <div id="guide-container">
+
+    <!-- =====================================================================
+         SECTION 1: OVERVIEW & WELCOME
+         ===================================================================== -->
+    <section id="section-overview" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">⛪</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">1. የHKHC ማህበረሰብ መድረክ ምንድን ነው?</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text);">
+          የHKHC ማህበረሰብ መድረክ የቤተክርስቲያናችን አባላት—ታዳጊዎች፣ ወጣቶች፣ አባቶችና እናቶች—በክርስትና ህይወታቸው የሚያጋጥሟቸውን ማንኛቸውም አስቸጋሪ፣ ስሜታዊ ወይም የጥርጣሬ ጥያቄዎች ያለምንም ማህበራዊ ፍርሃት ወይም መሸማቀቅ በነፃነት እንዲጠይቁ እና እርስ በእርስ በመጽሐፍ ቅዱሳዊ ፍቅር እንዲማማሩ የተዘጋጀ <strong>ሰላማዊና ደህንነቱ የተጠበቀ የቤተሰብ መድረክ</strong> ነው።
+        </p>
+        <div style="background-color: var(--primary-50); border-left: 4px solid var(--primary-700); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin: 1.25rem 0;">
+          <strong>💡 በቀላል ምሳሌ ሲገለጽ፡</strong><br>
+          ይህ መድረክ በቤተክርስቲያን ግቢ ውስጥ እንዳለ ምቹ የመወያያ አዳራሽ ነው። ማንኛውም ሰው እጁን አውጥቶ ጥያቄ መጠየቅ፣ የጸሎት ርዕሱን ማካፈል ወይም ያጋጠመውን ፈተና ማማከር ይችላል። ማንም አያሾፍብዎትም፣ ማንም ዝቅ አድርጎ አይመለከትዎትም።
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">⛪</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">1. What is the HKHC Community Platform?</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text);">
+          The HKHC Community Platform is a safe, loving, and Christ-centered online home where members of our church family—teens, young adults, parents, and seniors—can bring their real questions, doubts, struggles, and prayer concerns without fear of judgment, gossip, or embarrassment.
+        </p>
+        <div style="background-color: var(--primary-50); border-left: 4px solid var(--primary-700); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin: 1.25rem 0;">
+          <strong>💡 In Simple Words:</strong><br>
+          Think of this like a warm church fellowship hall. You can sit down, ask anything that has been weighing on your heart, read thoughtful biblical answers, and support one another in prayer and grace.
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 2: ACCOUNT & LOGIN
+         ===================================================================== -->
+    <section id="section-account" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👤</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">2. መለያ መክፈት እና ወደ መድረኩ መግባት</h2>
+        </div>
+        <p>በመድረኩ ላይ ውይይቶችን ለማንበብ ምንም አይነት መለያ አያስፈልግዎትም። ሆኖም ግን ጥያቄ ለመጠየቅ፣ መልስ ለመስጠት፣ Like/Dislike ለማድረግ እና ማሳወቂያዎችን ለመከታተል የራስዎ መለያ ሊኖርዎት ይገባል።</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <strong style="color: var(--accent-700); font-size: 1.05rem;">ደረጃ ሀ፡ መመዝገብ (Register)</strong>
+            <ol style="margin-top: 0.75rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.6;">
+              <li>ከላይ በቀኝ በኩል ያለውን <strong>"Join Community" (ይመዝገቡ)</strong> የሚለውን ቁልፍ ይጫኑ።</li>
+              <li>የኢሜይል አድራሻዎን ያስገቡ።</li>
+              <li>ለሌሎች አባላት እንዲታይ የሚፈልጉትን <strong>"የመገለጫ ስም" (Display Name)</strong> ይምረጡ (ለምሳሌ፡ "ዳንኤል" ወይም "ዮናስ")።</li>
+              <li>ቢያንስ 8 ፊደላትና ቁጥሮች ያሉት ጠንካራ የይለፍ ቃል (Password) ይፍጠሩ።</li>
+              <li>"ይመዝገቡ" የሚለውን ተጭነው ወዲያውኑ መሳተፍ ይጀምሩ።</li>
+            </ol>
+          </div>
+
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <strong style="color: var(--primary-700); font-size: 1.05rem;">ደረጃ ለ፡ መግባት (Log In)</strong>
+            <ol style="margin-top: 0.75rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.6;">
+              <li>ከላይ በቀኝ በኩል ያለውን <strong>"Log in" (ግባ)</strong> የሚለውን ይጫኑ።</li>
+              <li>በመመዝገቢያ ያስገቡትን ኢሜይል ወይም የመገለጫ ስምዎን እና የይለፍ ቃልዎን ያስገቡ።</li>
+              <li>የይለፍ ቃል ከረሱ፡ <em>"Forgot your password?"</em> የሚለውን በመጫን አዲስ የይለፍ ቃል በኢሜይልዎ መቀየር ይችላሉ።</li>
+              <li>መለያዎን ለማስተካከል (ፎቶ ወይም የህይወት ታሪክ ለማከል) ከላይ ያለውን <strong>"Settings" (ቅንብሮች)</strong> ይጫኑ።</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👤</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">2. Creating Your Account & Signing In</h2>
+        </div>
+        <p>Anyone can read public discussions on the platform without an account. However, to ask questions, post answers, react with Likes/Dislikes, or bookmark topics, you need a free account.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <strong style="color: var(--accent-700); font-size: 1.05rem;">Step A: Joining the Community</strong>
+            <ol style="margin-top: 0.75rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.6;">
+              <li>Click the green <strong>"Join Community"</strong> button at the top right of the screen.</li>
+              <li>Enter your email address.</li>
+              <li>Choose a friendly <strong>Display Name</strong> that fellow members will recognize (e.g., "Sarah M." or "Brother Dawit").</li>
+              <li>Create a secure password (at least 8 characters).</li>
+              <li>Click <strong>"Create Account"</strong> and you are ready to begin!</li>
+            </ol>
+          </div>
+
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <strong style="color: var(--primary-700); font-size: 1.05rem;">Step B: Signing In & Managing Profile</strong>
+            <ol style="margin-top: 0.75rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.6;">
+              <li>Click <strong>"Log in"</strong> at the top right.</li>
+              <li>Type either your email address or your display name, along with your password.</li>
+              <li>If you ever forget your password, click <em>"Forgot your password?"</em> to receive a quick reset link via email.</li>
+              <li>Click <strong>"Settings"</strong> at any time to upload a profile photo or update your bio.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 3: TOPIC ROOMS
+         ===================================================================== -->
+    <section id="section-topics" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🏷️</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. የውይይት ክፍሎችን (Topic Rooms) መምረጥና መጎብኘት</h2>
+        </div>
+        <p>ውይይቶች በዘፈቀደ እንዳይዘበራረቁ እና የሚፈልጉትን ርዕስ በቀላሉ እንዲያገኙ ውይይቶቹ በልዩ ልዩ ክፍሎች የተከፋፈሉ ናቸው።</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.7; font-size: 0.95rem;">
+          <li><strong>የመንፈሳዊ ህይወት እና እምነት (Faith & Spiritual Life)፡</strong> ስለ ጸሎት፣ መጽሐፍ ቅዱስ ንባብ፣ ጥርጣሬዎችና መንፈሳዊ እድገት የሚጠየቁ ጥያቄዎች።</li>
+          <li><strong>የወጣቶች እና ታዳጊዎች ክፍል (Youth & Teen Questions)፡</strong> በትምህርት ቤት፣ በእኩዮች ግፊት፣ በቴክኖሎጂ እና በወጣትነት ዘመን ፈተናዎች ዙሪያ የሚነሱ ጥያቄዎች።</li>
+          <li><strong>ግንኙነቶች እና ቤተሰብ (Relationships & Family)፡</strong> የፍቅር ጓደኝነት፣ ጋብቻ፣ የቤተሰብ አለመግባባቶችና የወዳጅነት ምክክሮች።</li>
+          <li><strong>የስነ-ልቦና እና ስሜታዊ ደህንነት (Mental & Emotional Health)፡</strong> ጭንቀት፣ ብቸኝነት፣ የሀዘን ስሜት እና ማጽናኛ የሚሹ ጉዳዮች።</li>
+        </ul>
+        <div style="background-color: var(--primary-50); padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1rem;">
+          👉 የትኛውንም ክፍል ለመክፈት ከላይ ባለው ማውጫ ላይ <strong>"Topics & Rooms"</strong> የሚለውን ይጫኑና የሚፈልጉትን ክፍል ይምረጡ።
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🏷️</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. Exploring Topic Rooms</h2>
+        </div>
+        <p>To keep discussions organized and easy to find, conversations are categorized into dedicated "Topic Rooms" just like different ministries or classrooms at church.</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.7; font-size: 0.95rem;">
+          <li><strong>Faith & Spiritual Life:</strong> Questions about prayer, understanding Bible passages, doubts, and walking with Jesus daily.</li>
+          <li><strong>Youth & Teen Questions:</strong> Navigating school life, peer pressure, identity, social media, and temptations.</li>
+          <li><strong>Relationships & Family:</strong> Biblical dating, marriage advice, resolving family conflict, and healthy friendships.</li>
+          <li><strong>Emotional & Mental Health:</strong> Navigating grief, anxiety, loneliness, burnout, and seeking healing prayer.</li>
+        </ul>
+        <div style="background-color: var(--primary-50); padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1rem;">
+          👉 To view all available rooms, click <strong>"Topics & Rooms"</strong> in the main navigation bar at the top of any page.
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 4: IDENTIFIED VS ANONYMOUS MODE
+         ===================================================================== -->
+    <section id="section-identity" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; border-left: 5px solid var(--accent-600);">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🔒</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. ማንነትን መምረጥ፡ በግልጽ ስም ወይስ በሚስጥር (Anonymous)?</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          ይህ የመድረካችን <strong>እጅግ በጣም ጠቃሚና ልዩ ገጽታ</strong> ነው። ማንኛውም አባል ጥያቄ ሲጠይቅ ወይም መልስ ሲሰጥ ማንነቱ እንዲታይ ወይም እንዳይታይ <strong>ለእያንዳንዱ ጽሑፍ ራሱን ችሎ መምረጥ ይችላል</strong>።
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.25rem 0;">
+          <!-- Identified Mode -->
+          <div style="border: 2px solid #bae6fd; background-color: #f0f9ff; padding: 1.25rem; border-radius: var(--radius-md);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">👤</span>
+              <strong style="font-size: 1.05rem; color: #0369a1;">ምርጫ 1፡ በመገለጫ ስሜ ልጻፍ (Identified)</strong>
+            </div>
+            <p style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text);">
+              የመረጡት የመገለጫ ስምና ፎቶ ከጽሑፍዎ ጋር አብሮ ይታያል።
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <strong>መቼ ይጠቅማል?</strong> አጠቃላይ የመጽሐፍ ቅዱስ ውይይቶች፣ የማበረታቻ ቃላት፣ የምስጋና ምስክርነቶች እና የተለመዱ ጥያቄዎች ሲኖሩዎት።
+            </div>
+          </div>
+
+          <!-- Anonymous Mode -->
+          <div style="border: 2px solid #bbf7d0; background-color: #f0fdf4; padding: 1.25rem; border-radius: var(--radius-md);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🔒</span>
+              <strong style="font-size: 1.05rem; color: #15803d;">ምርጫ 2፡ ማንነቴ ሳይገለጽ ልጻፍ (Anonymous)</strong>
+            </div>
+            <p style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text);">
+              ለሌሎች የማህበረሰብ አባላት በሙሉ ስምዎ <strong>"ማንነቱ ያልተገለጸ አባል" (Anonymous Member)</strong> ተብሎ ብቻ ይታያል።
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <strong>መቼ ይጠቅማል?</strong> በሚያሳቅቁ ወይም በጣም በሚያሳስቡ የግል ፈተናዎች፣ የፍቅር ወይም የቤተሰብ ቁስሎች፣ ኃጢአትን ስለመናዘዝ ወይም ስለ መጠራጠር በግልጽ ለመጠየቅ።
+            </div>
+          </div>
+        </div>
+
+        <div style="background-color: #fefce8; border: 1px solid #fef08a; padding: 1rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.6;">
+          <strong>🛡️ ሚስጥራዊነት እና ደህንነት እንዴት ይጠበቃል?</strong><br>
+          በሚስጥር ሲጽፉ እውነተኛ ስምዎ፣ ኢሜይልዎ እና ፎቶዎ ለተራ አባላት ፈጽሞ አይታይም፤ ከኮምፒዩተር ኮድ ውስጥም ይደበቃል። ሆኖም ግን ማህበረሰባችንን ከትንኮሳ፣ ራስን ከመጉዳት አደጋ ወይም ከጥላቻ ንግግር ለመጠበቅ ሲባል የተሾሙ የቤተክርስቲያን አወያዮች (Moderators) ጥቆማ ሲደርሳቸው ብቻ አስፈላጊውን መንፈሳዊ ድጋፍ ለማድረግ ጸሐፊውን በውስጥ የመመልከት ስልጣን አላቸው። ይህም መድረኩ ለሁሉም ሰው አስተማማኝና ደህንነቱ የተጠበቀ እንዲሆን ያደርገዋል።
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🔒</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. Choosing Your Identity: With Your Name vs. Anonymous</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          This is one of the most reassuring and powerful features of the HKHC platform. You have the freedom to decide your anonymity <strong>on every single question or reply you post</strong>.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.25rem 0;">
+          <!-- Identified Mode -->
+          <div style="border: 2px solid #bae6fd; background-color: #f0f9ff; padding: 1.25rem; border-radius: var(--radius-md);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">👤</span>
+              <strong style="font-size: 1.05rem; color: #0369a1;">Option 1: Post with My Identity</strong>
+            </div>
+            <p style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text);">
+              Your chosen display name and profile avatar will appear right next to your post.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <strong>Best for:</strong> General bible study questions, sharing scriptures of encouragement, testimonies, and friendly interaction.
+            </div>
+          </div>
+
+          <!-- Anonymous Mode -->
+          <div style="border: 2px solid #bbf7d0; background-color: #f0fdf4; padding: 1.25rem; border-radius: var(--radius-md);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🔒</span>
+              <strong style="font-size: 1.05rem; color: #15803d;">Option 2: Post Anonymously</strong>
+            </div>
+            <p style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text);">
+              To other community members, your author name will only show as <strong>"Anonymous Member"</strong>.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <strong>Best for:</strong> Vulnerable personal struggles, sensitive questions about purity, relationship hurts, family wounds, or honest faith doubts.
+            </div>
+          </div>
+        </div>
+
+        <div style="background-color: #fefce8; border: 1px solid #fef08a; padding: 1rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.6;">
+          <strong>🛡️ How Does Safety and Anonymity Work?</strong><br>
+          When you post anonymously, other members cannot see your name, email, or profile link. To safeguard the church family from abuse, cyberbullying, or self-harm crises, authorized church moderators can review internal identity solely during safety investigations to offer pastoral help. Every moderator review is strictly logged.
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 5: ASKING A QUESTION
+         ===================================================================== -->
+    <section id="section-ask" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">✍️</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. አዲስ ጥያቄ ወይም ውይይት እንዴት ይቀርባል?</h2>
+        </div>
+        <p>በመድረኩ ላይ ጥያቄ ማቅረብ እጅግ በጣም ቀላል ነው፡</p>
+        <ol style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li>በመጀመሪያ ተገቢውን የውይይት ክፍል ይክፈቱ (ለምሳሌ፡ "Faith Room")።</li>
+          <li>ከላይ በቀኝ በኩል ያለውን አረንጓዴ <strong>"Ask Question" (ጥያቄ ጠይቅ)</strong> የሚለውን ቁልፍ ይጫኑ።</li>
+          <li><strong>ርዕስ (Title)፡</strong> ጥያቄዎን በአጭሩ የሚገልጽ ግልጽ ርዕስ ይጻፉ (ለምሳሌ፡ <em>"በመንፈሳዊ ድካም ወቅት እንዴት እንጸልያለን?"</em>)።</li>
+          <li><strong>ዝርዝር ሐሳብ (Content)፡</strong> የጥያቄዎን ዳራ፣ ያስጨነቀዎትን ሁኔታ ወይም ማብራሪያ ይጻፉ።</li>
+          <li><strong>ማንነትዎን ይምረጡ፡</strong> "Post with my identity" (በስሜ) ወይም "Post anonymously" (በሚስጥር) የሚለውን ምልክት ያድርጉ።</li>
+          <li>በመጨረሻም <strong>"Submit Question" (ጥያቄውን ይለጥፉ)</strong> የሚለውን ይጫኑ። ጥያቄዎ ወዲያውኑ ይታያል!</li>
+        </ol>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">✍️</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. How to Ask a Question or Start a Discussion</h2>
+        </div>
+        <p>Starting a discussion is quick and intuitive:</p>
+        <ol style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li>Go to the relevant topic room (e.g., "Faith & Spiritual Life").</li>
+          <li>Click the green <strong>"Ask Question"</strong> button near the top right.</li>
+          <li><strong>Title:</strong> Give your question a clear, descriptive headline (e.g., <em>"How can we pray during seasons of spiritual dryness?"</em>).</li>
+          <li><strong>Content:</strong> Describe your question, Bible verse, or life circumstance in detail.</li>
+          <li><strong>Choose Identity:</strong> Select either <strong>"Post with my identity"</strong> or <strong>"Post anonymously"</strong>.</li>
+          <li>Click <strong>"Post Question"</strong>. Your discussion is now live for the community to read and answer!</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 6: REPLYING & THREADED DISCUSSIONS
+         ===================================================================== -->
+    <section id="section-replies" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">💬</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. መልስ መስጠት እና እርስ በእርስ መወያየት</h2>
+        </div>
+        <p>ማንኛውም አባል ለተጠየቀ ጥያቄ መልስ መስጠት ወይም የሌላ ሰውን መልስ በማሟላት መወያየት ይችላል፡</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li><strong>ለዋናው ጥያቄ መልስ መስጠት፡</strong> ወደ ገጹ ግርጌ ወረድ ብለው በሚገኘው የጽሑፍ ሳጥን ውስጥ መልስዎን ይጻፉ፣ በስምዎ ወይስ በሚስጥር መሆኑን መርጠው <strong>"Post Answer"</strong> የሚለውን ይጫኑ።</li>
+          <li><strong>ለአንድ አባል የተለየ መልስ መመለስ (Threaded Reply)፡</strong> አንድ አባል የጻፈውን መልስ ለመመለስ ወይም ለማበረታታት በመልሱ ስር ያለውን <strong>"↩ Reply" (መልስ ስጥ)</strong> የሚለውን ቁልፍ ይጫኑ። ይህ መልስዎ ከእርሱ ጽሑፍ ስር ተያይዞ እንዲታይ ያደርጋል።</li>
+          <li><strong>የራስዎን ጽሑፍ ማስተካከል ወይም መሰረዝ፡</strong> ጽሑፍዎ ላይ ስህተት ካለ "Edit" በመጫን ማስተካከል ወይም "Delete" በመጫን ማስወገድ ይችላሉ።</li>
+        </ul>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">💬</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. Replying & Threaded Conversations</h2>
+        </div>
+        <p>Meaningful fellowship happens when we respond with grace, biblical scripture, and honest reflections:</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li><strong>Answering the Main Question:</strong> Scroll to the bottom of the discussion page, write your answer in the form, choose whether to post with your name or anonymously, and click <strong>"Post Answer"</strong>.</li>
+          <li><strong>Replying to Another Member's Comment:</strong> Click the <strong>"↩ Reply"</strong> button on any reply card. This opens a nested reply box right beneath that specific comment so the conversation stays organized.</li>
+          <li><strong>Editing or Deleting:</strong> If you made a typo or want to update what you shared, you can click <strong>"Edit"</strong> or <strong>"Delete"</strong> on your own posts at any time.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 7: REACTIONS (LIKE & DISLIKE) ON POSTS & REPLIES
+         ===================================================================== -->
+    <section id="section-reactions" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #f8fafc 0%, #fefce8 100%); border-color: #fde047;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👍 👎</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. ለጥያቄዎች እና ለመልሶች ምላሽ መስጠት (Like እና Dislike)</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          <strong>አዲስና የተሻሻለ ገጽታ፡</strong> አሁን በመድረኩ ላይ በዋናው ጥያቄ ላይ ብቻ ሳይሆን <strong>በእያንዳንዱ አባል መልስ (Reply) ላይም Like ወይም Dislike ምላሽ መስጠት ይችላሉ!</strong>
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👍</span>
+              <strong style="color: var(--accent-700);">መውደድ (Like)</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              አንድ ጥያቄ ወይም የተሰጠ መልስ ጠቃሚ፣ መጽሐፍ ቅዱሳዊ ምክር ያዘለ፣ አጽናኝ ወይም ልብ የሚነካ ሆኖ ሲያገኙት የ👍 <strong>Like</strong> ቁልፉን ይጫኑ። የቁጥሩ መጨመር ለጸሐፊው ትልቅ ማበረታቻ ይሆናል።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👎</span>
+              <strong style="color: var(--danger-txt);">አለመውደድ (Dislike)</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              በተሰጠው ሐሳብ ላይ በአክብሮት ካልተስማሙ ወይም ጽሑፉ ትክክለኛ ካልመሰለዎት የ👎 <strong>Dislike</strong> ቁልፍን መጫን ይችላሉ። እባክዎን ይህን ቁልፍ ሰውን ለመጉዳት ወይም ለመናቅ ፈጽሞ አይጠቀሙበት።
+            </p>
+          </div>
+        </div>
+
+        <div style="background-color: var(--surface); border-left: 4px solid var(--accent-600); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1.25rem; font-size: 0.9rem; line-height: 1.6;">
+          <strong>💡 የReaction ቁልፎች አጠቃቀም ጠቃሚ ነጥቦች፡</strong>
+          <ul style="margin: 0.5rem 0 0 1.25rem;">
+            <li><strong>ምላሽዎን ማንሳት፡</strong> የተጫኑትን ቁልፍ (Like ወይም Dislike) ደግመው ሲጫኑት ምላሽዎ ይሰረዛል።</li>
+            <li><strong>ምላሽ መቀየር፡</strong> ከLike ወደ Dislike (ወይም በተቃራኒው) ለመቀየር ሌላኛውን ቁልፍ መጫን ብቻ በቂ ነው፤ ሥርዓቱ ወዲያውኑ ይቀይርልዎታል።</li>
+            <li><strong>ፈጣን አሰራር (HTMX)፡</strong> ቁልፉን ሲጫኑ ገጹን እንደገና ሳይከፍት በቅጽበት እዚያው ላይ ቁጥሩ ይጨምራል ወይም ይቀንሳል።</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👍 👎</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. Reacting with Likes & Dislikes (On Posts and Replies)</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          <strong>Complete Reaction Support:</strong> You can react with a Like or Dislike on the main discussion question <strong>AND on every individual reply</strong> throughout the conversation!
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👍</span>
+              <strong style="color: var(--accent-700);">Like Button</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              Click the 👍 <strong>Like</strong> button whenever a post or reply is spiritually enriching, thoughtful, wise, or encouraging. It shows your appreciation and uplifts the person who shared.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👎</span>
+              <strong style="color: var(--danger-txt);">Dislike Button</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              Click the 👎 <strong>Dislike</strong> button if you respectfully disagree with an assertion or believe an explanation is misleading. Always exercise this with Christian humility and gentleness.
+            </p>
+          </div>
+        </div>
+
+        <div style="background-color: var(--surface); border-left: 4px solid var(--accent-600); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1.25rem; font-size: 0.9rem; line-height: 1.6;">
+          <strong>💡 Handy Reaction Tips:</strong>
+          <ul style="margin: 0.5rem 0 0 1.25rem;">
+            <li><strong>To undo your reaction:</strong> Simply click the active reaction button again to toggle it off.</li>
+            <li><strong>To switch:</strong> If you liked something and want to change to dislike, just click the dislike button. It switches smoothly in one tap.</li>
+            <li><strong>Instant live update:</strong> Powered by modern inline HTMX, counts update smoothly without refreshing the whole webpage.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 8: BOOKMARKS & NOTIFICATIONS
+         ===================================================================== -->
+    <section id="section-bookmarks" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🔖 🔔</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. ውይይቶችን ምልክት ማድረግ (Bookmark) እና ማሳወቂያዎች (Notifications)</h2>
+        </div>
+        <p>የሚፈልጉትን ውይይት እንዳይረሱ እና አዳዲስ መልሶች ሲጻፉ ወዲያውኑ እንዲያውቁ የሚረዱ ጠቃሚ ባህሪያት፡</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li><strong>ውይይትን መከታተል (Bookmark)፡</strong> በማንኛውም ውይይት ገጽ ላይ <strong>"🔖 Bookmark" (ተከታተል)</strong> የሚለውን ቁልፍ ሲጫኑ ውይይቱ በተከታታይ ዝርዝርዎ ውስጥ ይመዘገባል።</li>
+          <li><strong>የማሳወቂያ ደወል (🔔)፡</strong> እርስዎ በጠየቁት ጥያቄ ላይ ወይም ምልክት ባደረጉበት ውይይት ላይ ሌላ ሰው መልስ ሲሰጥ ከላይ ባለው የደወል ምልክት ላይ የቀይ ቁጥር ምልክት ይታያል። ደወሉን በመጫን የተሰጡትን ምላሾች በቀጥታ ማየት ይችላሉ።</li>
+        </ul>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🔖 🔔</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. Bookmarking Discussions & Receiving Notifications</h2>
+        </div>
+        <p>Stay effortlessly connected to the conversations that matter to you:</p>
+        <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+          <li><strong>Bookmarking:</strong> Click the <strong>"🔖 Bookmark"</strong> button on any discussion thread you want to follow.</li>
+          <li><strong>Notification Bell (🔔):</strong> Whenever another member replies to a question you asked or to a thread you bookmarked, the notification bell in the top navigation bar will badge with an unread count. Click it to view and jump straight to the new response!</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 9: SAFETY & REPORTING
+         ===================================================================== -->
+    <section id="section-safety" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; border-left: 5px solid #f43f5e;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🚩</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. የጋራ ሰላማዊ ህብረት እና ተገቢ ያልሆነ ነገር ሪፖርት ማድረግ (Report)</h2>
+        </div>
+        <p>ይህ መድረክ የእግዚአብሔር ቤተሰብ የሚገናኝበት የተቀደሰና የተከበረ ስፍራ ነው። ማንኛውንም አባል ማዋረድ፣ የግል ስድብ፣ ዛቻ፣ የጥላቻ ንግግር ወይም የብልግና ይዘት በፍጹም አይፈቀድም።</p>
+        <div style="background-color: var(--danger-bg); border: 1px solid #fecdd3; border-radius: var(--radius-md); padding: 1.25rem; margin: 1rem 0;">
+          <strong style="color: var(--danger-txt); font-size: 1rem;">ተገቢ ያልሆነ ነገር ሲያጋጥም ምን ማድረግ አለብኝ?</strong>
+          <p style="margin: 0.5rem 0 0; font-size: 0.95rem; line-height: 1.6;">
+            በማንኛውም አግባብ ያልሆነ ጥያቄ ወይም መልስ ስር ያለውን <strong>"🚩 Report" (ጥቆማ ስጥ)</strong> የሚለውን ይጫኑ። የጥፋቱን አይነት (ለምሳሌ፡ ስድብ፣ ትንኮሳ፣ ወይም አላስፈላጊ ይዘት) መርጠው ያስገቡ። የቤተክርስቲያኑ አወያዮች ወዲያውኑ መርምረው አስፈላጊውን እርምጃ ይወስዳሉ።
+          </p>
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">🚩</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. Community Safety, Respect, and the Report Button</h2>
+        </div>
+        <p>We treat every member with Christian gentleness, patience, and mutual respect. Bullying, name-calling, mockery, explicit content, or attempting to expose anonymous posters are strictly forbidden.</p>
+        <div style="background-color: var(--danger-bg); border: 1px solid #fecdd3; border-radius: var(--radius-md); padding: 1.25rem; margin: 1rem 0;">
+          <strong style="color: var(--danger-txt); font-size: 1rem;">What should you do if you encounter hurtful or inappropriate content?</strong>
+          <p style="margin: 0.5rem 0 0; font-size: 0.95rem; line-height: 1.6;">
+            Simply click the <strong>"🚩 Report"</strong> link on that post or reply. Choose the reason (e.g., Harassment, Inappropriate Language, Spam, or Safety concern) and submit. Our church moderator team will promptly review and take appropriate corrective pastoral action.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 10: FAQ
+         ===================================================================== -->
+    <section id="section-faq" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 1.8rem;">❓</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. ተደጋግመው የሚጠየቁ ጥያቄዎች (FAQ)</h2>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 1፡ በሚስጥር ለመጻፍ ተጨማሪ ክፍያ ወይም ልዩ ፈቃድ ያስፈልጋል?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ በፍጹም አያስፈልግም! ማንኛውም የተመዘገበ አባል በማንኛውም ጊዜ በሚጠይቀው ጥያቄ ወይም በሚሰጠው መልስ ላይ "Post anonymously" የሚለውን በመምረጥ በሚስጥር መሳተፍ ይችላል።
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 2፡ ጥያቄ ከጠየቅኩ በኋላ ጽሑፌን ማስተካከል እችላለሁ?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ አዎ! የራስዎን ጥያቄ ወይም መልስ "Edit" የሚለውን በመጫን በማንኛውም ሰዓት ማስተካከል ይችላሉ።
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 3፡ ቋንቋውን ከአማርኛ ወደ እንግሊዝኛ እንዴት እቀይራለሁ?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ በየትኛውም ገጽ ላይ ከላይ በቀኝ በኩል ያለውን <strong>"Eng / አማ (Amh)"</strong> የሚለውን ቁልፍ ሲጫኑት መላው ድረ-ገጽ ወዲያውኑ ወደ ፈለጉት ቋንቋ ይቀየራል።
+          </p>
+        </div>
+
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 4፡ አስቸኳይ መንፈሳዊ ወይም የስነ-ልቦና እርዳታ ካስፈለገኝ ምን ላድርግ?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ እርስዎ በእግዚአብሔር እና በቤተክርስቲያናችን እጅግ የተወደዱ ሰው ነዎት። ከባድ ጭንቀት ወይም የአእምሮ ስቃይ ካጋጠመዎት እባክዎን ወዲያውኑ የቤተክርስቲያን አገልጋዮችን ወይም የቅርብ ህክምና ባለሙያዎችን ያነጋግሩ። ሁልጊዜ አብረንዎት ነን!
+          </p>
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 1.8rem;">❓</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. Frequently Asked Questions (FAQ)</h2>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q1: Does posting anonymously require special permission or payment?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: Not at all! Anonymous mode is 100% free and instantly available to every registered church member on every question or reply.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q2: Can I edit or delete my post after submitting?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: Yes. Authors retain full control to edit typos or delete their own posts whenever needed by clicking "Edit" or "Delete".
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q3: Can I react to replies as well as main questions?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: Yes! You can react with Like (👍) or Dislike (👎) on both the original question and every individual reply card.
+          </p>
+        </div>
+
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q4: What if I am in urgent need of prayer or pastoral counseling?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: You are deeply loved. If you are experiencing overwhelming emotional distress, thoughts of despair, or severe crisis, please reach out directly to church pastors, elders, or healthcare emergency responders. We are here for you!
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Bottom Action Card -->
+  <div class="card text-center" style="padding: 2.5rem; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%); border-color: #99f6e4; margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; color: var(--primary-900); margin-bottom: 0.75rem;">
+      {% if LANGUAGE_CODE == 'am' %}
+        ለመጀመር ዝግጁ ነዎት?
+      {% else %}
+        Ready to Explore and Participate?
+      {% endif %}
+    </h2>
+    <p class="text-muted" style="max-width: 540px; margin: 0 auto 1.5rem;">
+      {% if LANGUAGE_CODE == 'am' %}
+        የውይይት ክፍሎችን ይጎብኙ፣ ጥያቄዎችን ይመልከቱ፣ ወይም የራስዎን ጥያቄ በማቅረብ ውይይት ይጀምሩ።
+      {% else %}
+        Enter our topic rooms, read encouraging questions and answers, or ask your own in safe Christian fellowship.
+      {% endif %}
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary" style="padding: 0.75rem 1.75rem;">
+        {% trans "Browse Topics & Rooms" %} &rarr;
+      </a>
+      <a href="{% url 'core:guidelines' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+        {% trans "Read Community Guidelines" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .guide-lang-btn {
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .guide-lang-btn.active {
+    background-color: var(--primary-900);
+    color: #ffffff;
+    border-color: var(--primary-900);
+  }
+  .guide-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  /* Dual mode styling */
+  .guide-dual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  @media (max-width: 768px) {
+    .guide-dual-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function switchGuideLang(mode) {
+    var amBlocks = document.querySelectorAll('.guide-block.lang-am');
+    var enBlocks = document.querySelectorAll('.guide-block.lang-en');
+    var cards = document.querySelectorAll('.guide-card');
+
+    var btnAm = document.getElementById('btn-lang-am');
+    var btnEn = document.getElementById('btn-lang-en');
+    var btnBoth = document.getElementById('btn-lang-both');
+
+    if (btnAm) btnAm.classList.remove('active');
+    if (btnEn) btnEn.classList.remove('active');
+    if (btnBoth) btnBoth.classList.remove('active');
+
+    if (mode === 'am') {
+      if (btnAm) btnAm.classList.add('active');
+      amBlocks.forEach(function(el) { el.style.display = 'block'; });
+      enBlocks.forEach(function(el) { el.style.display = 'none'; });
+      cards.forEach(function(c) { c.classList.remove('guide-dual-grid'); });
+    } else if (mode === 'en') {
+      if (btnEn) btnEn.classList.add('active');
+      amBlocks.forEach(function(el) { el.style.display = 'none'; });
+      enBlocks.forEach(function(el) { el.style.display = 'block'; });
+      cards.forEach(function(c) { c.classList.remove('guide-dual-grid'); });
+    } else {
+      // Both / Dual
+      if (btnBoth) btnBoth.classList.add('active');
+      amBlocks.forEach(function(el) { el.style.display = 'block'; });
+      enBlocks.forEach(function(el) { el.style.display = 'block'; });
+      cards.forEach(function(c) { c.classList.add('guide-dual-grid'); });
+    }
+  }
+
+  // Initialize guide based on active site language
+  document.addEventListener('DOMContentLoaded', function() {
+    var currentSiteLang = "{{ LANGUAGE_CODE|default:'en' }}";
+    if (currentSiteLang === 'am') {
+      switchGuideLang('am');
+    } else {
+      switchGuideLang('en');
+    }
+  });
+</script>
+{% endblock %}

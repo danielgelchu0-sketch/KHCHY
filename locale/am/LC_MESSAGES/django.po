@@ -768,3 +768,43 @@ msgstr "ያልተጠበቀ የአገልጋይ ስህተት"
 
 msgid "We encountered an unexpected issue while processing your request. Our technical team has been alerted. Please try again shortly."
 msgstr "ጥያቄዎን ስናስተናግድ ያልተጠበቀ ችግር አጋጥሞናል። ለቴክኒክ ክፍላችን መልእክት ደርሷል። እባክዎ ከጥቂት ቆይታ በኋላ እንደገና ይሞክሩ።"
+
+# User Guide & Reply Reactions
+msgid "How to Use"
+msgstr "የአጠቃቀም መመሪያ"
+
+msgid "User Guide"
+msgstr "የተጠቃሚ መመሪያ"
+
+msgid "How to Use Guide"
+msgstr "የአጠቃቀም መመሪያ"
+
+msgid "New to the HKHC platform?"
+msgstr "አዲስ ነዎት?"
+
+msgid "Learn how to ask questions, post anonymously, reply, and react with Likes/Dislikes in our simple bilingual guide."
+msgstr "ጥያቄዎችን እንዴት እንደሚጠይቁ፣ በሚስጥር እንደሚጽፉ፣ መልስ እንደሚሰጡና Like/Dislike እንደሚጫኑ በቀላል ባለሁለት ቋንቋ መመሪያችን ይመልከቱ።"
+
+msgid "Read User Guide"
+msgstr "መመሪያውን ያንብቡ"
+
+msgid "Like this reply"
+msgstr "ይህን መልስ ውደዱት"
+
+msgid "Dislike this reply"
+msgstr "ይህን መልስ አለመውደድ"
+
+msgid "Log in to like this reply"
+msgstr "ይህን መልስ ለመውደድ ይግቡ"
+
+msgid "Log in to dislike this reply"
+msgstr "ይህን መልስ ላለመውደድ ይግቡ"
+
+msgid "Christian Community Fellowship and Dialogue"
+msgstr "የክርስቲያን ማህበረሰብ ህብረት እና ውይይት"
+
+msgid "Welcome to your church community discussion home. Choose a dedicated room below to explore questions, share encouragement, or post in safe biblical fellowship."
+msgstr "ወደ ቤተክርስቲያን ማህበረሰብ የውይይት አዳራሽ በደህና መጡ። ጥያቄዎችን ለመጠየቅ፣ ማበረታቻዎችን ለመካፈል ወይም በመንፈሳዊ ህብረት ለመሳተፍ ከታች ከተዘረዘሩት ክፍሎች ውስጥ አንዱን ይምረጡ።"
+
+
+

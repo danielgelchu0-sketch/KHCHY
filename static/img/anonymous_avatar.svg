@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none" role="img" aria-label="Anonymous Member Avatar">
+  <defs>
+    <linearGradient id="anonBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="60" cy="60" r="56" fill="url(#anonBg)" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Friendly Privacy Silhouette -->
+  <!-- Head -->
+  <circle cx="60" cy="45" r="16" fill="#94a3b8"/>
+  <!-- Body / Shoulders -->
+  <path d="M34 88 C34 72, 45 68, 60 68 C75 68, 86 72, 86 88 Z" fill="#94a3b8"/>
+
+  <!-- Gentle Privacy Shield Badge -->
+  <g transform="translate(68, 66)">
+    <!-- Small Shield -->
+    <path d="M16 2 C22 2, 28 0, 30 2 C30 14, 22 22, 16 26 C10 22, 2 14, 2 2 C4 0, 10 2, 16 2 Z" fill="url(#shieldGrad)"/>
+    <!-- Lock inside Shield -->
+    <rect x="12" y="11" width="8" height="7" rx="1.5" fill="#ffffff"/>
+    <path d="M13.5 11 V8.5 C13.5 7.1, 14.6 6, 16 6 C17.4 6, 18.5 7.1, 18.5 8.5 V11" stroke="#ffffff" stroke-width="1.5" fill="none"/>
+    <circle cx="16" cy="14" r="1" fill="#0d9488"/>
+  </g>
+</svg>

@@ -13,7 +13,8 @@ from django.views import View
 
 from apps.core.utils import sanitize_user_input
 from .forms import DiscussionCreateForm, ReplyCreateForm, TopicAdminForm
-from .models import Bookmark, Discussion, Reaction, Reply, Topic
+from .models import Bookmark, Discussion, Reaction, Reply, ReplyReaction, Topic
+
 
 logger = logging.getLogger(__name__)
 
@@ -117,21 +118,47 @@ class DiscussionDetailView(View):
         discussion.refresh_from_db(fields=["views_count"])
 
         # Fetch replies tree efficiently avoiding N+1 queries
-        replies_qs = (
+        replies_list = list(
             Reply.objects.filter(discussion=discussion)
             .exclude(status=Reply.Status.HIDDEN)
             .select_related("author", "author__profile", "parent")
+            .annotate(
+                _likes_count=Count(
+                    "reactions",
+                    filter=Q(reactions__vote_type=ReplyReaction.VoteType.LIKE),
+                    distinct=True,
+                ),
+                _dislikes_count=Count(
+                    "reactions",
+                    filter=Q(reactions__vote_type=ReplyReaction.VoteType.DISLIKE),
+                    distinct=True,
+                ),
+            )
             .order_by("created_at")
         )
+
+        # Pre-fetch user reactions on replies if authenticated
+        if request.user.is_authenticated and replies_list:
+            user_reply_reactions = dict(
+                ReplyReaction.objects.filter(
+                    user=request.user,
+                    reply_id__in=[r.id for r in replies_list],
+                ).values_list("reply_id", "vote_type")
+            )
+            for r in replies_list:
+                r._user_reaction = user_reply_reactions.get(r.id)
+        else:
+            for r in replies_list:
+                r._user_reaction = None
 
         # Build hierarchical reply structure
         replies_by_id = {}
         root_replies = []
-        for r in replies_qs:
+        for r in replies_list:
             replies_by_id[r.id] = r
             r.child_replies = []
 
-        for r in replies_qs:
+        for r in replies_list:
             if r.parent_id and r.parent_id in replies_by_id:
                 replies_by_id[r.parent_id].child_replies.append(r)
             else:
@@ -153,7 +180,7 @@ class DiscussionDetailView(View):
                 "topic": topic,
                 "discussion": discussion,
                 "root_replies": root_replies,
-                "replies_count": len(replies_qs),
+                "replies_count": len(replies_list),
                 "is_bookmarked": is_bookmarked,
                 "user_reaction": user_reaction,
                 "reply_form": reply_form,
@@ -465,6 +492,77 @@ class ReactionToggleView(View):
 
         messages.info(request, msg)
         return redirect(discussion.get_absolute_url())
+
+
+@method_decorator(login_required, name="dispatch")
+class ReplyReactionToggleView(View):
+    """
+    Handles user reactions (like or dislike) on a reply.
+    - If user clicks the same reaction they currently have, remove it (toggle off).
+    - If user clicks the opposite reaction, switch to that reaction.
+    - If user has no existing reaction, create it.
+    Supports HTMX partial rendering or standard HTTP redirects.
+    """
+
+    def post(self, request, pk, vote_type=None):
+        reply = get_object_or_404(Reply, pk=pk)
+
+        if not request.user.can_post():
+            if request.headers.get("HX-Request"):
+                return HttpResponseForbidden("Your account is not permitted to react.")
+            messages.error(request, "Your account cannot react to replies.")
+            return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
+
+        if reply.is_deleted or reply.status == Reply.Status.HIDDEN:
+            if request.headers.get("HX-Request"):
+                return HttpResponseForbidden("Cannot react to a deleted or hidden reply.")
+            messages.error(request, "Cannot react to this reply.")
+            return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
+
+        vote = vote_type or request.POST.get("vote_type")
+        if vote not in (ReplyReaction.VoteType.LIKE, ReplyReaction.VoteType.DISLIKE):
+            if request.headers.get("HX-Request"):
+                return HttpResponseBadRequest("Invalid reaction type.")
+            return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
+
+        reaction = ReplyReaction.objects.filter(user=request.user, reply=reply).first()
+
+        if reaction:
+            if reaction.vote_type == vote:
+                reaction.delete()
+                current_reaction = None
+                msg = f"Removed your {vote}."
+            else:
+                reaction.vote_type = vote
+                reaction.save(update_fields=["vote_type", "updated_at"])
+                current_reaction = vote
+                msg = f"Changed reaction to {vote}."
+        else:
+            ReplyReaction.objects.create(user=request.user, reply=reply, vote_type=vote)
+            current_reaction = vote
+            msg = f"Added {vote}."
+
+        # Clear any cached reaction properties on the reply instance
+        if hasattr(reply, "_likes_count"):
+            delattr(reply, "_likes_count")
+        if hasattr(reply, "_dislikes_count"):
+            delattr(reply, "_dislikes_count")
+        if hasattr(reply, "_user_reaction"):
+            delattr(reply, "_user_reaction")
+
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "discussions/partials/reply_reaction_buttons.html",
+                {
+                    "reply": reply,
+                    "user_reaction": current_reaction,
+                    "user": request.user,
+                },
+            )
+
+        messages.info(request, msg)
+        return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
 
 
 @method_decorator(login_required, name="dispatch")

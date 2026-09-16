@@ -29,6 +29,7 @@
       <nav aria-label="{% trans 'Main Navigation' %}">
         <ul class="nav-menu">
           <li class="nav-item"><a href="{% url 'discussions:topic_list' %}">{% trans "Topics & Rooms" %}</a></li>
+          <li class="nav-item"><a href="{% url 'core:how_to_use' %}">{% trans "How to Use" %}</a></li>
           <li class="nav-item"><a href="{% url 'core:guidelines' %}">{% trans "Guidelines" %}</a></li>
           <li class="nav-item"><a href="{% url 'core:privacy_policy' %}">{% trans "Privacy & Safety" %}</a></li>
           {% if user.is_authenticated and user.is_moderator %}
@@ -122,6 +123,7 @@
       </div>
       <ul class="footer-links">
         <li><a href="{% url 'discussions:topic_list' %}">{% trans "Topic Rooms" %}</a></li>
+        <li><a href="{% url 'core:how_to_use' %}">{% trans "User Guide" %}</a></li>
         <li><a href="{% url 'core:guidelines' %}">{% trans "Community Guidelines" %}</a></li>
         <li><a href="{% url 'core:privacy_policy' %}">{% trans "Privacy & Anonymity Policy" %}</a></li>
         {% if user.is_authenticated and user.is_moderator %}

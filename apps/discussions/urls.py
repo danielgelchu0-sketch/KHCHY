@@ -16,5 +16,8 @@ urlpatterns = [
     path("discussion/<int:pk>/bookmark/", views.BookmarkToggleView.as_view(), name="bookmark_toggle"),
     path("discussion/<int:pk>/react/", views.ReactionToggleView.as_view(), name="reaction_toggle"),
     path("discussion/<int:pk>/react/<str:vote_type>/", views.ReactionToggleView.as_view(), name="reaction_toggle_typed"),
+    path("reply/<int:pk>/react/", views.ReplyReactionToggleView.as_view(), name="reply_reaction_toggle"),
+    path("reply/<int:pk>/react/<str:vote_type>/", views.ReplyReactionToggleView.as_view(), name="reply_reaction_toggle_typed"),
 ]
+
 

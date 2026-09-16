@@ -87,6 +87,17 @@ class CommunityGuidelinesView(View):
         return render(request, "core/community_guidelines.html")
 
 
+class HowToUseView(View):
+    """
+    Step-by-step user guide explaining the entire HKHC Community platform
+    in clear, simple, and friendly language for both Amharic and English speakers of all ages.
+    """
+
+    def get(self, request):
+        return render(request, "core/how_to_use.html")
+
+
+
 # Custom HTTP error views
 def bad_request_view(request, exception=None):
     return render(request, "errors/400.html", status=400)

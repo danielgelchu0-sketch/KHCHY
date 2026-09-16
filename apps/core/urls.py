@@ -8,5 +8,7 @@ urlpatterns = [
     path("search/", views.SearchView.as_view(), name="search"),
     path("privacy-policy/", views.PrivacyPolicyView.as_view(), name="privacy_policy"),
     path("guidelines/", views.CommunityGuidelinesView.as_view(), name="guidelines"),
+    path("how-to-use/", views.HowToUseView.as_view(), name="how_to_use"),
     path("language/toggle/", views.toggle_language, name="toggle_language"),
 ]
+

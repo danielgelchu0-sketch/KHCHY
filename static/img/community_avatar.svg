@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none" role="img" aria-label="HKHC Community Emblem Avatar">
+  <defs>
+    <linearGradient id="avatarBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="goldAcc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="avatarGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0d9488" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Circle with Glow -->
+  <circle cx="60" cy="60" r="56" fill="url(#avatarBg)" filter="url(#avatarGlow)"/>
+  <circle cx="60" cy="60" r="53" stroke="url(#goldAcc)" stroke-width="2" stroke-dasharray="2 3" opacity="0.6"/>
+
+  <!-- Grace Cross -->
+  <rect x="57" y="24" width="6" height="42" rx="3" fill="url(#goldAcc)"/>
+  <rect x="46" y="34" width="28" height="6" rx="3" fill="url(#goldAcc)"/>
+
+  <!-- Open Bible Pages at Bottom of Cross -->
+  <!-- Left Page -->
+  <path d="M60 62 C48 59, 36 63, 34 71 C43 68, 54 67, 60 68 Z" fill="#ffffff"/>
+  <path d="M60 62 C48 59, 36 63, 34 71" stroke="#cbd5e1" stroke-width="1.2"/>
+  <!-- Right Page -->
+  <path d="M60 62 C72 59, 84 63, 86 71 C77 68, 66 67, 60 68 Z" fill="#f8fafc"/>
+  <path d="M60 62 C72 59, 84 63, 86 71" stroke="#cbd5e1" stroke-width="1.2"/>
+  <!-- Ribbon -->
+  <path d="M60 62 L60 74 L58 76 L62 76 Z" fill="#f43f5e"/>
+
+  <!-- Olive Leaves of Fellowship Arc -->
+  <path d="M28 72 C28 88, 42 98, 60 98 C78 98, 92 88, 92 72" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+  <circle cx="34" cy="80" r="2.5" fill="#5eead4"/>
+  <circle cx="44" cy="90" r="2.5" fill="#5eead4"/>
+  <circle cx="76" cy="90" r="2.5" fill="#5eead4"/>
+  <circle cx="86" cy="80" r="2.5" fill="#5eead4"/>
+  <circle cx="60" cy="98" r="3" fill="url(#goldAcc)"/>
+</svg>

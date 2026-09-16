@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load discussion_tags i18n %}
+{% load static discussion_tags i18n %}
 
 {% block title %}{% trans topic.name %} | {{ COMMUNITY_NAME }}{% endblock %}
 
@@ -46,7 +46,8 @@
           <div class="discussion-meta-row">
             <span class="author-chip {% if discussion.is_anonymous %}anonymous{% endif %}">
               {% if discussion.is_anonymous %}
-                &#128274; {{ discussion|display_author:user }}
+                <img src="{% static 'img/anonymous_avatar.svg' %}" alt="" width="16" height="16" style="width: 16px; height: 16px; border-radius: 50%;">
+                {{ discussion|display_author:user }}
               {% else %}
                 {{ discussion.author.display_name }}
               {% endif %}

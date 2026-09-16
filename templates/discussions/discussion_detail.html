@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load discussion_tags i18n %}
+{% load static discussion_tags i18n %}
 
 {% block title %}{{ discussion.title }} | {% trans topic.name %} | {{ COMMUNITY_NAME }}{% endblock %}
 
@@ -38,7 +38,10 @@
           <span style="font-style: italic; color: var(--text-light);">{% trans "Deleted" %}</span>
         {% elif discussion.is_anonymous %}
           <!-- STRICT PRIVACY: Anonymous Presentation -->
-          &#128274; {% trans "Anonymous Member" %}
+          <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <img src="{% static 'img/anonymous_avatar.svg' %}" alt="" width="20" height="20" style="width: 20px; height: 20px; border-radius: 50%;">
+            {% trans "Anonymous Member" %}
+          </span>
         {% else %}
           {% if discussion.author.profile.avatar %}
             <img src="{{ discussion.author.profile.avatar.url }}" alt="{{ discussion.author.display_name }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">

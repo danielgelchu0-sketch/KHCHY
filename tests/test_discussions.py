@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from apps.discussions.models import Bookmark, Discussion, Reaction, Reply, Topic
+from apps.discussions.models import Bookmark, Discussion, Reaction, Reply, ReplyReaction, Topic
+
 
 User = get_user_model()
 
@@ -305,4 +306,191 @@ class DiscussionsTests(TestCase):
         response = self.client.get(self.discussion.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "reaction-buttons-group")
+
+    def test_reply_reaction_like_and_unlike(self):
+        """User can like a reply and clicking again removes the like."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="This is an insightful answer.",
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        # Like reply
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        reply.refresh_from_db()
+        self.assertEqual(reply.likes_count, 1)
+        self.assertEqual(reply.dislikes_count, 0)
+        self.assertEqual(reply.get_user_reaction(self.user), "like")
+
+        # Like again -> removes like
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        reply.refresh_from_db()
+        self.assertEqual(reply.likes_count, 0)
+        self.assertIsNone(reply.get_user_reaction(self.user))
+
+    def test_reply_reaction_dislike_and_undislike(self):
+        """User can dislike a reply and clicking again removes the dislike."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.user,
+            content="Initial response.",
+        )
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        # Dislike reply
+        response = self.client.post(react_url, {"vote_type": "dislike"})
+        self.assertEqual(response.status_code, 302)
+        reply.refresh_from_db()
+        self.assertEqual(reply.dislikes_count, 1)
+        self.assertEqual(reply.likes_count, 0)
+        self.assertEqual(reply.get_user_reaction(self.responder), "dislike")
+
+        # Dislike again -> toggles off
+        response = self.client.post(react_url, {"vote_type": "dislike"})
+        self.assertEqual(response.status_code, 302)
+        reply.refresh_from_db()
+        self.assertEqual(reply.dislikes_count, 0)
+        self.assertIsNone(reply.get_user_reaction(self.responder))
+
+    def test_reply_reaction_switch_between_like_and_dislike(self):
+        """User can switch reaction on reply from like to dislike and vice-versa."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Let's reflect on this verse.",
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        # Like
+        self.client.post(react_url, {"vote_type": "like"})
+        reply.refresh_from_db()
+        self.assertEqual(reply.likes_count, 1)
+        self.assertEqual(reply.dislikes_count, 0)
+
+        # Switch to dislike
+        self.client.post(react_url, {"vote_type": "dislike"})
+        reply.refresh_from_db()
+        self.assertEqual(reply.likes_count, 0)
+        self.assertEqual(reply.dislikes_count, 1)
+        self.assertEqual(reply.get_user_reaction(self.user), "dislike")
+
+        # Switch back to like
+        self.client.post(react_url, {"vote_type": "like"})
+        reply.refresh_from_db()
+        self.assertEqual(reply.likes_count, 1)
+        self.assertEqual(reply.dislikes_count, 0)
+        self.assertEqual(reply.get_user_reaction(self.user), "like")
+
+    def test_reply_reaction_htmx_partial_response(self):
+        """HTMX POST request to reply reaction receives updated partial buttons template."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Detailed biblical reply.",
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        response = self.client.post(react_url, {"vote_type": "like"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "discussions/partials/reply_reaction_buttons.html")
+        content = response.content.decode()
+        self.assertIn("like-btn", content)
+        self.assertIn("active", content)
+        self.assertIn(f"reply-reactions-{reply.id}", content)
+
+    def test_reply_reaction_unauthenticated_user_redirected(self):
+        """Unauthenticated user POST to reply reaction endpoint is redirected to login."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Unauthenticated test reply.",
+        )
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("accounts:login"), response.url)
+
+    def test_reply_reaction_deleted_reply_forbidden(self):
+        """Cannot react to a deleted reply."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="To be deleted.",
+            is_deleted=True,
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        response = self.client.post(react_url, {"vote_type": "like"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(ReplyReaction.objects.count(), 0)
+
+    def test_reply_reaction_invalid_vote_type(self):
+        """Invalid vote type on reply returns 400 Bad Request on HTMX."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Sample reply.",
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle", kwargs={"pk": reply.id})
+
+        response = self.client.post(react_url, {"vote_type": "super_vote"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 400)
+
+    def test_reply_reaction_typed_url_pattern(self):
+        """User can react to reply using typed URL pattern."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Testing typed url.",
+        )
+        self.client.force_login(self.user)
+        react_url = reverse("discussions:reply_reaction_toggle_typed", kwargs={"pk": reply.id, "vote_type": "like"})
+
+        response = self.client.post(react_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(reply.likes_count, 1)
+
+    def test_discussion_detail_renders_reply_reaction_buttons(self):
+        """Discussion detail template renders reaction buttons on replies."""
+        reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="A visible reply with reaction controls.",
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(self.discussion.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f"reply-reactions-{reply.id}")
+        self.assertContains(response, "reply-reaction-group")
+
+    def test_anonymous_avatar_rendered_on_discussions_and_replies(self):
+        """Discussions and replies posted anonymously render the privacy avatar SVG."""
+        anon_disc = Discussion.objects.create(
+            topic=self.topic,
+            author=self.user,
+            title="A sensitive anonymous question",
+            content="Private content...",
+            is_anonymous=True,
+        )
+        anon_reply = Reply.objects.create(
+            discussion=anon_disc,
+            author=self.responder,
+            content="Anonymous reply advice.",
+            is_anonymous=True,
+        )
+        response = self.client.get(anon_disc.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "anonymous_avatar.svg")
+        self.assertContains(response, f"reply-{anon_reply.id}")
+
+
 
