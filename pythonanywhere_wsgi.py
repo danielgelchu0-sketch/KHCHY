@@ -9,11 +9,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Path configuration
-# Replace 'yourusername' and ensure path points to project root
-PROJECT_DIR = Path("/home/yourusername/HKHC-Chat-SYSTEM")
-if not PROJECT_DIR.exists():
-    # Fallback to relative path if running in a different location
-    PROJECT_DIR = Path(__file__).resolve().parent
+import getpass
+current_user = getpass.getuser()
+potential_dirs = [
+    Path(f"/home/{current_user}/HKHC-Chat-SYSTEM"),
+    Path(__file__).resolve().parent,
+    Path.cwd(),
+]
+PROJECT_DIR = next((p for p in potential_dirs if (p / "manage.py").exists()), Path(__file__).resolve().parent)
 
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))

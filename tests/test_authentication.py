@@ -125,3 +125,80 @@ class AuthenticationTests(TestCase):
         self.assertEqual(response.status_code, 429)
         self.assertContains(response, "Too many failed login attempts", status_code=429)
         cache.clear()
+
+    def test_login_with_display_name(self):
+        """Members can log in using their display name instead of email address."""
+        user = User.objects.create_user(
+            email="member1@example.com",
+            password="MemberPassword123!",
+            display_name="ChurchLeader",
+        )
+        response = self.client.post(self.login_url, {
+            "email": "ChurchLeader",
+            "password": "MemberPassword123!",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+
+    def test_login_with_case_insensitive_email(self):
+        """Members can log in regardless of email casing."""
+        user = User.objects.create_user(
+            email="member_case@example.com",
+            password="CasePassword123!",
+            display_name="CaseMember",
+        )
+        response = self.client.post(self.login_url, {
+            "email": "MEMBER_CASE@EXAMPLE.COM",
+            "password": "CasePassword123!",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+
+    def test_login_with_typo_tolerance(self):
+        """Account created with typo daneildg62 can be logged in with danieldg62 and vice versa."""
+        user = User.objects.create_user(
+            email="daneildg62@gmail.com",
+            password="DanielPassword123!",
+            display_name="Daniel",
+        )
+        response = self.client.post(self.login_url, {
+            "email": "danieldg62@gmail.com",
+            "password": "DanielPassword123!",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+
+    def test_profile_edit_can_update_email(self):
+        """Members can update their private email address in profile settings."""
+        user = User.objects.create_user(
+            email="initial_email@example.com",
+            password="SecurePass123!",
+            display_name="OldName",
+        )
+        self.client.force_login(user)
+        profile_url = reverse("accounts:profile_edit")
+
+        response = self.client.post(profile_url, {
+            "display_name": "NewName",
+            "email": "updated_email@example.com",
+            "bio": "Updated bio text.",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        user.refresh_from_db()
+        self.assertEqual(user.email, "updated_email@example.com")
+        self.assertEqual(user.display_name, "NewName")
+
+    def test_profile_edit_rejects_duplicate_email(self):
+        """Members cannot update email to one already registered by another user."""
+        User.objects.create_user(email="other_user@example.com", password="Password123!", display_name="Other")
+        user = User.objects.create_user(email="my_user@example.com", password="Password123!", display_name="Mine")
+        self.client.force_login(user)
+        profile_url = reverse("accounts:profile_edit")
+
+        response = self.client.post(profile_url, {
+            "display_name": "Mine",
+            "email": "other_user@example.com",
+        })
+        self.assertFormError(response.context["form"], "email", "An account with this email address already exists.")
+        user.refresh_from_db()
+        self.assertEqual(user.email, "my_user@example.com")

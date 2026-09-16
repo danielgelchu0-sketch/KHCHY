@@ -84,13 +84,17 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    """Authentication form for logging in members."""
+    """Authentication form for logging in members via email or display name."""
 
-    email = forms.EmailField(
-        widget=forms.EmailInput(
-            attrs={"class": "form-input", "placeholder": "you@example.com", "autocomplete": "email"}
+    email = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-input",
+                "placeholder": "you@example.com or Display Name",
+                "autocomplete": "username",
+            }
         ),
-        label="Email Address",
+        label="Email Address or Display Name",
     )
     password = forms.CharField(
         widget=forms.PasswordInput(
@@ -101,11 +105,11 @@ class UserLoginForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        email = cleaned_data.get("email", "").strip().lower()
+        identifier = cleaned_data.get("email", "").strip()
         password = cleaned_data.get("password")
 
-        if email and password:
-            self.user_cache = authenticate(username=email, password=password)
+        if identifier and password:
+            self.user_cache = authenticate(username=identifier, password=password)
             if self.user_cache is None:
                 raise ValidationError("Invalid email address or password.")
             elif not self.user_cache.is_active or self.user_cache.status == User.AccountStatus.BANNED:
@@ -121,12 +125,18 @@ class UserLoginForm(forms.Form):
 
 
 class UserProfileForm(forms.ModelForm):
-    """Form to edit user's display name, bio, and avatar."""
+    """Form to edit user's display name, email, bio, and avatar."""
 
     display_name = forms.CharField(
         max_length=50,
-        widget=forms.TextInput(attrs={"class": "form-input"}),
+        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "name"}),
         label="Display Name",
+        help_text="Public community name shown when posting with your identity.",
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={"class": "form-input", "autocomplete": "email"}),
+        label="Email Address",
+        help_text="Your private account login email address.",
     )
     bio = forms.CharField(
         max_length=500,
@@ -149,6 +159,7 @@ class UserProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.user:
             self.fields["display_name"].initial = self.user.display_name
+            self.fields["email"].initial = self.user.email
 
     def clean_display_name(self):
         name = self.cleaned_data.get("display_name", "").strip()
@@ -157,6 +168,17 @@ class UserProfileForm(forms.ModelForm):
         if "admin" in name.lower() or "moderator" in name.lower() or "anonymous" in name.lower():
             raise ValidationError("Display name cannot contain reserved words.")
         return name
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email", "").strip().lower()
+        if not email:
+            raise ValidationError("Email address cannot be empty.")
+        existing = User.objects.filter(email__iexact=email)
+        if self.user:
+            existing = existing.exclude(id=self.user.id)
+        if existing.exists():
+            raise ValidationError("An account with this email address already exists.")
+        return email
 
     def clean_avatar(self):
         avatar = self.cleaned_data.get("avatar")
@@ -183,8 +205,10 @@ class UserProfileForm(forms.ModelForm):
         profile = super().save(commit=False)
         if self.user:
             self.user.display_name = self.cleaned_data["display_name"]
+            if "email" in self.cleaned_data:
+                self.user.email = self.cleaned_data["email"]
             if commit:
-                self.user.save(update_fields=["display_name"])
+                self.user.save(update_fields=["display_name", "email"])
         if commit:
             profile.save()
         return profile

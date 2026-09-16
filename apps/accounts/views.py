@@ -34,7 +34,7 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         user = form.save()
-        login(self.request, user)
+        login(self.request, user, backend="apps.accounts.backends.EmailOrDisplayNameBackend")
         logger.info(f"New user registered successfully: {user.email} (ID: {user.id})")
         messages.success(
             self.request,

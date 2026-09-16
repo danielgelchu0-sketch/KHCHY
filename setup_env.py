@@ -13,8 +13,8 @@ secret_key = secrets.token_urlsafe(50)
 env_content = f"""# Production environment configuration for HKHC Community
 SECRET_KEY={secret_key}
 DEBUG=False
-ALLOWED_HOSTS=hkhc.pythonanywhere.com,HKHC.pythonanywhere.com,localhost,127.0.0.1
-CSRF_TRUSTED_ORIGINS=https://hkhc.pythonanywhere.com,https://HKHC.pythonanywhere.com
+ALLOWED_HOSTS=.pythonanywhere.com,hkhc.pythonanywhere.com,HKHC.pythonanywhere.com,localhost,127.0.0.1
+CSRF_TRUSTED_ORIGINS=https://*.pythonanywhere.com,http://*.pythonanywhere.com,https://hkhc.pythonanywhere.com
 
 # Database: default SQLite for PythonAnywhere free tier
 DB_ENGINE=

@@ -18,12 +18,13 @@ def community_context(request):
         "pending_reports_count": 0,
     }
 
-    if request.user.is_authenticated:
+    user = getattr(request, "user", None)
+    if user and user.is_authenticated:
         context["unread_notifications_count"] = Notification.objects.filter(
-            recipient=request.user, is_read=False
+            recipient=user, is_read=False
         ).count()
 
-        if request.user.is_moderator:
+        if getattr(user, "is_moderator", False):
             context["pending_reports_count"] = Report.objects.filter(
                 status__in=[Report.Status.PENDING, Report.Status.UNDER_REVIEW]
             ).count()

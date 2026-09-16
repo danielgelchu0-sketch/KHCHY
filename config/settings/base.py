@@ -25,14 +25,19 @@ SECRET_KEY = os.getenv("SECRET_KEY", "insecure-default-development-key-change-in
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "t", "yes")
 
 # Allowed Hosts & CSRF
-raw_allowed_hosts = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1")
+raw_allowed_hosts = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,.pythonanywhere.com")
 ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(",") if host.strip()]
+if ".pythonanywhere.com" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(".pythonanywhere.com")
 
 raw_csrf_trusted = os.getenv("CSRF_TRUSTED_ORIGINS", "")
 if raw_csrf_trusted:
     CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in raw_csrf_trusted.split(",") if origin.strip()]
 else:
     CSRF_TRUSTED_ORIGINS = []
+for origin in ["https://*.pythonanywhere.com", "http://*.pythonanywhere.com"]:
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 
 # Application definition
 INSTALLED_APPS = [
@@ -53,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -86,8 +92,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Custom User Model
+# Custom User Model & Backends
 AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = [
+    "apps.accounts.backends.EmailOrDisplayNameBackend",
+]
 
 # Database Configuration
 # Default to SQLite for local development; switches to PostgreSQL when configured
@@ -177,6 +186,15 @@ LANGUAGE_COOKIE_SAMESITE = "Lax"
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # Media files (User uploads such as profile photos)
 MEDIA_URL = "/media/"
