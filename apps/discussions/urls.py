@@ -14,4 +14,7 @@ urlpatterns = [
     path("reply/<int:pk>/edit/", views.ReplyEditView.as_view(), name="reply_edit"),
     path("reply/<int:pk>/delete/", views.ReplyDeleteView.as_view(), name="reply_delete"),
     path("discussion/<int:pk>/bookmark/", views.BookmarkToggleView.as_view(), name="bookmark_toggle"),
+    path("discussion/<int:pk>/react/", views.ReactionToggleView.as_view(), name="reaction_toggle"),
+    path("discussion/<int:pk>/react/<str:vote_type>/", views.ReactionToggleView.as_view(), name="reaction_toggle_typed"),
 ]
+

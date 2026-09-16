@@ -74,7 +74,8 @@
 
     <!-- Discussion Actions Toolbar -->
     <div class="discussion-actions-bar">
-      <div>
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        {% include "discussions/partials/reaction_buttons.html" with discussion=discussion user_reaction=user_reaction %}
         {% if user.is_authenticated and not discussion.is_deleted %}
           {% include "discussions/partials/bookmark_button.html" with discussion=discussion is_bookmarked=is_bookmarked %}
         {% endif %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bookmark, Discussion, Reply, Topic
+from .models import Bookmark, Discussion, Reaction, Reply, Topic
 
 
 @admin.register(Topic)
@@ -30,3 +30,12 @@ class ReplyAdmin(admin.ModelAdmin):
 class BookmarkAdmin(admin.ModelAdmin):
     list_display = ("user", "discussion", "created_at")
     raw_id_fields = ("user", "discussion")
+
+
+@admin.register(Reaction)
+class ReactionAdmin(admin.ModelAdmin):
+    list_display = ("user", "discussion", "vote_type", "created_at", "updated_at")
+    list_filter = ("vote_type", "created_at")
+    search_fields = ("user__email", "user__display_name", "discussion__title")
+    raw_id_fields = ("user", "discussion")
+

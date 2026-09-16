@@ -41,3 +41,12 @@ def can_delete(obj, user):
     if hasattr(obj, "can_user_delete"):
         return obj.can_user_delete(user)
     return False
+
+
+@register.filter(name="user_reaction")
+def user_reaction(discussion, user):
+    """Safely return user's reaction ('like', 'dislike', or None)."""
+    if hasattr(discussion, "get_user_reaction"):
+        return discussion.get_user_reaction(user)
+    return None
+

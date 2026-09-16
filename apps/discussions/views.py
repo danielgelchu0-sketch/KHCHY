@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, F, Q
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -13,7 +13,7 @@ from django.views import View
 
 from apps.core.utils import sanitize_user_input
 from .forms import DiscussionCreateForm, ReplyCreateForm, TopicAdminForm
-from .models import Bookmark, Discussion, Reply, Topic
+from .models import Bookmark, Discussion, Reaction, Reply, Topic
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,18 @@ class DiscussionDetailView(View):
     def get(self, request, topic_slug, pk):
         topic = get_object_or_404(Topic, slug=topic_slug)
         discussion = get_object_or_404(
-            Discussion.objects.select_related("author", "author__profile", "topic"),
+            Discussion.objects.select_related("author", "author__profile", "topic").annotate(
+                _likes_count=Count(
+                    "reactions",
+                    filter=Q(reactions__vote_type=Reaction.VoteType.LIKE),
+                    distinct=True,
+                ),
+                _dislikes_count=Count(
+                    "reactions",
+                    filter=Q(reactions__vote_type=Reaction.VoteType.DISLIKE),
+                    distinct=True,
+                ),
+            ),
             pk=pk,
             topic=topic,
         )
@@ -126,10 +137,12 @@ class DiscussionDetailView(View):
             else:
                 root_replies.append(r)
 
-        # Check bookmark status if authenticated
+        # Check bookmark and reaction status if authenticated
         is_bookmarked = False
+        user_reaction = None
         if request.user.is_authenticated:
             is_bookmarked = Bookmark.objects.filter(user=request.user, discussion=discussion).exists()
+            user_reaction = discussion.get_user_reaction(request.user)
 
         reply_form = ReplyCreateForm()
 
@@ -142,6 +155,7 @@ class DiscussionDetailView(View):
                 "root_replies": root_replies,
                 "replies_count": len(replies_qs),
                 "is_bookmarked": is_bookmarked,
+                "user_reaction": user_reaction,
                 "reply_form": reply_form,
             },
         )
@@ -376,6 +390,77 @@ class BookmarkToggleView(View):
                 request,
                 "discussions/partials/bookmark_button.html",
                 {"discussion": discussion, "is_bookmarked": is_bookmarked},
+            )
+
+        messages.info(request, msg)
+        return redirect(discussion.get_absolute_url())
+
+
+@method_decorator(login_required, name="dispatch")
+class ReactionToggleView(View):
+    """
+    Handles user reactions (like or dislike) on a discussion.
+    - If user clicks the same reaction they currently have, remove it (toggle off).
+    - If user clicks the opposite reaction, switch to that reaction.
+    - If user has no existing reaction, create it.
+    Supports HTMX partial rendering or standard HTTP redirects.
+    """
+
+    def post(self, request, pk, vote_type=None):
+        discussion = get_object_or_404(Discussion, pk=pk)
+
+        if not request.user.can_post():
+            if request.headers.get("HX-Request"):
+                return HttpResponseForbidden("Your account is not permitted to react.")
+            messages.error(request, "Your account cannot react to discussions.")
+            return redirect(discussion.get_absolute_url())
+
+        if discussion.is_deleted:
+            if request.headers.get("HX-Request"):
+                return HttpResponseForbidden("Cannot react to a deleted discussion.")
+            messages.error(request, "Cannot react to a deleted discussion.")
+            return redirect(discussion.get_absolute_url())
+
+        vote = vote_type or request.POST.get("vote_type")
+        if vote not in (Reaction.VoteType.LIKE, Reaction.VoteType.DISLIKE):
+            if request.headers.get("HX-Request"):
+                return HttpResponseBadRequest("Invalid reaction type.")
+            return redirect(discussion.get_absolute_url())
+
+        reaction = Reaction.objects.filter(user=request.user, discussion=discussion).first()
+
+        if reaction:
+            if reaction.vote_type == vote:
+                reaction.delete()
+                current_reaction = None
+                msg = f"Removed your {vote}."
+            else:
+                reaction.vote_type = vote
+                reaction.save(update_fields=["vote_type", "updated_at"])
+                current_reaction = vote
+                msg = f"Changed reaction to {vote}."
+        else:
+            Reaction.objects.create(user=request.user, discussion=discussion, vote_type=vote)
+            current_reaction = vote
+            msg = f"Added {vote}."
+
+        # Clear any cached reaction properties on the discussion instance
+        if hasattr(discussion, "_likes_count"):
+            delattr(discussion, "_likes_count")
+        if hasattr(discussion, "_dislikes_count"):
+            delattr(discussion, "_dislikes_count")
+        if hasattr(discussion, "_user_reaction"):
+            delattr(discussion, "_user_reaction")
+
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "discussions/partials/reaction_buttons.html",
+                {
+                    "discussion": discussion,
+                    "user_reaction": current_reaction,
+                    "user": request.user,
+                },
             )
 
         messages.info(request, msg)

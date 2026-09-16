@@ -1,0 +1,68 @@
+{% load i18n %}
+<div id="discussion-reactions-{{ discussion.id }}" class="reaction-buttons-group">
+  <!-- Like Button -->
+  {% if user.is_authenticated and not discussion.is_deleted %}
+    <form action="{% url 'discussions:reaction_toggle' pk=discussion.id %}" method="post"
+          hx-post="{% url 'discussions:reaction_toggle' pk=discussion.id %}"
+          hx-target="#discussion-reactions-{{ discussion.id }}"
+          hx-swap="outerHTML" style="display: inline-flex; margin: 0;">
+      {% csrf_token %}
+      <input type="hidden" name="vote_type" value="like">
+      <button type="submit"
+              class="reaction-btn like-btn {% if user_reaction == 'like' %}active{% endif %}"
+              title="{% if user_reaction == 'like' %}{% trans "Remove Like" %}{% else %}{% trans "Like this post" %}{% endif %}"
+              aria-label="{% trans "Like" %}">
+        <svg class="reaction-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+        </svg>
+        <span class="reaction-label">{% trans "Like" %}</span>
+        <span class="reaction-count">{{ discussion.likes_count }}</span>
+      </button>
+    </form>
+  {% else %}
+    <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}?next={{ discussion.get_absolute_url }}{% else %}#{% endif %}"
+       class="reaction-btn like-btn {% if user.is_authenticated %}disabled{% endif %}"
+       title="{% if not user.is_authenticated %}{% trans "Log in to like this post" %}{% else %}{% trans "Reactions disabled" %}{% endif %}"
+       aria-label="{% trans "Like" %}">
+      <svg class="reaction-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+      </svg>
+      <span class="reaction-label">{% trans "Like" %}</span>
+      <span class="reaction-count">{{ discussion.likes_count }}</span>
+    </a>
+  {% endif %}
+
+  <span class="reaction-divider" aria-hidden="true"></span>
+
+  <!-- Dislike Button -->
+  {% if user.is_authenticated and not discussion.is_deleted %}
+    <form action="{% url 'discussions:reaction_toggle' pk=discussion.id %}" method="post"
+          hx-post="{% url 'discussions:reaction_toggle' pk=discussion.id %}"
+          hx-target="#discussion-reactions-{{ discussion.id }}"
+          hx-swap="outerHTML" style="display: inline-flex; margin: 0;">
+      {% csrf_token %}
+      <input type="hidden" name="vote_type" value="dislike">
+      <button type="submit"
+              class="reaction-btn dislike-btn {% if user_reaction == 'dislike' %}active{% endif %}"
+              title="{% if user_reaction == 'dislike' %}{% trans "Remove Dislike" %}{% else %}{% trans "Dislike this post" %}{% endif %}"
+              aria-label="{% trans "Dislike" %}">
+        <svg class="reaction-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
+        </svg>
+        <span class="reaction-label">{% trans "Dislike" %}</span>
+        <span class="reaction-count">{{ discussion.dislikes_count }}</span>
+      </button>
+    </form>
+  {% else %}
+    <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}?next={{ discussion.get_absolute_url }}{% else %}#{% endif %}"
+       class="reaction-btn dislike-btn {% if user.is_authenticated %}disabled{% endif %}"
+       title="{% if not user.is_authenticated %}{% trans "Log in to dislike this post" %}{% else %}{% trans "Reactions disabled" %}{% endif %}"
+       aria-label="{% trans "Dislike" %}">
+      <svg class="reaction-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
+      </svg>
+      <span class="reaction-label">{% trans "Dislike" %}</span>
+      <span class="reaction-count">{{ discussion.dislikes_count }}</span>
+    </a>
+  {% endif %}
+</div>

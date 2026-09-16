@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from apps.discussions.models import Bookmark, Discussion, Reply, Topic
+from apps.discussions.models import Bookmark, Discussion, Reaction, Reply, Topic
 
 User = get_user_model()
 
@@ -165,3 +165,144 @@ class DiscussionsTests(TestCase):
         self.assertEqual(response.status_code, 403)
         reply.refresh_from_db()
         self.assertEqual(reply.content, "Original reply text.")
+
+    def test_reaction_like_and_toggle_off(self):
+        """User can like a discussion and toggle it off by liking again."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        # Like the post
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.discussion.likes_count, 1)
+        self.assertEqual(self.discussion.dislikes_count, 0)
+        self.assertEqual(self.discussion.get_user_reaction(self.responder), "like")
+
+        # Like again -> toggles off
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        # Refresh discussion
+        self.discussion.refresh_from_db()
+        self.assertEqual(self.discussion.likes_count, 0)
+        self.assertEqual(self.discussion.dislikes_count, 0)
+        self.assertIsNone(self.discussion.get_user_reaction(self.responder))
+
+    def test_reaction_dislike_and_toggle_off(self):
+        """User can dislike a discussion and toggle it off by disliking again."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        # Dislike the post
+        response = self.client.post(react_url, {"vote_type": "dislike"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.discussion.dislikes_count, 1)
+        self.assertEqual(self.discussion.likes_count, 0)
+        self.assertEqual(self.discussion.get_user_reaction(self.responder), "dislike")
+
+        # Dislike again -> toggles off
+        response = self.client.post(react_url, {"vote_type": "dislike"})
+        self.assertEqual(response.status_code, 302)
+        self.discussion.refresh_from_db()
+        self.assertEqual(self.discussion.dislikes_count, 0)
+        self.assertIsNone(self.discussion.get_user_reaction(self.responder))
+
+    def test_reaction_switch_between_like_and_dislike(self):
+        """User can switch reaction from like to dislike and vice-versa."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        # First like
+        self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(self.discussion.likes_count, 1)
+        self.assertEqual(self.discussion.dislikes_count, 0)
+
+        # Switch to dislike
+        self.client.post(react_url, {"vote_type": "dislike"})
+        self.discussion.refresh_from_db()
+        self.assertEqual(self.discussion.likes_count, 0)
+        self.assertEqual(self.discussion.dislikes_count, 1)
+        self.assertEqual(self.discussion.get_user_reaction(self.responder), "dislike")
+
+        # Switch back to like
+        self.client.post(react_url, {"vote_type": "like"})
+        self.discussion.refresh_from_db()
+        self.assertEqual(self.discussion.likes_count, 1)
+        self.assertEqual(self.discussion.dislikes_count, 0)
+        self.assertEqual(self.discussion.get_user_reaction(self.responder), "like")
+
+    def test_reaction_htmx_partial_response(self):
+        """HTMX POST request receives the updated partial reaction buttons template."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        response = self.client.post(react_url, {"vote_type": "like"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "discussions/partials/reaction_buttons.html")
+        content = response.content.decode()
+        self.assertIn("like-btn", content)
+        self.assertIn("active", content)
+        self.assertIn(react_url, content)
+
+    def test_reaction_unauthenticated_user_redirected(self):
+        """Unauthenticated user POST to reaction endpoint is redirected to login."""
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("accounts:login"), response.url)
+
+    def test_reaction_suspended_user_forbidden(self):
+        """Suspended user cannot react to discussions and is intercepted by middleware."""
+        self.responder.status = User.AccountStatus.SUSPENDED
+        self.responder.save()
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        response = self.client.post(react_url, {"vote_type": "like"})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("accounts:login"), response.url)
+        self.assertEqual(Reaction.objects.count(), 0)
+
+    def test_reaction_deleted_discussion_forbidden(self):
+        """Cannot react to a deleted discussion."""
+        self.discussion.is_deleted = True
+        self.discussion.save()
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        response = self.client.post(react_url, {"vote_type": "like"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Reaction.objects.count(), 0)
+
+    def test_reaction_invalid_vote_type(self):
+        """Invalid vote type returns 400 Bad Request on HTMX or redirect on standard POST."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle", kwargs={"pk": self.discussion.id})
+
+        response = self.client.post(react_url, {"vote_type": "invalid_vote"}, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 400)
+
+    def test_reaction_typed_url_pattern(self):
+        """User can react using typed URL path pattern."""
+        self.client.force_login(self.responder)
+        react_url = reverse("discussions:reaction_toggle_typed", kwargs={"pk": self.discussion.id, "vote_type": "like"})
+
+        response = self.client.post(react_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.discussion.likes_count, 1)
+
+    def test_discussion_detail_renders_reaction_buttons(self):
+        """Discussion detail template renders reaction buttons and counts."""
+        # Authenticated view
+        self.client.force_login(self.user)
+        response = self.client.get(self.discussion.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "reaction-buttons-group")
+        self.assertContains(response, "like-btn")
+        self.assertContains(response, "dislike-btn")
+
+        # Anonymous view
+        self.client.logout()
+        response = self.client.get(self.discussion.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "reaction-buttons-group")
+

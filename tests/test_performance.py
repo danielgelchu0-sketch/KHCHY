@@ -38,7 +38,7 @@ class PerformanceAndQueryCountTests(TestCase):
         """
         self.client.force_login(self.user)
         # Bounded query test: Should execute <= 12 queries total for user, session, topic, discussion, view update, replies tree
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(self.discussion.get_absolute_url())
             self.assertEqual(response.status_code, 200)
 

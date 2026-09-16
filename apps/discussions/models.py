@@ -154,6 +154,28 @@ class Discussion(models.Model):
             return False
         return True
 
+    @property
+    def likes_count(self):
+        if hasattr(self, "_likes_count"):
+            return self._likes_count
+        return self.reactions.filter(vote_type="like").count()
+
+    @property
+    def dislikes_count(self):
+        if hasattr(self, "_dislikes_count"):
+            return self._dislikes_count
+        return self.reactions.filter(vote_type="dislike").count()
+
+    def get_user_reaction(self, user):
+        if hasattr(self, "_user_reaction") and self._user_reaction is not None:
+            return self._user_reaction or None
+        if not user or not user.is_authenticated:
+            return None
+        reaction = self.reactions.filter(user=user).first()
+        return reaction.vote_type if reaction else None
+
+
+
 
 class Reply(models.Model):
     """
@@ -265,3 +287,48 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"{self.user.email} -> {self.discussion.title}"
+
+
+class Reaction(models.Model):
+    """
+    User reaction (like or dislike) on a discussion.
+    Each user can have at most one reaction per discussion (like OR dislike).
+    """
+
+    class VoteType(models.TextChoices):
+        LIKE = "like", "Like"
+        DISLIKE = "dislike", "Dislike"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="discussion_reactions",
+    )
+    discussion = models.ForeignKey(
+        Discussion,
+        on_delete=models.CASCADE,
+        related_name="reactions",
+    )
+    vote_type = models.CharField(
+        max_length=10,
+        choices=VoteType.choices,
+        db_index=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Discussion Reaction"
+        verbose_name_plural = "Discussion Reactions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "discussion"],
+                name="unique_user_discussion_reaction",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["discussion", "vote_type"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user.email} -> {self.vote_type} on '{self.discussion.title}'"
