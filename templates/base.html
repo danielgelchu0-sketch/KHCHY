@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ COMMUNITY_NAME }}{% endblock %} | {% trans "Church Community Discussion" %}</title>
   <meta name="description" content="{% trans COMMUNITY_DESCRIPTION %}">
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
   <!-- Production Styles -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <!-- Offline-safe minified HTMX -->
@@ -18,15 +23,15 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="{% url 'core:home' %}" class="brand-link" aria-label="{{ COMMUNITY_NAME }} {% trans 'Home' %}">
-        <div class="brand-logo-icon" aria-hidden="true">&#10013;</div>
-        <div>
+        <img src="{% static 'img/logo.png' %}" alt="{{ COMMUNITY_NAME }} Logo" class="brand-logo-img" width="40" height="40">
+        <div class="brand-text">
           <span class="brand-name">{% trans "HKHC Community" %}</span>
           <span class="brand-tagline">{% trans "Safe, Honest, Biblical Fellowship" %}</span>
         </div>
       </a>
 
       <!-- Desktop Navigation Menu -->
-      <nav aria-label="{% trans 'Main Navigation' %}">
+      <nav class="desktop-nav" aria-label="{% trans 'Main Navigation' %}">
         <ul class="nav-menu">
           <li class="nav-item"><a href="{% url 'discussions:topic_list' %}">{% trans "Topics & Rooms" %}</a></li>
           <li class="nav-item"><a href="{% url 'core:how_to_use' %}">{% trans "How to Use" %}</a></li>
@@ -47,12 +52,12 @@
 
       <!-- Search & Auth Actions -->
       <div class="nav-actions">
-        <!-- Quick Search -->
-        <form action="{% url 'core:search' %}" method="get" class="search-form" role="search">
+        <!-- Quick Search (Desktop) -->
+        <form action="{% url 'core:search' %}" method="get" class="search-form desktop-only" role="search">
           <input type="search" name="q" placeholder="{% trans 'Search questions...' %}" value="{{ request.GET.q|default:'' }}" class="form-input" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: 180px;" aria-label="{% trans 'Search discussions' %}">
         </form>
 
-        <!-- Bilingual Switcher: Eng / Amh -->
+        <!-- Bilingual Switcher: Eng / Amh (Visible on both Desktop and Mobile) -->
         <form action="{% url 'core:toggle_language' %}" method="post" class="lang-switch-form" aria-label="{% trans 'Language Selector' %}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -65,7 +70,7 @@
         </form>
 
         {% if user.is_authenticated %}
-          <!-- Notification Bell with HTMX polling -->
+          <!-- Notification Bell with HTMX polling (Visible on both Desktop and Mobile) -->
           <a href="{% url 'notifications:list' %}" class="notification-link" aria-label="{% trans 'Notifications' %}"
              hx-get="{% url 'notifications:badge' %}" hx-trigger="every 45s" hx-target="#nav-notification-badge" hx-swap="outerHTML">
             <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -76,25 +81,227 @@
             </span>
           </a>
 
-          <!-- User Profile & Status -->
-          <div class="user-badge">
+          <!-- User Profile & Status (Desktop) -->
+          <div class="user-badge desktop-only">
             <span>{{ user.display_name }}</span>
             {% if user.is_moderator %}
               <span class="mod-tag">{% trans "Mod" %}</span>
             {% endif %}
           </div>
-          <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary btn-sm">{% trans "Settings" %}</a>
-          <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
+          <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary btn-sm desktop-only">{% trans "Settings" %}</a>
+          <form action="{% url 'accounts:logout' %}" method="post" class="desktop-only" style="display: inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-outline btn-sm">{% trans "Log out" %}</button>
           </form>
         {% else %}
-          <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm">{% trans "Log in" %}</a>
-          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">{% trans "Join Community" %}</a>
+          <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm desktop-only">{% trans "Log in" %}</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm desktop-only">{% trans "Join Community" %}</a>
+        {% endif %}
+
+        <!-- Mobile Menu Toggle Button -->
+        <button type="button" id="mobile-menu-toggle" class="btn-mobile-menu mobile-only" aria-label="{% trans 'Toggle Menu' %}" aria-expanded="false" aria-controls="mobile-drawer">
+          <svg class="icon-hamburger" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <span class="menu-text">{% trans "Menu" %}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Member / Action Quick Sub-Bar (Visible on phone/tablet, no sliding needed) -->
+    <div class="mobile-subbar mobile-only">
+      <div class="container mobile-subbar-container">
+        {% if user.is_authenticated %}
+          <div class="mobile-user-status">
+            <span class="mobile-user-avatar" aria-hidden="true">{{ user.display_name|slice:":1"|upper }}</span>
+            <span class="mobile-user-name" title="{{ user.display_name }}">{{ user.display_name }}</span>
+            {% if user.is_moderator %}
+              <span class="mod-tag">{% trans "Mod" %}</span>
+            {% endif %}
+          </div>
+          <div class="mobile-user-actions">
+            <a href="{% url 'accounts:profile_edit' %}" class="btn-subbar" aria-label="{% trans 'Settings' %}">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3" stroke-width="2"></circle></svg>
+              <span>{% trans "Settings" %}</span>
+            </a>
+            <form action="{% url 'accounts:logout' %}" method="post" class="subbar-logout-form">
+              {% csrf_token %}
+              <button type="submit" class="btn-subbar btn-subbar-logout" aria-label="{% trans 'Log out' %}">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>{% trans "Log out" %}</span>
+              </button>
+            </form>
+          </div>
+        {% else %}
+          <div class="mobile-guest-welcome">
+            <span>{% trans "Welcome to HKHC" %}</span>
+          </div>
+          <div class="mobile-guest-actions">
+            <a href="{% url 'accounts:login' %}" class="btn-subbar btn-subbar-login">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+              <span>{% trans "Log in" %}</span>
+            </a>
+            <a href="{% url 'accounts:register' %}" class="btn-subbar btn-subbar-join">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+              <span>{% trans "Join Community" %}</span>
+            </a>
+          </div>
         {% endif %}
       </div>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer & Backdrop -->
+  <div id="mobile-drawer-backdrop" class="mobile-drawer-backdrop hidden" aria-hidden="true"></div>
+  <aside id="mobile-drawer" class="mobile-drawer hidden" aria-label="{% trans 'Mobile Navigation Drawer' %}" role="dialog" aria-modal="true">
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <img src="{% static 'img/logo.png' %}" alt="{{ COMMUNITY_NAME }} Logo" width="34" height="34" class="brand-logo-img">
+        <div>
+          <span class="drawer-brand-name">{% trans "HKHC Community" %}</span>
+          <span class="drawer-tagline">{% trans "Safe, Honest, Biblical Fellowship" %}</span>
+        </div>
+      </div>
+      <button type="button" id="mobile-drawer-close" class="btn-drawer-close" aria-label="{% trans 'Close Menu' %}">
+        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Quick Search -->
+      <div class="drawer-section drawer-search-section">
+        <form action="{% url 'core:search' %}" method="get" class="drawer-search-form" role="search">
+          <input type="search" name="q" placeholder="{% trans 'Search questions, topics...' %}" value="{{ request.GET.q|default:'' }}" class="form-input drawer-search-input" aria-label="{% trans 'Search discussions' %}">
+          <button type="submit" class="btn-drawer-search" aria-label="{% trans 'Search' %}">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">{% trans "Explore Fellowship" %}</span>
+        <ul class="drawer-nav-list">
+          <li>
+            <a href="{% url 'discussions:topic_list' %}" class="drawer-nav-item">
+              <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label">{% trans "Topics & Rooms" %}</span>
+                <span class="drawer-nav-desc">{% trans "Browse discussions by category" %}</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:how_to_use' %}" class="drawer-nav-item">
+              <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label">{% trans "How to Use" %}</span>
+                <span class="drawer-nav-desc">{% trans "User guide & features tutorial" %}</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:guidelines' %}" class="drawer-nav-item">
+              <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label">{% trans "Community Guidelines" %}</span>
+                <span class="drawer-nav-desc">{% trans "Biblical respect and decorum" %}</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:privacy_policy' %}" class="drawer-nav-item">
+              <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label">{% trans "Privacy & Safety" %}</span>
+                <span class="drawer-nav-desc">{% trans "Anonymity and psychological safety" %}</span>
+              </div>
+            </a>
+          </li>
+          {% if user.is_authenticated and user.is_moderator %}
+            <li>
+              <a href="{% url 'moderation:dashboard' %}" class="drawer-nav-item drawer-nav-mod">
+                <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <div class="drawer-nav-content">
+                  <span class="drawer-nav-label">{% trans "Moderator Hub" %}</span>
+                  <span class="drawer-nav-desc">{% trans "Review reports & flagged posts" %}</span>
+                </div>
+                {% if pending_reports_count > 0 %}
+                  <span class="notification-badge" style="position: static;">{{ pending_reports_count }}</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Account Section -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">{% trans "Account & Settings" %}</span>
+        {% if user.is_authenticated %}
+          <div class="drawer-account-box">
+            <div class="drawer-user-info">
+              <span class="drawer-user-avatar" aria-hidden="true">{{ user.display_name|slice:":1"|upper }}</span>
+              <div>
+                <div class="drawer-user-name">{{ user.display_name }}</div>
+                <div class="drawer-user-role">
+                  {% if user.is_moderator %}{% trans "Community Moderator" %}{% else %}{% trans "Community Member" %}{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="drawer-account-buttons">
+              <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary btn-sm" style="flex: 1; text-align: center; justify-content: center;">
+                ⚙️ {% trans "Settings" %}
+              </a>
+              <a href="{% url 'notifications:list' %}" class="btn btn-secondary btn-sm" style="flex: 1; text-align: center; justify-content: center;">
+                🔔 {% trans "Notifications" %}
+              </a>
+            </div>
+            <form action="{% url 'accounts:logout' %}" method="post" style="margin-top: 0.75rem; margin-bottom: 0;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline btn-sm" style="width: 100%; justify-content: center; color: var(--danger-txt); border-color: var(--danger-txt);">
+                🚪 {% trans "Log out" %}
+              </button>
+            </form>
+          </div>
+        {% else %}
+          <div class="drawer-account-box">
+            <p class="drawer-guest-intro">{% trans "Join discussions, ask faith questions, and connect with your community." %}</p>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem;">
+              <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center;">
+                {% trans "Log in" %}
+              </a>
+              <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;">
+                {% trans "Join Community" %}
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Language Selector Section -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">{% trans "Language / ቋንቋ" %}</span>
+        <form action="{% url 'core:toggle_language' %}" method="post" class="drawer-lang-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'am' %}en{% else %}am{% endif %}">
+          <button type="submit" class="btn-drawer-lang">
+            <span>{% if LANGUAGE_CODE == 'am' %}🌐 Switch to English{% else %}🌐 ወደ አማርኛ ቀይር (Amharic){% endif %}</span>
+            <span class="lang-tag active" style="margin-left: auto;">{% if LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="drawer-footer-note">
+        {% trans "Safe, Honest, Biblical Fellowship" %}
+      </div>
+    </div>
+  </aside>
 
   <!-- Flash Messages -->
   <div class="container messages-container" style="padding-top: 1rem;">
@@ -116,7 +323,10 @@
   <footer class="footer">
     <div class="container footer-content">
       <div>
-        <strong>{{ COMMUNITY_NAME }}</strong>
+        <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.4rem;">
+          <img src="{% static 'img/logo.png' %}" alt="{{ COMMUNITY_NAME }} Logo" width="30" height="30" style="border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+          <strong style="font-size: 1.05rem;">{{ COMMUNITY_NAME }}</strong>
+        </div>
         <p class="text-muted" style="margin-top: 0.25rem; font-size: 0.85rem; max-width: 480px;">
           {% trans "Providing teens, youths, and adults a psychologically safer, moderated space to explore difficult questions about faith, relationships, and struggles in biblical fellowship." %}
         </p>

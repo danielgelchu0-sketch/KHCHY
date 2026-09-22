@@ -806,5 +806,57 @@ msgstr "የክርስቲያን ማህበረሰብ ህብረት እና ውይይ�
 msgid "Welcome to your church community discussion home. Choose a dedicated room below to explore questions, share encouragement, or post in safe biblical fellowship."
 msgstr "ወደ ቤተክርስቲያን ማህበረሰብ የውይይት አዳራሽ በደህና መጡ። ጥያቄዎችን ለመጠየቅ፣ ማበረታቻዎችን ለመካፈል ወይም በመንፈሳዊ ህብረት ለመሳተፍ ከታች ከተዘረዘሩት ክፍሎች ውስጥ አንዱን ይምረጡ።"
 
+# Mobile Responsive Navigation & Drawer
+msgid "Menu"
+msgstr "ምናሌ"
+
+msgid "Toggle Menu"
+msgstr "ምናሌን ይክፈቱ/ይዝጉ"
+
+msgid "Close Menu"
+msgstr "ምናሌውን ዝጋ"
+
+msgid "Mobile Navigation Drawer"
+msgstr "የሞባይል ዳሰሳ ምናሌ"
+
+msgid "Welcome to HKHC"
+msgstr "እንኳን ወደ HKHC በደህና መጡ"
+
+msgid "Explore Fellowship"
+msgstr "ውይይቶችን ያስሱ"
+
+msgid "Browse discussions by category"
+msgstr "ውይይቶችን በምድብ ይመልከቱ"
+
+msgid "User guide & features tutorial"
+msgstr "የአጠቃቀም መመሪያ እና ማብራሪያ"
+
+msgid "Biblical respect and decorum"
+msgstr "መጽሐፍ ቅዱሳዊ አክብሮት እና ስርዓት"
+
+msgid "Anonymity and psychological safety"
+msgstr "ሚስጥራዊነት እና የአእምሮ ሰላም"
+
+msgid "Review reports & flagged posts"
+msgstr "ጥቆማዎችን እና ሪፖርቶችን ይገምግሙ"
+
+msgid "Account & Settings"
+msgstr "መለያ እና ቅንብሮች"
+
+msgid "Community Moderator"
+msgstr "የማህበረሰብ አወያይ"
+
+msgid "Community Member"
+msgstr "የማህበረሰብ አባል"
+
+msgid "Join discussions, ask faith questions, and connect with your community."
+msgstr "በውይይቶች ይሳተፉ፣ የሃይማኖት ጥያቄዎችን ይጠይቁ እና ከማህበረሰብዎ ጋር ይገናኙ።"
+
+msgid "Search questions, topics..."
+msgstr "ጥያቄዎችን፣ ርዕሶችን ይፈልጉ..."
+
+msgid "Language / ቋንቋ"
+msgstr "ቋንቋ"
+
 
 

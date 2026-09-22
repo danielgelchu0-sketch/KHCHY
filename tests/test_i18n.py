@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import translation
+
+User = get_user_model()
 
 
 class InternationalizationTests(TestCase):
@@ -143,5 +146,83 @@ class InternationalizationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "topic-welcome-banner")
         self.assertContains(response, "community_avatar.svg")
+
+    def test_logo_and_favicons_render_across_pages(self):
+        """Test that the application logo and favicons are rendered in layout and auth templates."""
+        home_res = self.client.get(reverse("core:home"))
+        self.assertEqual(home_res.status_code, 200)
+        self.assertContains(home_res, "img/logo.png")
+        self.assertContains(home_res, "img/favicon-32x32.png")
+        self.assertContains(home_res, "brand-logo-img")
+
+        login_res = self.client.get(reverse("accounts:login"))
+        self.assertEqual(login_res.status_code, 200)
+        self.assertContains(login_res, "img/logo.png")
+        self.assertContains(login_res, "brand-logo-img-lg")
+
+        register_res = self.client.get(reverse("accounts:register"))
+        self.assertEqual(register_res.status_code, 200)
+        self.assertContains(register_res, "img/logo.png")
+        self.assertContains(register_res, "brand-logo-img-lg")
+
+    def test_mobile_navigation_guest_elements_rendered(self):
+        """Guest mobile navbar renders toggle button, quick guest subbar, and drawer without side-sliding."""
+        res = self.client.get(reverse("core:home"))
+        self.assertEqual(res.status_code, 200)
+        # Mobile Menu Toggle Button
+        self.assertContains(res, "id=\"mobile-menu-toggle\"")
+        self.assertContains(res, "icon-hamburger")
+        self.assertContains(res, "Menu")
+        # Mobile Subbar for Guest
+        self.assertContains(res, "mobile-subbar")
+        self.assertContains(res, "mobile-guest-welcome")
+        self.assertContains(res, "Welcome to HKHC")
+        self.assertContains(res, "btn-subbar-login")
+        self.assertContains(res, "btn-subbar-join")
+        # Mobile Drawer & Backdrop
+        self.assertContains(res, "id=\"mobile-drawer\"")
+        self.assertContains(res, "id=\"mobile-drawer-backdrop\"")
+        self.assertContains(res, "id=\"mobile-drawer-close\"")
+        self.assertContains(res, "drawer-search-form")
+        self.assertContains(res, "Explore Fellowship")
+
+    def test_mobile_navigation_authenticated_member_elements_rendered(self):
+        """Authenticated user sees user badge, direct settings, logout in mobile subbar, and notification bell."""
+        user = User.objects.create_user(
+            email="churchmember@example.com",
+            password="StrongPassword123!",
+            display_name="Elder Thomas",
+        )
+        self.client.force_login(user)
+        res = self.client.get(reverse("discussions:topic_list"))
+        self.assertEqual(res.status_code, 200)
+        # Mobile Subbar with User Name and direct Settings & Logout
+        self.assertContains(res, "mobile-subbar")
+        self.assertContains(res, "Elder Thomas")
+        self.assertContains(res, reverse("accounts:profile_edit"))
+        self.assertContains(res, reverse("accounts:logout"))
+        # Notification link visible in top bar with HTMX polling badge
+        self.assertContains(res, "nav-notification-badge")
+        self.assertContains(res, reverse("notifications:list"))
+        # Mobile drawer contains member profile overview
+        self.assertContains(res, "drawer-user-info")
+        self.assertContains(res, "Community Member")
+
+    def test_mobile_navigation_amharic_translations(self):
+        """In Amharic mode, mobile menu, subbar, and drawer render proper translated labels."""
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "am"
+        res = self.client.get(reverse("core:home"))
+        self.assertEqual(res.status_code, 200)
+        # Menu translated to ምናሌ
+        self.assertContains(res, "ምናሌ")
+        # Guest subbar translated
+        self.assertContains(res, "እንኳን ወደ HKHC በደህና መጡ")
+        self.assertContains(res, "ይግቡ")
+        self.assertContains(res, "ማህበረሰቡን ይቀላቀሉ")
+        # Drawer sections translated
+        self.assertContains(res, "ውይይቶችን ያስሱ")
+        self.assertContains(res, "መለያ እና ቅንብሮች")
+
+
 
 
