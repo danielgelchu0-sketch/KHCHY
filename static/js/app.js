@@ -154,4 +154,37 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    // Password Visibility Toggle (Show / Hide Password)
+    const toggleButtons = document.querySelectorAll('.btn-toggle-password');
+    toggleButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const targetId = btn.getAttribute('data-target');
+            let input = null;
+            if (targetId) {
+                input = document.getElementById(targetId);
+            }
+            if (!input) {
+                input = btn.closest('.password-input-wrapper')?.querySelector('input');
+            }
+            if (!input) return;
+
+            const iconShow = btn.querySelector('.icon-eye-show');
+            const iconHide = btn.querySelector('.icon-eye-hide');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.setAttribute('title', 'Hide password');
+                btn.setAttribute('aria-label', 'Hide password');
+                if (iconShow) iconShow.classList.add('hidden');
+                if (iconHide) iconHide.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                btn.setAttribute('title', 'Show password');
+                btn.setAttribute('aria-label', 'Show password');
+                if (iconShow) iconShow.classList.remove('hidden');
+                if (iconHide) iconHide.classList.add('hidden');
+            }
+        });
+    });
 });

@@ -7,15 +7,19 @@ from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
-    """Custom user manager where email is the unique identifier for authentication."""
+    """Custom user manager where email or phone number serves as identifier for authentication."""
 
-    def create_user(self, email, password=None, display_name=None, **extra_fields):
-        if not email:
-            raise ValueError("The Email field is required.")
+    def create_user(self, email=None, password=None, display_name=None, phone_number=None, **extra_fields):
+        phone_number = (phone_number or "").strip()
+        if not email and not phone_number:
+            raise ValueError("An email address or phone number is required.")
+        if not email and phone_number:
+            clean_digits = "".join(filter(str.isdigit, phone_number))
+            email = f"phone_{clean_digits}@phone.community.hkhc.org"
         email = self.normalize_email(email).lower()
         if not display_name:
-            display_name = email.split("@")[0].capitalize()
-        user = self.model(email=email, display_name=display_name, **extra_fields)
+            display_name = phone_number if phone_number else email.split("@")[0].capitalize()
+        user = self.model(email=email, display_name=display_name, phone_number=phone_number, **extra_fields)
         if password:
             user.set_password(password)
         else:
@@ -73,6 +77,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         BANNED = "banned", "Banned"
 
     email = models.EmailField("Email Address", unique=True, db_index=True)
+    phone_number = models.CharField(
+        "Phone Number",
+        max_length=30,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="Optional mobile phone number for authentication and notifications.",
+    )
     display_name = models.CharField(
         "Display Name",
         max_length=50,

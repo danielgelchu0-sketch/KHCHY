@@ -18,7 +18,11 @@
         {% trans "Growing in Christ means wrestling with hard questions. We provide our church family—teens, youths, and adults—a psychologically safe, structured, and carefully moderated community platform where you can choose to participate under your identity or post anonymously." %}
       </p>
       <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-        <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-size: 1rem;">{% trans "Join Our Community" %}</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'discussions:topic_list' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-size: 1rem;">{% trans "Go to Discussion Rooms" %} &rarr;</a>
+        {% else %}
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-size: 1rem;">{% trans "Join Our Community" %}</a>
+        {% endif %}
         <a href="{% url 'discussions:topic_list' %}" class="btn btn-secondary" style="padding: 0.8rem 1.4rem; font-size: 1rem;">{% trans "Browse Rooms" %}</a>
         <a href="{% url 'core:how_to_use' %}" class="btn btn-outline" style="padding: 0.8rem 1.4rem; font-size: 1rem;">📖 {% trans "How to Use Guide" %}</a>
       </div>

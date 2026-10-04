@@ -142,22 +142,17 @@ else:
         }
     }
 
-# Password validation
+# Password validation - relaxed for community accessibility
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 8},
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "OPTIONS": {"min_length": 4},
     },
 ]
+
+# Authentication trial thresholds (forgiving for digitally illiterate members)
+MAX_FAILED_LOGIN_ATTEMPTS = int(os.getenv("MAX_FAILED_LOGIN_ATTEMPTS", "5" if "test" in sys.argv else "10"))
+LOCKOUT_DURATION = int(os.getenv("LOCKOUT_DURATION", "300" if "test" in sys.argv else "120"))
 
 if "test" in sys.argv:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

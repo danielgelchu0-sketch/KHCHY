@@ -7,14 +7,23 @@ from .models import User, Profile
 
 
 class UserRegistrationForm(forms.ModelForm):
-    """Registration form for new church community members."""
+    """Registration form for new church community members supporting email or phone."""
 
     email = forms.EmailField(
+        required=False,
         widget=forms.EmailInput(
-            attrs={"class": "form-input", "placeholder": "you@example.com", "autocomplete": "email"}
+            attrs={"class": "form-input", "placeholder": "you@example.com (optional if phone provided)", "autocomplete": "email"}
         ),
         label="Email Address",
-        help_text="Your email will never be displayed publicly to other members.",
+        help_text="Your email will never be displayed publicly. Optional if phone number is provided.",
+    )
+    phone_number = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-input", "placeholder": "e.g. 0911223344 or +251...", "autocomplete": "tel"}
+        ),
+        label="Phone Number",
+        help_text="Optional if email is provided. Makes signing in fast and easy.",
     )
     display_name = forms.CharField(
         max_length=50,
@@ -26,9 +35,10 @@ class UserRegistrationForm(forms.ModelForm):
     )
     password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-input", "placeholder": "Create a secure password", "autocomplete": "new-password"}
+            attrs={"class": "form-input", "placeholder": "At least 4 characters", "autocomplete": "new-password"}
         ),
         label="Password",
+        help_text="At least 4 characters.",
     )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
@@ -44,13 +54,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email", "display_name"]
-
-    def clean_email(self):
-        email = self.cleaned_data.get("email", "").strip().lower()
-        if User.objects.filter(email=email).exists():
-            raise ValidationError("An account with this email address already exists.")
-        return email
+        fields = ["email", "phone_number", "display_name"]
 
     def clean_display_name(self):
         name = self.cleaned_data.get("display_name", "").strip()
@@ -62,12 +66,41 @@ class UserRegistrationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        email = cleaned_data.get("email", "").strip().lower()
+        phone = cleaned_data.get("phone_number", "").strip()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
+
+        # Validate that at least one of email or phone is provided
+        if not email and not phone:
+            raise ValidationError("Please provide either an email address or a phone number to register.")
+
+        if email:
+            if User.objects.filter(email__iexact=email).exists():
+                self.add_error("email", "An account with this email address already exists.")
+            cleaned_data["email"] = email
+
+        if phone:
+            clean_digits = "".join(filter(str.isdigit, phone))
+            if len(clean_digits) < 7:
+                self.add_error("phone_number", "Please enter a valid phone number (at least 7 digits).")
+            else:
+                for existing in User.objects.exclude(phone_number=""):
+                    existing_digits = "".join(filter(str.isdigit, existing.phone_number))
+                    if existing_digits and (existing_digits == clean_digits or existing_digits.endswith(clean_digits[-9:]) or clean_digits.endswith(existing_digits[-9:])):
+                        self.add_error("phone_number", "An account with this phone number already exists.")
+                        break
+
+        # If user registered with phone only, generate internal email
+        if not email and phone:
+            clean_digits = "".join(filter(str.isdigit, phone))
+            cleaned_data["email"] = f"phone_{clean_digits}@phone.community.hkhc.org"
 
         if password and confirm_password:
             if password != confirm_password:
                 self.add_error("confirm_password", "Passwords do not match.")
+            elif len(password) < 4:
+                self.add_error("password", "Password must be at least 4 characters long.")
             else:
                 validate_password(password)
 
@@ -75,6 +108,8 @@ class UserRegistrationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        user.phone_number = self.cleaned_data.get("phone_number", "").strip()
         user.set_password(self.cleaned_data["password"])
         user.role = User.Role.MEMBER
         user.status = User.AccountStatus.ACTIVE
@@ -84,23 +119,28 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    """Authentication form for logging in members via email or display name."""
+    """Authentication form for logging in members via email, phone, or display name."""
 
     email = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "class": "form-input",
-                "placeholder": "you@example.com or Display Name",
+                "placeholder": "you@example.com, Phone (09...), or Display Name",
                 "autocomplete": "username",
             }
         ),
-        label="Email Address or Display Name",
+        label="Email Address, Phone Number, or Display Name",
     )
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={"class": "form-input", "placeholder": "Your password", "autocomplete": "current-password"}
         ),
         label="Password",
+    )
+    remember_me = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Keep me signed in on this device",
     )
 
     def clean(self):
@@ -111,7 +151,7 @@ class UserLoginForm(forms.Form):
         if identifier and password:
             self.user_cache = authenticate(username=identifier, password=password)
             if self.user_cache is None:
-                raise ValidationError("Invalid email address or password.")
+                raise ValidationError("Invalid email address or password. Please check your credentials or click 'Forgot password?'.")
             elif not self.user_cache.is_active or self.user_cache.status == User.AccountStatus.BANNED:
                 raise ValidationError("This account has been deactivated or banned.")
             elif self.user_cache.status == User.AccountStatus.SUSPENDED:
@@ -125,7 +165,7 @@ class UserLoginForm(forms.Form):
 
 
 class UserProfileForm(forms.ModelForm):
-    """Form to edit user's display name, email, bio, and avatar."""
+    """Form to edit user's display name, email, phone number, bio, and avatar."""
 
     display_name = forms.CharField(
         max_length=50,
@@ -137,6 +177,13 @@ class UserProfileForm(forms.ModelForm):
         widget=forms.EmailInput(attrs={"class": "form-input", "autocomplete": "email"}),
         label="Email Address",
         help_text="Your private account login email address.",
+    )
+    phone_number = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-input", "autocomplete": "tel"}),
+        label="Phone Number",
+        help_text="Optional mobile phone number for authentication.",
     )
     bio = forms.CharField(
         max_length=500,
@@ -160,6 +207,7 @@ class UserProfileForm(forms.ModelForm):
         if self.user:
             self.fields["display_name"].initial = self.user.display_name
             self.fields["email"].initial = self.user.email
+            self.fields["phone_number"].initial = self.user.phone_number
 
     def clean_display_name(self):
         name = self.cleaned_data.get("display_name", "").strip()
@@ -168,6 +216,21 @@ class UserProfileForm(forms.ModelForm):
         if "admin" in name.lower() or "moderator" in name.lower() or "anonymous" in name.lower():
             raise ValidationError("Display name cannot contain reserved words.")
         return name
+
+    def clean_phone_number(self):
+        phone = self.cleaned_data.get("phone_number", "").strip()
+        if phone:
+            clean_digits = "".join(filter(str.isdigit, phone))
+            if len(clean_digits) < 7:
+                raise ValidationError("Please enter a valid phone number (at least 7 digits).")
+            existing = User.objects.exclude(phone_number="")
+            if self.user:
+                existing = existing.exclude(id=self.user.id)
+            for cand in existing:
+                cand_digits = "".join(filter(str.isdigit, cand.phone_number))
+                if cand_digits and (cand_digits == clean_digits or cand_digits.endswith(clean_digits[-9:]) or clean_digits.endswith(cand_digits[-9:])):
+                    raise ValidationError("An account with this phone number already exists.")
+        return phone
 
     def clean_email(self):
         email = self.cleaned_data.get("email", "").strip().lower()
@@ -207,8 +270,10 @@ class UserProfileForm(forms.ModelForm):
             self.user.display_name = self.cleaned_data["display_name"]
             if "email" in self.cleaned_data:
                 self.user.email = self.cleaned_data["email"]
+            if "phone_number" in self.cleaned_data:
+                self.user.phone_number = self.cleaned_data["phone_number"]
             if commit:
-                self.user.save(update_fields=["display_name", "email"])
+                self.user.save(update_fields=["display_name", "email", "phone_number"])
         if commit:
             profile.save()
         return profile

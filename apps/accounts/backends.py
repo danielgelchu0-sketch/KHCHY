@@ -36,14 +36,32 @@ class EmailOrDisplayNameBackend(ModelBackend):
             if cand.check_password(password) and self.user_can_authenticate(cand):
                 return cand
 
-        # 3. Third priority: Email prefix / username match (e.g. 'danieldg62' for 'danieldg62@gmail.com')
+        # 3. Third priority: Phone number match (flexible formatting: with/without +251, dashes, spaces)
+        clean_digits = "".join(filter(str.isdigit, identifier))
+        if len(clean_digits) >= 7:
+            # Check exact phone match
+            phone_user = UserModel.objects.filter(phone_number__iexact=identifier).first()
+            if phone_user and phone_user.check_password(password) and self.user_can_authenticate(phone_user):
+                return phone_user
+            # Check normalized digits or suffix match (e.g. 0911223344 vs +251911223344)
+            for cand in UserModel.objects.exclude(phone_number=""):
+                cand_digits = "".join(filter(str.isdigit, cand.phone_number))
+                if cand_digits and (cand_digits == clean_digits or cand_digits.endswith(clean_digits[-9:]) or clean_digits.endswith(cand_digits[-9:])):
+                    if cand.check_password(password) and self.user_can_authenticate(cand):
+                        return cand
+            # Check phone-generated internal email
+            cand_phone_email = UserModel.objects.filter(email=f"phone_{clean_digits}@phone.community.hkhc.org").first()
+            if cand_phone_email and cand_phone_email.check_password(password) and self.user_can_authenticate(cand_phone_email):
+                return cand_phone_email
+
+        # 4. Fourth priority: Email prefix / username match (e.g. 'danieldg62' for 'danieldg62@gmail.com')
         if "@" not in identifier:
             prefix_matches = UserModel.objects.filter(email__istartswith=f"{identifier}@")
             for cand in prefix_matches:
                 if cand.check_password(password) and self.user_can_authenticate(cand):
                     return cand
 
-        # 4. Fourth priority: Common typo variations (e.g. daneil <-> daniel)
+        # 5. Fifth priority: Common typo variations (e.g. daneil <-> daniel)
         candidate_identifiers = []
         id_lower = identifier.lower()
         if "danieldg62" in id_lower:

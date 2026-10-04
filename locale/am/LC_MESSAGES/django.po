@@ -858,5 +858,61 @@ msgstr "ጥያቄዎችን፣ ርዕሶችን ይፈልጉ..."
 msgid "Language / ቋንቋ"
 msgstr "ቋንቋ"
 
+msgid "Phone Number"
+msgstr "ስልክ ቁጥር"
+
+msgid "Email Address, Phone Number, or Display Name"
+msgstr "የኢሜይል አድራሻ፣ ስልክ ቁጥር ወይም የመገለጫ ስም"
+
+msgid "Optional if email is provided. Makes signing in fast and easy."
+msgstr "ኢሜይል ካለዎት አማራጭ ነው። ለመግባት ቀላልና ፈጣን ያደርጋል።"
+
+msgid "Your email will never be displayed publicly. Optional if phone number is provided."
+msgstr "ኢሜይልዎ ለማንም አይታይም። ስልክ ቁጥር ካስገቡ አማራጭ ነው።"
+
+msgid "At least 4 characters."
+msgstr "ቢያንስ 4 ፊደላት ወይም ቁጥሮች።"
+
+msgid "At least 4 characters"
+msgstr "ቢያንስ 4 ፊደላት ወይም ቁጥሮች"
+
+msgid "Remember me on this device"
+msgstr "በዚህ መሳሪያ ላይ አስታውሰኝ"
+
+msgid "Keep me signed in on this device"
+msgstr "በዚህ መሳሪያ ላይ እንደገባሁ አቆየኝ"
+
+msgid "You can use your email address, phone number, or display name."
+msgstr "የኢሜይል አድራሻዎን፣ ስልክ ቁጥርዎን ወይም የመገለጫ ስምዎን መጠቀም ይችላሉ።"
+
+msgid "Show or hide password"
+msgstr "የይለፍ ቃል አሳይ ወይም ደብቅ"
+
+msgid "Show password"
+msgstr "የይለፍ ቃል አሳይ"
+
+msgid "Hide password"
+msgstr "የይለፍ ቃል ደብቅ"
+
+msgid "Go to Discussion Rooms"
+msgstr "ወደ ውይይት ክፍሎች ይሂዱ"
+
+msgid "Security Notice:"
+msgstr "የደህንነት ማስታወቂያ፡"
+
+msgid "Attempts remaining before temporary cooldown:"
+msgstr "ጊዜያዊ እረፍት ከመደረጉ በፊት የቀሩ ሙከራዎች፡"
+
+msgid "Tip: Click the eye icon below to check your password."
+msgstr "ጠቃሚ ምክር፡ የይለፍ ቃልዎን ለማረጋገጥ ከታች ያለውን የዓይን ምልክት ይጫኑ።"
+
+msgid "Reset your password here"
+msgstr "የይለፍ ቃልዎን እዚህ ያድሱ"
+
+msgid "Need help?"
+msgstr "እርዳታ ይፈልጋሉ?"
+
+
+
 
 

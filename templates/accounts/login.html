@@ -17,19 +17,31 @@
 
       {% if rate_limited %}
         <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
-          <p style="margin-bottom: 0;"><strong>{% trans "Security Protection:" %}</strong> {% trans "Too many failed login attempts from your IP address. Please wait 5 minutes before trying again." %}</p>
+          <p style="margin-bottom: 0.35rem;"><strong>{% trans "Security Notice:" %}</strong> {% trans "Too many failed login attempts from your IP address. Please wait a short moment before trying again." %}</p>
+          <p style="margin-bottom: 0; font-size: 0.85rem;">
+            {% trans "Need help?" %} <a href="{% url 'accounts:password_reset' %}" style="text-decoration: underline; font-weight: 600;">{% trans "Reset your password here" %}</a>.
+          </p>
         </div>
       {% elif form.non_field_errors %}
         <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
           {% for error in form.non_field_errors %}
-            <p style="margin-bottom: 0;">{{ error }}</p>
+            <p style="margin-bottom: 0.25rem;">{{ error }}</p>
           {% endfor %}
+          {% if attempts_remaining %}
+            <p style="margin-bottom: 0; font-size: 0.85rem; color: #7f1d1d;">
+              {% trans "Attempts remaining before temporary cooldown:" %} <strong>{{ attempts_remaining }}</strong>.
+              {% trans "Tip: Click the eye icon below to check your password." %}
+            </p>
+          {% endif %}
         </div>
       {% endif %}
 
       <div class="form-group">
         <label for="{{ form.email.id_for_label }}" class="form-label">{% trans form.email.label %}</label>
         {{ form.email }}
+        <span class="form-help" style="font-size: 0.8rem; color: var(--text-muted);">
+          {% trans "You can use your email address, phone number, or display name." %}
+        </span>
         {% if form.email.errors %}
           <div class="form-error">{{ form.email.errors.0 }}</div>
         {% endif %}
@@ -40,10 +52,28 @@
           <label for="{{ form.password.id_for_label }}" class="form-label" style="margin-bottom: 0;">{% trans form.password.label %}</label>
           <a href="{% url 'accounts:password_reset' %}" style="font-size: 0.85rem;">{% trans "Forgot password?" %}</a>
         </div>
-        {{ form.password }}
+        <div class="password-input-wrapper">
+          {{ form.password }}
+          <button type="button" class="btn-toggle-password" data-target="{{ form.password.id_for_label }}" aria-label="{% trans 'Show or hide password' %}" title="{% trans 'Show password' %}">
+            <svg class="icon-eye-show" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg class="icon-eye-hide hidden" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+            </svg>
+          </button>
+        </div>
         {% if form.password.errors %}
           <div class="form-error">{{ form.password.errors.0 }}</div>
         {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text);">
+          {{ form.remember_me }}
+          <span>{% trans "Remember me on this device" %}</span>
+        </label>
       </div>
 
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.85rem;">

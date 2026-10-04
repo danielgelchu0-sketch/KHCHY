@@ -202,3 +202,88 @@ class AuthenticationTests(TestCase):
         self.assertFormError(response.context["form"], "email", "An account with this email address already exists.")
         user.refresh_from_db()
         self.assertEqual(user.email, "my_user@example.com")
+
+    def test_registration_with_phone_number_only(self):
+        """Users can register using only their mobile phone number without email."""
+        data = {
+            "phone_number": "0911223344",
+            "display_name": "Phone Member",
+            "password": "pass",
+            "confirm_password": "pass",
+            "agree_to_guidelines": True,
+        }
+        response = self.client.post(self.register_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        user = User.objects.filter(phone_number="0911223344").first()
+        self.assertIsNotNone(user)
+        self.assertEqual(user.display_name, "Phone Member")
+        self.assertTrue(user.check_password("pass"))
+        self.assertTrue(user.email.startswith("phone_0911223344@"))
+
+    def test_registration_with_email_and_phone(self):
+        """Users can provide both email and phone during registration."""
+        data = {
+            "email": "both@example.com",
+            "phone_number": "+251912345678",
+            "display_name": "Both Member",
+            "password": "abcd",
+            "confirm_password": "abcd",
+            "agree_to_guidelines": True,
+        }
+        response = self.client.post(self.register_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        user = User.objects.filter(email="both@example.com").first()
+        self.assertIsNotNone(user)
+        self.assertEqual(user.phone_number, "+251912345678")
+
+    def test_registration_password_min_4_chars_allowed(self):
+        """Passwords with 4 characters are accepted for ease of use by digitally illiterate users."""
+        data = self.user_data.copy()
+        data["email"] = "simple4@example.com"
+        data["password"] = "1234"
+        data["confirm_password"] = "1234"
+        response = self.client.post(self.register_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        user = User.objects.filter(email="simple4@example.com").first()
+        self.assertIsNotNone(user)
+        self.assertTrue(user.check_password("1234"))
+
+    def test_registration_password_under_4_chars_rejected(self):
+        """Passwords with fewer than 4 characters are rejected."""
+        data = self.user_data.copy()
+        data["email"] = "short3@example.com"
+        data["password"] = "123"
+        data["confirm_password"] = "123"
+        response = self.client.post(self.register_url, data)
+        self.assertFormError(response.context["form"], "password", "Password must be at least 4 characters long.")
+
+    def test_login_with_phone_number(self):
+        """Members can log in using their phone number instead of email."""
+        user = User.objects.create_user(
+            email="phoneuser@example.com",
+            phone_number="0911556677",
+            password="MySecretPassword1",
+            display_name="PhoneUser",
+        )
+        response = self.client.post(self.login_url, {
+            "email": "0911556677",
+            "password": "MySecretPassword1",
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+
+    def test_login_and_register_pages_contain_password_toggle_buttons(self):
+        """Auth templates contain show/hide password toggle buttons with accessible attributes."""
+        login_res = self.client.get(self.login_url)
+        self.assertEqual(login_res.status_code, 200)
+        self.assertContains(login_res, "btn-toggle-password")
+        self.assertContains(login_res, "password-input-wrapper")
+        self.assertContains(login_res, "Remember me on this device")
+
+        reg_res = self.client.get(self.register_url)
+        self.assertEqual(reg_res.status_code, 200)
+        self.assertContains(reg_res, "btn-toggle-password")
+        self.assertContains(reg_res, "phone_number")
+

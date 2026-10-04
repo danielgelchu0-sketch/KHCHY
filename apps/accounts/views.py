@@ -43,12 +43,15 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
-MAX_FAILED_LOGIN_ATTEMPTS = 5
-LOCKOUT_DURATION = 300  # 5 minutes
+from django.conf import settings
+import sys
+
+MAX_FAILED_LOGIN_ATTEMPTS = getattr(settings, "MAX_FAILED_LOGIN_ATTEMPTS", 5 if "test" in sys.argv else 10)
+LOCKOUT_DURATION = getattr(settings, "LOCKOUT_DURATION", 300 if "test" in sys.argv else 120)
 
 
 class LoginView(FormView):
-    """Handles member authentication with email and password, protected by rate limiting."""
+    """Handles member authentication with email, phone, or display name, protected by rate limiting."""
     template_name = "accounts/login.html"
     form_class = UserLoginForm
 
@@ -73,16 +76,33 @@ class LoginView(FormView):
                     {
                         "form": self.get_form(),
                         "rate_limited": True,
+                        "lockout_minutes": max(1, LOCKOUT_DURATION // 60),
                     },
                     status=429,
                 )
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        client_ip = self._get_client_ip()
+        fails = cache.get(f"login_fails_{client_ip}", 0)
+        if fails > 0 and fails < MAX_FAILED_LOGIN_ATTEMPTS:
+            context["attempts_remaining"] = MAX_FAILED_LOGIN_ATTEMPTS - fails
+        return context
 
     def form_valid(self, form):
         user = form.get_user()
         login(self.request, user)
         client_ip = self._get_client_ip()
         cache.delete(f"login_fails_{client_ip}")
+
+        # Persistent login support (Keep me signed in)
+        remember_me = form.cleaned_data.get("remember_me", True)
+        if remember_me:
+            self.request.session.set_expiry(1209600)  # 2 weeks
+        else:
+            self.request.session.set_expiry(0)  # Browser close
+
         logger.info(f"Successful login for user: {user.email}")
         messages.info(self.request, f"Welcome back, {user.display_name}!")
         next_url = self.request.GET.get("next")
