@@ -287,3 +287,90 @@ class AuthenticationTests(TestCase):
         self.assertContains(reg_res, "btn-toggle-password")
         self.assertContains(reg_res, "phone_number")
 
+    def test_user_referral_code_generated_on_save(self):
+        """Users automatically receive a unique referral code when created."""
+        user = User.objects.create_user(
+            email="ref_owner@example.com",
+            password="Password123!",
+            display_name="Referral Owner",
+        )
+        self.assertTrue(bool(user.referral_code))
+        self.assertEqual(len(user.referral_code), 8)
+
+    def test_registration_with_referral_shows_warm_banner(self):
+        """Visiting register page with ?ref=<code> renders the warm 'Invited By' banner."""
+        inviter = User.objects.create_user(
+            email="inviter@example.com",
+            password="Password123!",
+            display_name="Sarah Fellowship",
+        )
+        response = self.client.get(f"{self.register_url}?ref={inviter.referral_code}")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Sarah Fellowship")
+        self.assertContains(response, "invited you to HKHC!")
+        self.assertContains(response, f'value="{inviter.referral_code}"')
+        self.assertEqual(self.client.session.get("referral_code"), inviter.referral_code)
+
+    def test_registration_with_referral_attributes_inviter_and_notifies(self):
+        """Registering with referral code sets invited_by and creates celebration notification."""
+        inviter = User.objects.create_user(
+            email="inviter2@example.com",
+            password="Password123!",
+            display_name="David Host",
+        )
+        self.assertEqual(inviter.invited_members_count, 0)
+
+        data = {
+            "email": "friend@example.com",
+            "display_name": "New Friend",
+            "password": "Password123!",
+            "confirm_password": "Password123!",
+            "agree_to_guidelines": True,
+            "ref": inviter.referral_code,
+        }
+        response = self.client.post(self.register_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        new_user = User.objects.filter(email="friend@example.com").first()
+        self.assertIsNotNone(new_user)
+        self.assertEqual(new_user.invited_by, inviter)
+        self.assertEqual(inviter.invited_members_count, 1)
+
+        # Check inviter notification
+        from apps.notifications.models import Notification
+        notif = Notification.objects.filter(recipient=inviter).first()
+        self.assertIsNotNone(notif)
+        self.assertIn("New Friend", notif.message)
+        self.assertIn("invite link", notif.message)
+
+    def test_profile_shows_referral_card_for_owner_only(self):
+        """User viewing their own profile sees personal invite link and stats, but others do not."""
+        user = User.objects.create_user(
+            email="profile_owner@example.com",
+            password="Password123!",
+            display_name="Profile Owner",
+        )
+        other_user = User.objects.create_user(
+            email="viewer@example.com",
+            password="Password123!",
+            display_name="Profile Viewer",
+        )
+
+        profile_url = reverse("accounts:public_profile", kwargs={"user_id": user.id})
+
+        # Login as owner
+        self.client.force_login(user)
+        response_owner = self.client.get(profile_url)
+        self.assertEqual(response_owner.status_code, 200)
+        self.assertContains(response_owner, "Your Personal Invite Link")
+        self.assertContains(response_owner, user.referral_code)
+        self.assertContains(response_owner, "Friends Joined")
+
+        # Login as other user
+        self.client.force_login(other_user)
+        response_other = self.client.get(profile_url)
+        self.assertEqual(response_other.status_code, 200)
+        self.assertNotContains(response_other, "Your Personal Invite Link")
+        self.assertNotContains(response_other, user.referral_code)
+
+

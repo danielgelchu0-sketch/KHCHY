@@ -109,10 +109,50 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
+    referral_code = models.CharField(
+        "Referral Code",
+        max_length=20,
+        unique=True,
+        blank=True,
+        null=True,
+        db_index=True,
+        help_text="Unique referral/invite code for inviting friends.",
+    )
+    invited_by = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="invited_members",
+        help_text="Member who invited this user.",
+    )
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = self.generate_referral_code()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def generate_referral_code(cls):
+        import secrets
+        import string
+        chars = string.ascii_uppercase + string.digits
+        for _ in range(25):
+            code = "".join(secrets.choice(chars) for _ in range(8))
+            if not cls.objects.filter(referral_code=code).exists():
+                return code
+        return secrets.token_hex(4).upper()
+
+    @property
+    def invited_members_count(self):
+        """Count of active members who registered using this member's referral code."""
+        return self.invited_members.filter(is_active=True).count()
+
 
     class Meta:
         verbose_name = "User"

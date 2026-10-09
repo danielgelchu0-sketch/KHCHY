@@ -10,7 +10,7 @@ from django.contrib.auth.views import (
 )
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import FormView, UpdateView
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class RegisterView(FormView):
-    """Handles new member registration."""
+    """Handles new member registration with optional personal referral attribution."""
     template_name = "accounts/register.html"
     form_class = UserRegistrationForm
     success_url = reverse_lazy("discussions:topic_list")
@@ -32,15 +32,61 @@ class RegisterView(FormView):
             return redirect("discussions:topic_list")
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ref_code = self.request.GET.get("ref") or self.request.session.get("referral_code")
+        if ref_code:
+            inviter = User.objects.filter(referral_code=ref_code, is_active=True).first()
+            if inviter:
+                context["inviter"] = inviter
+                context["referral_code"] = ref_code
+                self.request.session["referral_code"] = ref_code
+        return context
+
     def form_valid(self, form):
-        user = form.save()
+        user = form.save(commit=False)
+        ref_code = self.request.POST.get("ref") or self.request.session.get("referral_code")
+        if ref_code:
+            inviter = User.objects.filter(referral_code=ref_code, is_active=True).first()
+            if inviter:
+                user.invited_by = inviter
+        user.save()
+        if hasattr(form, "save_m2m"):
+            form.save_m2m()
+
+        # If user was referred by a fellow member, notify the inviter
+        if user.invited_by:
+            try:
+                from apps.notifications.models import Notification
+                from apps.notifications.services import send_web_push
+                profile_url = reverse("accounts:public_profile", kwargs={"user_id": user.id})
+                Notification.objects.create(
+                    recipient=user.invited_by,
+                    notification_type=Notification.NotificationType.MODERATION,
+                    title="Friend Joined HKHC!",
+                    message=f"🎉 {user.display_name} joined HKHC Community using your personal invite link!",
+                    link=profile_url,
+                )
+                send_web_push(
+                    [user.invited_by_id],
+                    title="🎉 Friend Joined HKHC!",
+                    message=f"{user.display_name} joined using your invite link!",
+                    url=profile_url,
+                )
+            except Exception as ex:
+                logger.warning(f"Error dispatching referral notification: {ex}")
+
+        # Clear referral from session
+        self.request.session.pop("referral_code", None)
+
         login(self.request, user, backend="apps.accounts.backends.EmailOrDisplayNameBackend")
-        logger.info(f"New user registered successfully: {user.email} (ID: {user.id})")
+        logger.info(f"New user registered successfully: {user.email} (ID: {user.id}, Invited by: {user.invited_by_id})")
         messages.success(
             self.request,
             f"Welcome to HKHC Community, {user.display_name}! Your account has been created successfully.",
         )
         return super().form_valid(form)
+
 
 
 from django.conf import settings
@@ -169,6 +215,10 @@ class PublicProfileView(View):
         )
         identified_replies_count = Reply.objects.filter(author=member, is_anonymous=False, is_deleted=False).count()
 
+        invited_members = []
+        if request.user.is_authenticated and request.user == member:
+            invited_members = member.invited_members.filter(is_active=True).order_by("-date_joined")[:15]
+
         return render(
             request,
             self.template_name,
@@ -176,6 +226,7 @@ class PublicProfileView(View):
                 "member": member,
                 "discussions": identified_discussions,
                 "replies_count": identified_replies_count,
+                "invited_members": invited_members,
             },
         )
 

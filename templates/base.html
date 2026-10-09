@@ -101,21 +101,22 @@
           </div>
 
           <!-- Invite Friends Button (WhatsApp & Telegram 1-Tap) -->
-          <button type="button" class="btn-nav-invite js-open-share-modal" aria-label="{% trans 'Invite Friends' %}" title="{% trans 'Invite Friends via WhatsApp or Telegram' %}">
+          <button type="button" class="btn-nav-invite js-open-share-modal"
+                  data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ user.referral_code }}"
+                  data-share-title="{{ COMMUNITY_NAME }}"
+                  data-share-text="✨ {{ user.display_name }} {% trans 'invites you to join HKHC Community!' %} / ወደ HKHC ማህበረሰብ እንዲቀላቀሉ ተጋብዘዋል!"
+                  aria-label="{% trans 'Invite Friends' %}" title="{% trans 'Invite Friends via WhatsApp or Telegram' %}">
             <span aria-hidden="true">🎁</span>
             <span class="desktop-only">{% trans "Invite" %}</span>
           </button>
 
-
-
-
           <!-- User Profile & Status (Desktop) -->
-          <div class="user-badge desktop-only">
+          <a href="{% url 'accounts:public_profile' user_id=user.id %}" class="user-badge desktop-only" style="text-decoration: none;" title="{% trans 'View your profile and referral link' %}">
             <span>{{ user.display_name }}</span>
             {% if user.is_moderator %}
               <span class="mod-tag">{% trans "Mod" %}</span>
             {% endif %}
-          </div>
+          </a>
           <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary btn-sm desktop-only">{% trans "Settings" %}</a>
           <form action="{% url 'accounts:logout' %}" method="post" class="desktop-only" style="display: inline;">
             {% csrf_token %}
@@ -275,7 +276,7 @@
             <div class="drawer-user-info">
               <span class="drawer-user-avatar" aria-hidden="true">{{ user.display_name|slice:":1"|upper }}</span>
               <div>
-                <div class="drawer-user-name">{{ user.display_name }}</div>
+                <a href="{% url 'accounts:public_profile' user_id=user.id %}" class="drawer-user-name" style="text-decoration: none; color: inherit;">{{ user.display_name }}</a>
                 <div class="drawer-user-role">
                   {% if user.is_moderator %}{% trans "Community Moderator" %}{% else %}{% trans "Community Member" %}{% endif %}
                 </div>
@@ -289,6 +290,13 @@
                 🔔 {% trans "Notifications" %}
               </a>
             </div>
+            <button type="button" class="btn btn-primary btn-sm js-open-share-modal"
+                    data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ user.referral_code }}"
+                    data-share-title="{{ COMMUNITY_NAME }}"
+                    data-share-text="✨ {{ user.display_name }} {% trans 'invites you to join HKHC Community!' %} / ወደ HKHC ማህበረሰብ እንዲቀላቀሉ ተጋብዘዋል!"
+                    style="width: 100%; margin-top: 0.6rem; justify-content: center;">
+              🎁 {% trans "Invite Friends" %} / ጓደኛ ይጋብዙ
+            </button>
             <form action="{% url 'accounts:logout' %}" method="post" style="margin-top: 0.75rem; margin-bottom: 0;">
               {% csrf_token %}
               <button type="submit" class="btn btn-outline btn-sm" style="width: 100%; justify-content: center; color: var(--danger-txt); border-color: var(--danger-txt);">

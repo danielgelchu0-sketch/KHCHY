@@ -22,12 +22,22 @@
         <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "Registered Members" %}</span>
       </div>
 
-      <button type="button" class="btn btn-outline btn-sm js-open-share-modal"
-              data-share-title="{{ COMMUNITY_NAME }}"
-              data-share-text="Join our HKHC Church Community discussion space! A safe place to ask faith questions, share encouragement, and fellowship. / ወደ HKHC ቤተክርስቲያን የማህበረሰብ ውይይት መድረክ ይምጡ!"
-              style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
-        🎁 {% trans "Invite Friends" %}
-      </button>
+      {% if user.is_authenticated %}
+        <button type="button" class="btn btn-outline btn-sm js-open-share-modal"
+                data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ user.referral_code }}"
+                data-share-title="{{ COMMUNITY_NAME }}"
+                data-share-text="✨ {{ user.display_name }} {% trans 'invites you to join HKHC Church Community!' %} / ወደ HKHC ቤተክርስቲያን የማህበረሰብ ውይይት መድረክ ይምጡ!"
+                style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
+          🎁 {% trans "Invite Friends" %}
+        </button>
+      {% else %}
+        <button type="button" class="btn btn-outline btn-sm js-open-share-modal"
+                data-share-title="{{ COMMUNITY_NAME }}"
+                data-share-text="Join our HKHC Church Community discussion space! A safe place to ask faith questions, share encouragement, and fellowship. / ወደ HKHC ቤተክርስቲያን የማህበረሰብ ውይይት መድረክ ይምጡ!"
+                style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
+          🎁 {% trans "Invite Friends" %}
+        </button>
+      {% endif %}
 
 
       <a href="{% url 'core:how_to_use' %}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">

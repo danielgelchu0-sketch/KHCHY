@@ -35,6 +35,76 @@
       </div>
     </div>
 
+    {% if user.is_authenticated and user == member %}
+      <!-- Personal Referral Link & Invitation Card -->
+      <div class="referral-invite-card" style="margin-top: 1.75rem; padding: 1.5rem; background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #86efac; border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 260px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.35rem;" aria-hidden="true">🎁</span>
+              <h3 style="margin-bottom: 0; font-size: 1.15rem; color: #166534;">
+                {% trans "Your Personal Invite Link" %} / የእርስዎ የግል መጋበዣ ሊንክ
+              </h3>
+            </div>
+            <p style="margin: 0.45rem 0 0; font-size: 0.88rem; color: #374151; line-height: 1.5;">
+              {% trans "Invite friends to HKHC. When they click your link to join, they will see a warm welcome banner from you, and you'll be notified!" %}
+              <span style="display: block; color: #4b5563; font-size: 0.82rem; margin-top: 0.2rem;">
+                ጓደኞችን ወደ HKHC ይጋብዙ። በእርስዎ ሊንክ ሲመዘገቡ የእርስዎ ሞቅ ያለ አቀባበል ይታያቸዋል፤ ለእርስዎም የደስታ ማሳወቂያ ይደርስዎታል!
+              </span>
+            </p>
+          </div>
+          <div style="text-align: center; background: #ffffff; padding: 0.6rem 1.1rem; border-radius: var(--radius-md); border: 1px solid #bbf7d0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); min-width: 130px;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #15803d; letter-spacing: 0.04em;">
+              {% trans "Friends Joined" %}
+            </div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #166534; line-height: 1.1; margin: 0.2rem 0;">
+              {{ member.invited_members_count }}
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b;">
+              የተቀላቀሉ አባላት
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.25rem;">
+          <label for="profile-ref-link" style="font-size: 0.8rem; font-weight: 600; color: #166534; display: block; margin-bottom: 0.35rem;">
+            {% trans "Share this personal invitation link:" %}
+          </label>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="profile-ref-link" readonly value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ member.referral_code }}" style="flex: 1; min-width: 250px; padding: 0.6rem 0.85rem; font-size: 0.88rem; border: 1.5px solid #86efac; border-radius: var(--radius-md); background: #ffffff; color: #1e293b; font-family: monospace;">
+            <button type="button" id="profile-copy-ref-btn" class="btn btn-secondary btn-sm" style="background: #ffffff; border: 1.5px solid #86efac; color: #166534; font-weight: 700; padding: 0.6rem 1rem;">
+              <span id="profile-copy-icon">📋</span> <span id="profile-copy-text">{% trans "Copy" %} / ቅዳ</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm js-open-share-modal"
+                    data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ member.referral_code }}"
+                    data-share-title="{{ COMMUNITY_NAME }}"
+                    data-share-text="✨ {{ member.display_name }} {% trans 'invites you to join HKHC Community!' %} / ወደ HKHC ማህበረሰብ እንዲቀላቀሉ ተጋብዘዋል!"
+                    style="padding: 0.6rem 1.1rem; font-weight: 600;">
+              🎁 {% trans "Invite via WhatsApp / Telegram" %}
+            </button>
+          </div>
+        </div>
+
+        {% if invited_members %}
+          <div style="margin-top: 1.25rem; border-top: 1px dashed #86efac; padding-top: 1rem;">
+            <div style="font-weight: 700; font-size: 0.85rem; color: #166534; margin-bottom: 0.5rem;">
+              🎉 {% trans "Friends who joined through your invitation" %} ({{ member.invited_members_count }}):
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              {% for invited in invited_members %}
+                <a href="{% url 'accounts:public_profile' user_id=invited.id %}" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: #ffffff; border: 1px solid #bbf7d0; border-radius: 9999px; text-decoration: none; color: #1e293b; font-size: 0.82rem; font-weight: 500;">
+                  <span style="width: 22px; height: 22px; border-radius: 50%; background: #22c55e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">
+                    {{ invited.display_name|slice:":1"|upper }}
+                  </span>
+                  <span>{{ invited.display_name }}</span>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
     {% if user.is_authenticated and user != member %}
       <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; text-align: right;">
         <a href="{% url 'moderation:report_submit' %}?type=user&id={{ member.id }}" class="btn btn-outline btn-sm" style="color: var(--danger-txt); border-color: #fecdd3;">
@@ -70,4 +140,54 @@
     </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function() {
+    const profileCopyBtn = document.getElementById('profile-copy-ref-btn');
+    const profileRefInput = document.getElementById('profile-ref-link');
+    const profileCopyText = document.getElementById('profile-copy-text');
+    const profileCopyIcon = document.getElementById('profile-copy-icon');
+
+    if (profileCopyBtn && profileRefInput) {
+      profileCopyBtn.addEventListener('click', function() {
+        const textToCopy = profileRefInput.value;
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(textToCopy).then(function() {
+            showCopied();
+          }).catch(function() {
+            fallbackCopy();
+          });
+        } else {
+          fallbackCopy();
+        }
+
+        function showCopied() {
+          if (profileCopyIcon) profileCopyIcon.textContent = '✅';
+          if (profileCopyText) profileCopyText.textContent = 'Copied! / ተቀድቷል!';
+          profileCopyBtn.style.background = '#dcfce7';
+          profileCopyBtn.style.borderColor = '#16a34a';
+          setTimeout(function() {
+            if (profileCopyIcon) profileCopyIcon.textContent = '📋';
+            if (profileCopyText) profileCopyText.textContent = 'Copy / ቅዳ';
+            profileCopyBtn.style.background = '#ffffff';
+            profileCopyBtn.style.borderColor = '#86efac';
+          }, 2500);
+        }
+
+        function fallbackCopy() {
+          profileRefInput.focus();
+          profileRefInput.select();
+          try {
+            document.execCommand('copy');
+            showCopied();
+          } catch (e) {
+            console.error('Copy fallback failed', e);
+          }
+        }
+      });
+    }
+  })();
+</script>
 {% endblock %}
