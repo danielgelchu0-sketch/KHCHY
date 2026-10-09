@@ -470,5 +470,127 @@ document.addEventListener('DOMContentLoaded', function () {
             body: JSON.stringify(subscription)
         });
     }
+
+    // =========================================================================
+    // 5. WhatsApp & Telegram 1-Tap Share Modal Controller
+    // =========================================================================
+    const shareModal = document.getElementById('share-invite-modal');
+    const shareWhatsappBtn = document.getElementById('share-whatsapp-btn');
+    const shareTelegramBtn = document.getElementById('share-telegram-btn');
+    const shareLinkInput = document.getElementById('share-link-input');
+    const shareCopyBtn = document.getElementById('share-copy-btn');
+    const copyText = document.getElementById('copy-text');
+
+    function openShareModal(targetUrl, targetTitle, targetText) {
+        const urlToShare = targetUrl || window.location.href;
+        const titleToShare = targetTitle || document.title || 'HKHC Community';
+        const textToShare = targetText || 'Join our HKHC Church Community discussion space! / ወደ HKHC ቤተክርስቲያን የማህበረሰብ ውይይት መድረክ ይምጡ!';
+
+        // If on mobile device with native sharing capability, offer native share first
+        if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            navigator.share({
+                title: titleToShare,
+                text: textToShare,
+                url: urlToShare
+            }).catch(function (err) {
+                // If user dismissed native sheet or if it errored, fallback to modal
+                if (err.name !== 'AbortError') {
+                    displayShareModal(urlToShare, textToShare);
+                }
+            });
+            return;
+        }
+
+        displayShareModal(urlToShare, textToShare);
+    }
+
+    function displayShareModal(url, text) {
+        if (!shareModal) return;
+
+        // WhatsApp deep link
+        const whatsappMsg = `${text}\n${url}`;
+        if (shareWhatsappBtn) {
+            shareWhatsappBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMsg)}`;
+        }
+
+        // Telegram deep link
+        if (shareTelegramBtn) {
+            shareTelegramBtn.href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        }
+
+        // Link input
+        if (shareLinkInput) {
+            shareLinkInput.value = url;
+        }
+
+        shareModal.classList.remove('hidden');
+    }
+
+    function closeShareModal() {
+        if (!shareModal) return;
+        shareModal.classList.add('hidden');
+    }
+
+    // Attach click listeners to all share buttons
+    document.querySelectorAll('.js-open-share-modal').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const shareUrl = btn.getAttribute('data-share-url') || window.location.href;
+            const shareTitle = btn.getAttribute('data-share-title') || document.title;
+            const shareText = btn.getAttribute('data-share-text') || '';
+            openShareModal(shareUrl, shareTitle, shareText);
+        });
+    });
+
+    // Close buttons & backdrop click
+    document.querySelectorAll('.js-close-share-modal').forEach(function (btn) {
+        btn.addEventListener('click', closeShareModal);
+    });
+
+    shareModal?.addEventListener('click', function (e) {
+        if (e.target === shareModal) {
+            closeShareModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && shareModal && !shareModal.classList.contains('hidden')) {
+            closeShareModal();
+        }
+    });
+
+    // Copy to clipboard button
+    shareCopyBtn?.addEventListener('click', function () {
+        if (!shareLinkInput) return;
+        shareLinkInput.select();
+        shareLinkInput.setSelectionRange(0, 99999);
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareLinkInput.value).then(handleCopySuccess).catch(function () {
+                document.execCommand('copy');
+                handleCopySuccess();
+            });
+        } else {
+            document.execCommand('copy');
+            handleCopySuccess();
+        }
+    });
+
+    function handleCopySuccess() {
+        playNotificationSound();
+        if (copyText) {
+            const originalText = copyText.textContent;
+            copyText.textContent = 'Copied! / ተገልብጧል!';
+            setTimeout(function () {
+                copyText.textContent = originalText;
+            }, 2500);
+        }
+        showNotificationToast({
+            title: 'Link Copied! / ሊንኩ ተገልብጧል!',
+            message: 'You can now paste and send it to your friends on WhatsApp or Telegram.',
+            notification_type: 'new_discussion'
+        });
+    }
 });
+
 

@@ -82,7 +82,16 @@
         {% if user.is_authenticated and not discussion.is_deleted %}
           {% include "discussions/partials/bookmark_button.html" with discussion=discussion is_bookmarked=is_bookmarked %}
         {% endif %}
+        <!-- Share to WhatsApp / Telegram button -->
+        <button type="button" class="btn btn-outline btn-sm js-open-share-modal"
+                data-share-title="{{ discussion.title }}"
+                data-share-text="Check out this discussion in HKHC Community: '{{ discussion.title }}' / በ HKHC ማህበረሰብ ውስጥ ይህን ውይይት ይመልከቱ፦"
+                title="{% trans 'Share to WhatsApp or Telegram' %}">
+          <span>📤</span>
+          <span>{% trans "Share" %}</span>
+        </button>
       </div>
+
 
       <div style="display: flex; gap: 0.75rem; align-items: center;">
         {% if user.is_authenticated and not discussion.is_deleted %}
