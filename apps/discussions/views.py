@@ -224,6 +224,10 @@ class DiscussionCreateView(View):
                     last_activity_at=timezone.now(),
                 )
 
+            # Create broadcast notifications for registered members
+            from apps.notifications.services import create_discussion_notifications
+            create_discussion_notifications(discussion)
+
             logger.info(
                 f"Discussion created: '{discussion.title}' in '{topic.name}' by user {request.user.id} (Anonymous: {is_anonymous})"
             )

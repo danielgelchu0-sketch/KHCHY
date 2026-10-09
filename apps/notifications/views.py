@@ -1,12 +1,17 @@
+import json
+import logging
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .models import Notification
+from .models import Notification, PushSubscription
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -76,3 +81,178 @@ class NotificationBadgeView(View):
         else:
             html = "<span class='notification-badge hidden' id='nav-notification-badge'></span>"
         return HttpResponse(html)
+
+
+@method_decorator(login_required, name="dispatch")
+class NotificationPollRecentView(View):
+    """
+    Near real-time endpoint for active tabs to fetch latest unread count
+    and recent notification events to trigger Telegram-style in-tab toasts & audio chimes.
+    """
+
+    def get(self, request):
+        unread_count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+
+        since_id_raw = request.GET.get("since_id")
+        notifications_qs = Notification.objects.filter(recipient=request.user)
+
+        if since_id_raw and since_id_raw.isdigit():
+            since_id = int(since_id_raw)
+            recent_items = notifications_qs.filter(id__gt=since_id).order_by("-id")[:5]
+        else:
+            recent_items = notifications_qs.filter(is_read=False).order_by("-id")[:3]
+
+        data = [
+            {
+                "id": notif.id,
+                "title": notif.title,
+                "message": notif.message,
+                "link": notif.link,
+                "notification_type": notif.notification_type,
+                "created_at": notif.created_at.strftime("%I:%M %p"),
+            }
+            for notif in recent_items
+        ]
+
+        return JsonResponse({
+            "unread_count": unread_count,
+            "notifications": data,
+        })
+
+
+class PushPublicKeyView(View):
+    """Returns the application VAPID public key for browser push registration."""
+
+    def get(self, request):
+        key = getattr(settings, "VAPID_PUBLIC_KEY", "")
+        return JsonResponse({"publicKey": key})
+
+
+@method_decorator(login_required, name="dispatch")
+class PushSubscribeView(View):
+    """Registers or updates a browser Web Push subscription for the authenticated user."""
+
+    def post(self, request):
+        try:
+            body = json.loads(request.body.decode("utf-8"))
+        except (ValueError, UnicodeDecodeError):
+            return HttpResponseBadRequest("Invalid JSON payload")
+
+        endpoint = body.get("endpoint")
+        keys = body.get("keys", {})
+        p256dh = keys.get("p256dh")
+        auth = keys.get("auth")
+
+        if not endpoint or not p256dh or not auth:
+            return HttpResponseBadRequest("Missing required push subscription fields")
+
+        user_agent = request.META.get("HTTP_USER_AGENT", "")[:500]
+
+        sub, created = PushSubscription.objects.update_or_create(
+            endpoint=endpoint,
+            defaults={
+                "user": request.user,
+                "p256dh": p256dh,
+                "auth": auth,
+                "user_agent": user_agent,
+            },
+        )
+
+        logger.info(f"Push subscription {'created' if created else 'updated'} for user {request.user.id}")
+        return JsonResponse({"status": "subscribed", "id": sub.id})
+
+
+@method_decorator(login_required, name="dispatch")
+class PushUnsubscribeView(View):
+    """Revokes a browser Web Push subscription."""
+
+    def post(self, request):
+        try:
+            body = json.loads(request.body.decode("utf-8"))
+            endpoint = body.get("endpoint")
+        except Exception:
+            endpoint = None
+
+        if endpoint:
+            deleted_count, _ = PushSubscription.objects.filter(
+                user=request.user,
+                endpoint=endpoint,
+            ).delete()
+            return JsonResponse({"status": "unsubscribed", "deleted": deleted_count})
+
+        # If no specific endpoint provided, delete all subscriptions for this user
+        deleted_count, _ = PushSubscription.objects.filter(user=request.user).delete()
+        return JsonResponse({"status": "unsubscribed", "deleted": deleted_count})
+
+
+class ServiceWorkerView(View):
+    """Serves the Service Worker file at root scope."""
+
+    def get(self, request):
+        sw_code = """/**
+ * HKHC Community Discussion Platform - Web Push Service Worker
+ */
+
+self.addEventListener('install', function(event) {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', function(event) {
+    event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('push', function(event) {
+    let payload = {};
+    if (event.data) {
+        try {
+            payload = event.data.json();
+        } catch (e) {
+            payload = { message: event.data.text() };
+        }
+    }
+
+    const title = payload.title || 'HKHC Community';
+    const message = payload.message || 'New community message received.';
+    const url = payload.url || '/';
+
+    const options = {
+        body: message,
+        icon: payload.icon || '/static/img/logo.png',
+        badge: payload.badge || '/static/img/logo.png',
+        data: { url: url },
+        vibrate: [150, 80, 150],
+        renotify: true,
+        tag: 'hkhc-notification-' + Date.now(),
+        actions: [
+            { action: 'open', title: 'Open / ክፈት' }
+        ]
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(title, options)
+    );
+});
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+            for (let i = 0; i < clientList.length; i++) {
+                const client = clientList[i];
+                if (client.url.includes(targetUrl) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(targetUrl);
+            }
+        })
+    );
+});
+"""
+        response = HttpResponse(sw_code, content_type="application/javascript")
+        response["Service-Worker-Allowed"] = "/"
+        response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        return response

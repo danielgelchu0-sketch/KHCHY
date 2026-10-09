@@ -1815,3 +1815,294 @@ p {
   outline: 2px solid var(--accent-500);
 }
 
+/* ==========================================================================
+   Sound Toggle & Member Stat Badges
+   ========================================================================== */
+.sound-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 1.15rem;
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  color: var(--primary-700);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  line-height: 1;
+}
+
+.sound-toggle-btn:hover {
+  background-color: var(--primary-50);
+  transform: scale(1.08);
+}
+
+.sound-toggle-btn:focus-visible {
+  outline: 2px solid var(--accent-500);
+}
+
+.community-member-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-800);
+  background: var(--primary-50);
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+}
+
+.banner-stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+}
+
+.footer-member-badge {
+  margin-top: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ==========================================================================
+   Friendly Bilingual Push Notification Permission Card (Telegram-inspired)
+   ========================================================================== */
+.push-permission-card {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  max-width: 580px;
+  z-index: 1000;
+  animation: slideUpPushCard 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpPushCard {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.push-card-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 12px 36px -6px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(37, 99, 235, 0.12);
+  border-left: 4px solid var(--accent-600, #2563eb);
+}
+
+.push-card-icon-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.push-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 99, 235, 0.4);
+  animation: pulsePush 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulsePush {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+.push-card-text {
+  flex: 1;
+}
+
+.push-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--primary-900, #0f172a);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.push-card-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.push-card-desc-am {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted, #64748b);
+  font-size: 0.82rem;
+}
+
+.push-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .push-card-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* ==========================================================================
+   Telegram-Style Floating In-Tab Toast Popups
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  z-index: 1100;
+  max-width: 380px;
+  width: calc(100% - 2.5rem);
+  pointer-events: none;
+}
+
+.toast-card {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #ffffff;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid var(--accent-600, #2563eb);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: slideInToast 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -4px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: var(--accent-600, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--primary-900, #0f172a);
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast-message {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toast-time {
+  font-size: 0.72rem;
+  color: var(--text-light, #94a3b8);
+  margin-top: 0.25rem;
+}
+
+.toast-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--text-light, #94a3b8);
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+}
+
+.toast-close-btn:hover {
+  color: var(--primary-900, #0f172a);
+}
+
+.toast-card.fade-out {
+  animation: fadeOutToast 0.3s forwards ease;
+}
+
+@keyframes fadeOutToast {
+  to {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+}
+

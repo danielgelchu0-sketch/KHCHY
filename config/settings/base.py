@@ -213,6 +213,22 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "HKHC Community <noreply@co
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Web Push Notifications (VAPID)
+VAPID_PUBLIC_KEY = os.getenv(
+    "VAPID_PUBLIC_KEY",
+    "BJeQagVxCk0H6vxeuYLh4sS7QA_BZ5dVoe8b-7AR-qcPB7mUEBBdeEOou0pD_hzFykyvjo100wvBRS4MWNNL2jI",
+)
+VAPID_PRIVATE_KEY = os.getenv(
+    "VAPID_PRIVATE_KEY",
+    "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgx/tMF/0OLrI3jlnM\n2UaW+/naBZpdXoV+AvCIjCvFTAmhRANCAASXkGoFcQpNB+r8XrmC4eLEu0APwWeX\nVaHvG/uwEfqnDwe5lBAQXXhDqLtKQ/4cxcpMr46NdNMLwUUuDFjTS9oy\n-----END PRIVATE KEY-----",
+)
+VAPID_CLAIMS_EMAIL = os.getenv("VAPID_CLAIMS_EMAIL", "admin@community.hkhc.org")
+# PythonAnywhere Free Tier outbound HTTP proxy configuration
+PYTHONANYWHERE_PROXY = os.getenv(
+    "PYTHONANYWHERE_PROXY",
+    "http://proxy.server:3128" if "PYTHONANYWHERE_DOMAIN" in os.environ or os.path.exists("/var/www") else "",
+)
+
 # Community Platform Settings
 COMMUNITY_NAME = "HKHC Community"
 COMMUNITY_DESCRIPTION = "A safe, moderated church community space for honest questions, biblical fellowship, and thoughtful discussion."

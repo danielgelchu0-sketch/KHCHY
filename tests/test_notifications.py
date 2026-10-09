@@ -141,3 +141,131 @@ class NotificationTests(TestCase):
         response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Notification.objects.filter(recipient=self.question_author, is_read=False).count(), 0)
+
+    def test_broadcast_discussion_creates_notifications_for_registered_members(self):
+        """When a new discussion is created, registered active members receive broadcast notifications."""
+        from apps.notifications.services import create_discussion_notifications
+
+        new_discussion = Discussion.objects.create(
+            topic=self.topic,
+            author=self.question_author,
+            title="Community Prayer Request",
+            content="Please join in prayer this evening.",
+            is_anonymous=False,
+        )
+        create_discussion_notifications(new_discussion)
+
+        # Other registered members (commenter, replier, follower) should receive notification
+        for member in [self.commenter, self.replier, self.follower]:
+            notif = Notification.objects.filter(recipient=member, notification_type=Notification.NotificationType.NEW_DISCUSSION).first()
+            self.assertIsNotNone(notif, f"Member {member.email} did not receive broadcast notification")
+            self.assertIn("Question Author", notif.message)
+            self.assertIn("Community Prayer Request", notif.message)
+
+        # Author should NOT receive a notification for their own post
+        self.assertFalse(
+            Notification.objects.filter(
+                recipient=self.question_author,
+                notification_type=Notification.NotificationType.NEW_DISCUSSION,
+                link=new_discussion.get_absolute_url()
+            ).exists()
+        )
+
+    def test_anonymous_discussion_broadcast_preserves_privacy(self):
+        """Anonymous discussion broadcast uses neutral community label."""
+        from apps.notifications.services import create_discussion_notifications
+
+        anon_discussion = Discussion.objects.create(
+            topic=self.topic,
+            author=self.question_author,
+            title="A sensitive question",
+            content="Asking anonymously for counsel.",
+            is_anonymous=True,
+        )
+        create_discussion_notifications(anon_discussion)
+
+        notif = Notification.objects.filter(
+            recipient=self.follower,
+            notification_type=Notification.NotificationType.NEW_DISCUSSION
+        ).first()
+        self.assertIsNotNone(notif)
+        self.assertIn("A community member", notif.message)
+        self.assertNotIn("Question Author", notif.message)
+
+    def test_push_public_key_endpoint(self):
+        """Public key endpoint returns VAPID key."""
+        url = reverse("notifications:push_public_key")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("publicKey", data)
+        self.assertTrue(len(data["publicKey"]) > 0)
+
+    def test_push_subscribe_and_unsubscribe_endpoints(self):
+        """User can register a Web Push subscription and revoke it."""
+        from apps.notifications.models import PushSubscription
+
+        self.client.force_login(self.question_author)
+        sub_url = reverse("notifications:push_subscribe")
+        payload = {
+            "endpoint": "https://fcm.googleapis.com/fcm/send/test-token-12345",
+            "keys": {
+                "p256dh": "BNcRdreALRFXTkOOUHK18VW5TboS9yETBL3WreIvW2KS0LdSpMWwyfNT2ZWP29Ozb",
+                "auth": "tBHItJI5svbpez7KI4CCXg",
+            },
+        }
+        res = self.client.post(sub_url, data=payload, content_type="application/json")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json().get("status"), "subscribed")
+
+        sub = PushSubscription.objects.filter(user=self.question_author).first()
+        self.assertIsNotNone(sub)
+        self.assertEqual(sub.endpoint, payload["endpoint"])
+
+        # Unsubscribe
+        unsub_url = reverse("notifications:push_unsubscribe")
+        res_unsub = self.client.post(unsub_url, data={"endpoint": payload["endpoint"]}, content_type="application/json")
+        self.assertEqual(res_unsub.status_code, 200)
+        self.assertFalse(PushSubscription.objects.filter(user=self.question_author).exists())
+
+    def test_notification_poll_recent_endpoint(self):
+        """Active tab polling endpoint returns unread count and recent notifications."""
+        notif = Notification.objects.create(
+            recipient=self.question_author,
+            notification_type=Notification.NotificationType.REPLY_QUESTION,
+            title="Poll Alert",
+            message="Someone replied",
+            link="/discussions/",
+        )
+        self.client.force_login(self.question_author)
+        url = reverse("notifications:poll_recent")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["unread_count"], 1)
+        self.assertTrue(len(data["notifications"]) >= 1)
+        self.assertEqual(data["notifications"][0]["title"], "Poll Alert")
+
+    def test_service_worker_endpoint(self):
+        """Service Worker is served with appropriate JS mime type and root scope header."""
+        url = reverse("root_service_worker")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("application/javascript", response["Content-Type"])
+        self.assertEqual(response["Service-Worker-Allowed"], "/")
+        self.assertIn("addEventListener('push'", response.content.decode())
+
+    def test_total_registered_members_in_context_processor(self):
+        """Global context processor includes total registered members count and VAPID key."""
+        from django.test import RequestFactory
+        from apps.core.context_processors import community_context
+
+        factory = RequestFactory()
+        request = factory.get("/")
+        request.user = self.question_author
+        ctx = community_context(request)
+
+        self.assertIn("total_registered_members", ctx)
+        self.assertGreaterEqual(ctx["total_registered_members"], 4)
+        self.assertIn("vapid_public_key", ctx)
+

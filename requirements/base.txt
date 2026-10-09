@@ -4,3 +4,4 @@ python-dotenv>=1.0.0
 pillow>=10.0.0
 bleach>=6.0.0
 whitenoise>=6.8.0
+pywebpush>=2.0.0

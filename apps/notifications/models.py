@@ -12,6 +12,7 @@ class Notification(models.Model):
         REPLY_QUESTION = "reply_question", "Reply to Your Question"
         REPLY_COMMENT = "reply_comment", "Reply to Your Comment"
         BOOKMARK_UPDATE = "bookmark_update", "New Reply in Followed Discussion"
+        NEW_DISCUSSION = "new_discussion", "New Community Discussion"
         MODERATION = "moderation", "Moderation Notification"
 
     recipient = models.ForeignKey(
@@ -41,3 +42,34 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.recipient.email}: {self.title}"
+
+
+class PushSubscription(models.Model):
+    """
+    Browser Web Push subscription credentials (VAPID endpoint & keys)
+    for native device and lockscreen push notifications.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="push_subscriptions",
+        db_index=True,
+    )
+    endpoint = models.URLField(max_length=1000, unique=True)
+    p256dh = models.CharField(max_length=255)
+    auth = models.CharField(max_length=255)
+    user_agent = models.CharField(max_length=500, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Push Subscription"
+        verbose_name_plural = "Push Subscriptions"
+        indexes = [
+            models.Index(fields=["user", "created_at"]),
+        ]
+
+    def __str__(self):
+        return f"PushSubscription for {self.user.email} ({self.created_at:%Y-%m-%d})"
+

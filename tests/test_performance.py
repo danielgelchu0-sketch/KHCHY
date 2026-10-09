@@ -37,8 +37,8 @@ class PerformanceAndQueryCountTests(TestCase):
         of database queries rather than issuing 15+ separate queries for authors/profiles.
         """
         self.client.force_login(self.user)
-        # Bounded query test: Should execute <= 12 queries total for user, session, topic, discussion, view update, replies tree
-        with self.assertNumQueries(11):
+        # Bounded query test: Should execute <= 12 queries total for user, session, topic, discussion, view update, replies tree, member stat
+        with self.assertNumQueries(12):
             response = self.client.get(self.discussion.get_absolute_url())
             self.assertEqual(response.status_code, 200)
 
@@ -55,7 +55,8 @@ class PerformanceAndQueryCountTests(TestCase):
             )
 
         self.client.force_login(self.user)
-        # Should execute a fixed small number of queries
-        with self.assertNumQueries(6):
+        # Should execute a fixed small number of queries (7 including member count)
+        with self.assertNumQueries(7):
             response = self.client.get(self.topic.get_absolute_url())
             self.assertEqual(response.status_code, 200)
+

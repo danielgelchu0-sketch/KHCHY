@@ -15,8 +15,15 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <!-- Offline-safe minified HTMX -->
   <script src="{% static 'js/htmx.min.js' %}"></script>
+  <!-- Notification & Web Push Metadata -->
+  <meta name="vapid-public-key" content="{{ vapid_public_key }}">
+  <meta name="push-subscribe-url" content="{% url 'notifications:push_subscribe' %}">
+  <meta name="push-unsubscribe-url" content="{% url 'notifications:push_unsubscribe' %}">
+  <meta name="poll-notifications-url" content="{% url 'notifications:poll_recent' %}">
+  <meta name="is-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
   {% block extra_head %}{% endblock %}
 </head>
+
 <body>
 
   <!-- Navigation Bar -->
@@ -70,9 +77,9 @@
         </form>
 
         {% if user.is_authenticated %}
-          <!-- Notification Bell with HTMX polling (Visible on both Desktop and Mobile) -->
+          <!-- Notification Bell with live polling (Visible on both Desktop and Mobile) -->
           <a href="{% url 'notifications:list' %}" class="notification-link" aria-label="{% trans 'Notifications' %}"
-             hx-get="{% url 'notifications:badge' %}" hx-trigger="every 45s" hx-target="#nav-notification-badge" hx-swap="outerHTML">
+             hx-get="{% url 'notifications:badge' %}" hx-trigger="every 15s" hx-target="#nav-notification-badge" hx-swap="outerHTML">
             <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
@@ -80,6 +87,19 @@
               {{ unread_notifications_count }}
             </span>
           </a>
+
+          <!-- Sound Mute / Unmute Toggle Button -->
+          <button type="button" id="nav-sound-toggle" class="sound-toggle-btn" aria-label="{% trans 'Toggle Notification Sound' %}" title="{% trans 'Notification Sounds: Active' %}">
+            <span id="sound-icon-unmuted" class="sound-icon" aria-hidden="true">🔊</span>
+            <span id="sound-icon-muted" class="sound-icon hidden" aria-hidden="true">🔇</span>
+          </button>
+
+          <!-- Registered Members Count Stat (Desktop) -->
+          <div class="community-member-stat desktop-only" title="{% trans 'Total Registered Members' %}">
+            <span aria-hidden="true">👥</span>
+            <span><strong>{{ total_registered_members }}</strong> {% trans "members" %}</span>
+          </div>
+
 
           <!-- User Profile & Status (Desktop) -->
           <div class="user-badge desktop-only">
@@ -330,6 +350,10 @@
         <p class="text-muted" style="margin-top: 0.25rem; font-size: 0.85rem; max-width: 480px;">
           {% trans "Providing teens, youths, and adults a psychologically safer, moderated space to explore difficult questions about faith, relationships, and struggles in biblical fellowship." %}
         </p>
+        <div class="footer-member-badge">
+          <span aria-hidden="true">👥</span>
+          <span><strong>{{ total_registered_members }}</strong> {% trans "registered members in community" %}</span>
+        </div>
       </div>
       <ul class="footer-links">
         <li><a href="{% url 'discussions:topic_list' %}">{% trans "Topic Rooms" %}</a></li>
@@ -343,8 +367,43 @@
     </div>
   </footer>
 
+  <!-- Telegram-Style Floating In-Tab Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  {% if user.is_authenticated %}
+    <!-- Friendly Bilingual Push Notification Permission Card -->
+    <div id="push-permission-card" class="push-permission-card hidden" role="dialog" aria-labelledby="push-card-title">
+      <div class="push-card-inner">
+        <div class="push-card-icon-wrap" aria-hidden="true">
+          <span class="push-pulse-ring"></span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+        </div>
+        <div class="push-card-text">
+          <div class="push-card-title" id="push-card-title">
+            {% trans "Never Miss Community Updates!" %} / ማሳወቂያዎችን ያብሩ!
+          </div>
+          <p class="push-card-desc">
+            {% trans "Get instant sound & screen alerts whenever someone asks a question or replies to you, even when your phone is locked." %}
+            <span class="push-card-desc-am">አባላት ጥያቄ ሲጠይቁ ወይም መልስ ሲሰጡ ስልክዎ ወይም ኮምፒውተርዎ ላይ ፈጣን ድምፅና ማሳወቂያ ያግኙ።</span>
+          </p>
+        </div>
+        <div class="push-card-actions">
+          <button type="button" id="btn-enable-push" class="btn btn-primary btn-sm">
+            🔔 {% trans "Turn On Alerts" %} / አብራ
+          </button>
+          <button type="button" id="btn-dismiss-push" class="btn btn-outline btn-sm" aria-label="{% trans 'Close' %}">
+            {% trans "Later" %} / በኋላ
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
   <!-- Application Interactivity Script -->
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
+
 </html>
