@@ -2,7 +2,9 @@ import json
 import logging
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -114,10 +116,15 @@ class NotificationPollRecentView(View):
             for notif in recent_items
         ]
 
+        User = get_user_model()
+        total_members = User.objects.filter(is_active=True).count()
+
         return JsonResponse({
             "unread_count": unread_count,
+            "total_members": total_members,
             "notifications": data,
         })
+
 
 
 class PushPublicKeyView(View):

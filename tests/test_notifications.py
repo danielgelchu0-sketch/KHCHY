@@ -243,8 +243,11 @@ class NotificationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data["unread_count"], 1)
+        self.assertIn("total_members", data)
+        self.assertGreaterEqual(data["total_members"], 4)
         self.assertTrue(len(data["notifications"]) >= 1)
         self.assertEqual(data["notifications"][0]["title"], "Poll Alert")
+
 
     def test_service_worker_endpoint(self):
         """Service Worker is served with appropriate JS mime type and root scope header."""

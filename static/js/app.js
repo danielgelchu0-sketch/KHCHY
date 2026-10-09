@@ -345,7 +345,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     updateBadge(data.unread_count);
                 }
 
+                if (typeof data.total_members === 'number') {
+                    document.querySelectorAll('.js-total-members-count').forEach(function (el) {
+                        el.textContent = data.total_members;
+                    });
+                }
+
                 if (Array.isArray(data.notifications) && data.notifications.length > 0) {
+
                     let highestId = lastSeenNotificationId;
 
                     data.notifications.forEach(function (notif) {

@@ -97,8 +97,9 @@
           <!-- Registered Members Count Stat (Desktop) -->
           <div class="community-member-stat desktop-only" title="{% trans 'Total Registered Members' %}">
             <span aria-hidden="true">👥</span>
-            <span><strong>{{ total_registered_members }}</strong> {% trans "members" %}</span>
+            <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "members" %}</span>
           </div>
+
 
 
           <!-- User Profile & Status (Desktop) -->
@@ -352,8 +353,9 @@
         </p>
         <div class="footer-member-badge">
           <span aria-hidden="true">👥</span>
-          <span><strong>{{ total_registered_members }}</strong> {% trans "registered members in community" %}</span>
+          <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "registered members in community" %}</span>
         </div>
+
       </div>
       <ul class="footer-links">
         <li><a href="{% url 'discussions:topic_list' %}">{% trans "Topic Rooms" %}</a></li>

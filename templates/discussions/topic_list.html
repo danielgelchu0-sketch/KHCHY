@@ -19,8 +19,9 @@
     <div class="topic-welcome-actions">
       <div class="banner-stat-badge" title="{% trans 'Total Registered Members' %}">
         <span aria-hidden="true">👥</span>
-        <span><strong>{{ total_registered_members }}</strong> {% trans "Registered Members" %}</span>
+        <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "Registered Members" %}</span>
       </div>
+
       <a href="{% url 'core:how_to_use' %}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.1);">
         📖 {% trans "User Guide" %}
       </a>
