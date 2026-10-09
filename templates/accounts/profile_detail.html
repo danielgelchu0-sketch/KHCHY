@@ -80,8 +80,13 @@
                     data-share-title="{{ COMMUNITY_NAME }}"
                     data-share-text="✨ {{ member.display_name }} {% trans 'invites you to join HKHC Community!' %} / ወደ HKHC ማህበረሰብ እንዲቀላቀሉ ተጋብዘዋል!"
                     style="padding: 0.6rem 1.1rem; font-weight: 600;">
-              🎁 {% trans "Invite via WhatsApp / Telegram" %}
+              🎁 {% trans "Share (WhatsApp / Telegram / SMS)" %}
             </button>
+            <a href="sms:?body=✨%20{{ member.display_name }}%20{% trans 'invites you to join HKHC Community!' %}%0A{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:register' %}?ref={{ member.referral_code }}"
+               class="btn btn-secondary btn-sm mobile-only"
+               style="background: #ffffff; border: 1.5px solid #6366f1; color: #4338ca; font-weight: 700; padding: 0.6rem 1rem;">
+              💬 {% trans "Invite via SMS" %} / በኤስኤምኤስ
+            </a>
           </div>
         </div>
 

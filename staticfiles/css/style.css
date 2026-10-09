@@ -2262,6 +2262,11 @@ p {
   background: #f0f9ff;
 }
 
+.share-sms:hover {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
 .share-card-icon-wrap {
   width: 40px;
   height: 40px;
@@ -2279,6 +2284,10 @@ p {
 
 .bg-telegram {
   background: #0088cc;
+}
+
+.bg-sms {
+  background: #6366f1;
 }
 
 .share-card-info {

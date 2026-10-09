@@ -477,6 +477,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const shareModal = document.getElementById('share-invite-modal');
     const shareWhatsappBtn = document.getElementById('share-whatsapp-btn');
     const shareTelegramBtn = document.getElementById('share-telegram-btn');
+    const shareSmsBtn = document.getElementById('share-sms-btn');
     const shareLinkInput = document.getElementById('share-link-input');
     const shareCopyBtn = document.getElementById('share-copy-btn');
     const copyText = document.getElementById('copy-text');
@@ -516,6 +517,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // Telegram deep link
         if (shareTelegramBtn) {
             shareTelegramBtn.href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        }
+
+        // Phone SMS deep link (Zero Cost - opens native messaging app)
+        if (shareSmsBtn) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const smsSep = isIOS ? '&' : '?';
+            const smsBody = `${text}\n${url}`;
+            shareSmsBtn.href = `sms:${smsSep}body=${encodeURIComponent(smsBody)}`;
         }
 
         // Link input

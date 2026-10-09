@@ -373,4 +373,27 @@ class AuthenticationTests(TestCase):
         self.assertNotContains(response_other, "Your Personal Invite Link")
         self.assertNotContains(response_other, user.referral_code)
 
+    def test_native_sms_sharing_elements_present(self):
+        """Pages contain Option 3 native SMS share buttons and modal cards."""
+        user = User.objects.create_user(
+            email="sms_user@example.com",
+            password="Password123!",
+            display_name="SMS User",
+        )
+        self.client.force_login(user)
+
+        # Base layout share modal has SMS button
+        response_home = self.client.get(reverse("discussions:topic_list"))
+        self.assertEqual(response_home.status_code, 200)
+        self.assertContains(response_home, 'id="share-sms-btn"')
+        self.assertContains(response_home, "SMS / መልእክት")
+
+        # Profile has SMS 1-tap invite link
+        profile_url = reverse("accounts:public_profile", kwargs={"user_id": user.id})
+        response_prof = self.client.get(profile_url)
+        self.assertEqual(response_prof.status_code, 200)
+        self.assertContains(response_prof, "sms:?body=")
+        self.assertContains(response_prof, user.referral_code)
+
+
 
