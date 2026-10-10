@@ -94,11 +94,11 @@
             <span id="sound-icon-muted" class="sound-icon hidden" aria-hidden="true">🔇</span>
           </button>
 
-          <!-- Registered Members Count Stat (Desktop) -->
-          <div class="community-member-stat desktop-only" title="{% trans 'Total Registered Members' %}">
+          <!-- Registered Members Count Stat (Desktop) - Tap to view registered members modal -->
+          <button type="button" class="community-member-stat desktop-only js-open-members-modal" title="{% trans 'Tap to view registered members' %}" aria-label="{% trans 'View registered members' %}">
             <span aria-hidden="true">👥</span>
             <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "members" %}</span>
-          </div>
+          </button>
 
           <!-- Invite Friends Button (WhatsApp & Telegram 1-Tap) -->
           <button type="button" class="btn-nav-invite js-open-share-modal"
@@ -149,6 +149,10 @@
             {% endif %}
           </div>
           <div class="mobile-user-actions">
+            <button type="button" class="btn-subbar js-open-members-modal" aria-label="{% trans 'View registered members' %}" title="{% trans 'Tap to view registered members' %}">
+              <span aria-hidden="true">👥</span>
+              <span><strong class="js-total-members-count">{{ total_registered_members }}</strong></span>
+            </button>
             <a href="{% url 'accounts:profile_edit' %}" class="btn-subbar" aria-label="{% trans 'Settings' %}">
               <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3" stroke-width="2"></circle></svg>
               <span>{% trans "Settings" %}</span>
@@ -166,6 +170,10 @@
             <span>{% trans "Welcome to HKHC" %}</span>
           </div>
           <div class="mobile-guest-actions">
+            <button type="button" class="btn-subbar js-open-members-modal" title="{% trans 'Tap to view registered members' %}" aria-label="{% trans 'View registered members' %}">
+              <span aria-hidden="true">👥</span>
+              <span><strong class="js-total-members-count">{{ total_registered_members }}</strong></span>
+            </button>
             <a href="{% url 'accounts:login' %}" class="btn-subbar btn-subbar-login">
               <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
               <span>{% trans "Log in" %}</span>
@@ -223,6 +231,15 @@
                 <span class="drawer-nav-desc">{% trans "Browse discussions by category" %}</span>
               </div>
             </a>
+          </li>
+          <li>
+            <button type="button" class="drawer-nav-item js-open-members-modal" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; font-family: inherit;">
+              <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label">{% trans "Community Members" %} (<strong class="js-total-members-count">{{ total_registered_members }}</strong>)</span>
+                <span class="drawer-nav-desc">{% trans "View registered church members" %}</span>
+              </div>
+            </button>
           </li>
           <li>
             <a href="{% url 'core:how_to_use' %}" class="drawer-nav-item">
@@ -366,10 +383,10 @@
         <p class="text-muted" style="margin-top: 0.25rem; font-size: 0.85rem; max-width: 480px;">
           {% trans "Providing teens, youths, and adults a psychologically safer, moderated space to explore difficult questions about faith, relationships, and struggles in biblical fellowship." %}
         </p>
-        <div class="footer-member-badge">
+        <button type="button" class="footer-member-badge js-open-members-modal" title="{% trans 'Tap to view registered members' %}" aria-label="{% trans 'View registered members' %}" style="background: none; border: none; padding: 0; cursor: pointer; text-align: left; font-family: inherit;">
           <span aria-hidden="true">👥</span>
           <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "registered members in community" %}</span>
-        </div>
+        </button>
 
       </div>
       <ul class="footer-links">
@@ -492,6 +509,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Community Members Directory Modal -->
+  {% include "accounts/partials/members_modal.html" %}
 
   <!-- Application Interactivity Script -->
   <script src="{% static 'js/app.js' %}"></script>

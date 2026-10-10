@@ -223,6 +223,42 @@ class InternationalizationTests(TestCase):
         self.assertContains(res, "ውይይቶችን ያስሱ")
         self.assertContains(res, "መለያ እና ቅንብሮች")
 
+    def test_consolidated_topic_rooms_render_in_amharic(self):
+        """The two consolidated topic rooms render accurate Amharic names and descriptions."""
+        from apps.discussions.models import Topic
+        Topic.objects.get_or_create(
+            slug="youth-emotional-wellbeing",
+            defaults={
+                "name": "Youth & Emotional Well-being",
+                "description": "A dedicated, safe room for teens, youths, and young adults tackling peer pressure, identity, emotional struggles, anxiety, burnout, and life choices.",
+                "order": 2,
+            }
+        )
+        Topic.objects.get_or_create(
+            slug="relationships-marriage-boundaries",
+            defaults={
+                "name": "Relationships, Marriage & Boundaries",
+                "description": "Biblical dialogue on godly dating, purity, healthy boundaries, temptations, courtship, marriage communication, and Christian family life.",
+                "order": 3,
+            }
+        )
+
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "am"
+        res = self.client.get(reverse("discussions:topic_list"))
+        self.assertEqual(res.status_code, 200)
+
+        # Room 1 Amharic name and description
+        self.assertContains(res, "የወጣቶች ሕይወት እና ስነ-ልቦናዊ ደህንነት")
+        self.assertContains(res, "ለታዳጊዎች፣ ወጣቶችና ወጣት ጎልማሶች ስለ ጓደኛ ተፅዕኖ")
+
+        # Room 2 Amharic name and description
+        self.assertContains(res, "የፍቅር ግንኙነት፣ ጋብቻ እና ክርስቲያናዊ ወሰኖች")
+        self.assertContains(res, "እግዚአብሔርን ስለሚያከብር የፍቅር ጓደኝነት")
+
+        # Member count badges rendered in Amharic
+        self.assertContains(res, "የተመዘገቡ አባላት")
+
+
 
 
 

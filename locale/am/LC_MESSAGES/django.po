@@ -150,6 +150,18 @@ msgstr "እምነትና መንፈሳዊ ሕይወት"
 msgid "Questions about prayer, spiritual doubts, personal devotion, hearing God's voice, and growing in Christ."
 msgstr "ስለ ጸሎት፣ መንፈሳዊ ጥርጣሬዎች፣ የግል የጸሎት ሕይወት፣ የእግዚአብሔርን ድምጽ ስለመስማትና በክርስቶስ ስለማደግ የሚነሱ ጥያቄዎች።"
 
+msgid "Youth & Emotional Well-being"
+msgstr "የወጣቶች ሕይወት እና ስነ-ልቦናዊ ደህንነት"
+
+msgid "A dedicated, safe room for teens, youths, and young adults tackling peer pressure, identity, emotional struggles, anxiety, burnout, and life choices."
+msgstr "ለታዳጊዎች፣ ወጣቶችና ወጣት ጎልማሶች ስለ ጓደኛ ተፅዕኖ፣ ማንነት፣ ስሜታዊ ፈተናዎች፣ ጭንቀት፣ ድካምና የሕይወት ውሳኔዎች በአስተማማኝ ሁኔታ የሚወያዩበት የተዘጋጀ ክፍል።"
+
+msgid "Relationships, Marriage & Boundaries"
+msgstr "የፍቅር ግንኙነት፣ ጋብቻ እና ክርስቲያናዊ ወሰኖች"
+
+msgid "Biblical dialogue on godly dating, purity, healthy boundaries, temptations, courtship, marriage communication, and Christian family life."
+msgstr "እግዚአብሔርን ስለሚያከብር የፍቅር ጓደኝነት፣ ንጽሕና፣ ጤናማ ወሰኖች፣ ፈተናዎች፣ የጋብቻ ጥምረት፣ የቤተሰብ ተግባቦት እና ክርስቲያናዊ የጋብቻ ሕይወት የሚደረግ መጽሐፍ ቅዱሳዊ ውይይት።"
+
 msgid "Youth Questions"
 msgstr "የወጣቶች ጥያቄዎች"
 
@@ -911,6 +923,59 @@ msgstr "የይለፍ ቃልዎን እዚህ ያድሱ"
 
 msgid "Need help?"
 msgstr "እርዳታ ይፈልጋሉ?"
+
+# Community Members Directory & Stats
+msgid "Total Registered Members"
+msgstr "ጠቅላላ የተመዘገቡ አባላት"
+
+msgid "Registered Members"
+msgstr "የተመዘገቡ አባላት"
+
+msgid "registered members in community"
+msgstr "በማህበረሰቡ ውስጥ የተመዘገቡ አባላት"
+
+msgid "members"
+msgstr "አባላት"
+
+msgid "Community Members"
+msgstr "የማህበረሰብ አባላት"
+
+msgid "registered"
+msgstr "የተመዘገቡ"
+
+msgid "Search members by name..."
+msgstr "አባላትን በስም ይፈልጉ..."
+
+msgid "No members found"
+msgstr "ምንም የተገኘ አባል የለም"
+
+msgid "Joined"
+msgstr "የተቀላቀሉት"
+
+msgid "public discussions"
+msgstr "ይፋዊ ውይይቶች"
+
+msgid "public discussion"
+msgstr "ይፋዊ ውይይት"
+
+msgid "View public profile"
+msgstr "ይፋዊ መገለጫን ይመልከቱ"
+
+msgid "Emails and private anonymous posts are strictly confidential and protected."
+msgstr "የኢሜይል አድራሻዎችና በሚስጥር የተጻፉ ጽሑፎች በጥብቅ የተጠበቁ ናቸው።"
+
+msgid "View registered church members"
+msgstr "የተመዘገቡ የቤተክርስቲያን አባላትን ይመልከቱ"
+
+msgid "Tap to view registered members"
+msgstr "የተመዘገቡ አባላትን ዝርዝር ለማየት ይጫኑ"
+
+msgid "Loading members..."
+msgstr "አባላትን በመጫን ላይ..."
+
+msgid "All members"
+msgstr "ሁሉም አባላት"
+
 
 
 

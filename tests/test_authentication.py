@@ -395,5 +395,114 @@ class AuthenticationTests(TestCase):
         self.assertContains(response_prof, "sms:?body=")
         self.assertContains(response_prof, user.referral_code)
 
+    def test_member_directory_json_endpoint_and_strict_privacy(self):
+        """
+        Members directory returns JSON payload for modal with zero privacy leakage:
+        - NEVER exposes email addresses, phone numbers, or passwords.
+        - Calculates non-anonymous public discussion counts accurately.
+        """
+        mod_user = User.objects.create_user(
+            email="moderator_secret@example.com",
+            phone_number="+251911000001",
+            password="Password123!",
+            display_name="Mod Pastor",
+            role=User.Role.MODERATOR,
+        )
+        regular_user = User.objects.create_user(
+            email="regular_secret@example.com",
+            phone_number="+251911000002",
+            password="Password123!",
+            display_name="Regular Sister",
+        )
+
+        from apps.discussions.models import Topic, Discussion
+        topic = Topic.objects.create(name="Youth Room", slug="youth-room-test")
+        # 1 public discussion
+        Discussion.objects.create(
+            topic=topic,
+            author=regular_user,
+            title="Public Question from Sister",
+            content="Content",
+            is_anonymous=False,
+        )
+        # 1 anonymous discussion (MUST NOT increment public discussions count or be attributed)
+        Discussion.objects.create(
+            topic=topic,
+            author=regular_user,
+            title="Confidential Question",
+            content="Content",
+            is_anonymous=True,
+        )
+
+        response = self.client.get(reverse("accounts:member_directory") + "?format=json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+
+        data = response.json()
+        self.assertIn("total_count", data)
+        self.assertIn("members", data)
+        self.assertGreaterEqual(data["total_count"], 2)
+
+        # Full text content check for zero leaks
+        content_str = response.content.decode("utf-8")
+        self.assertNotIn("moderator_secret@example.com", content_str)
+        self.assertNotIn("regular_secret@example.com", content_str)
+        self.assertNotIn("+251911000001", content_str)
+        self.assertNotIn("+251911000002", content_str)
+
+        # Find regular sister in members list
+        sister_data = next((m for m in data["members"] if m["display_name"] == "Regular Sister"), None)
+        self.assertIsNotNone(sister_data)
+        self.assertEqual(sister_data["public_discussions_count"], 1)
+        self.assertFalse(sister_data["is_moderator"])
+
+        # Find mod in members list
+        mod_data = next((m for m in data["members"] if m["display_name"] == "Mod Pastor"), None)
+        self.assertIsNotNone(mod_data)
+        self.assertTrue(mod_data["is_moderator"])
+        self.assertEqual(mod_data["role_label"], "Moderator")
+
+    def test_member_directory_search_filter(self):
+        """Searching members by name query filters results accurately."""
+        User.objects.create_user(
+            email="search_user_1@example.com",
+            password="Password123!",
+            display_name="Berhanu Wondimu",
+        )
+        User.objects.create_user(
+            email="search_user_2@example.com",
+            password="Password123!",
+            display_name="Tigist Hailu",
+        )
+
+        res = self.client.get(reverse("accounts:member_directory") + "?format=json&q=Berhanu")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        names = [m["display_name"] for m in data["members"]]
+        self.assertIn("Berhanu Wondimu", names)
+        self.assertNotIn("Tigist Hailu", names)
+
+    def test_member_directory_html_page_renders(self):
+        """Direct access to /auth/members/ renders the responsive community directory page."""
+        User.objects.create_user(
+            email="directory_page_user@example.com",
+            password="Password123!",
+            display_name="Directory Member",
+        )
+        res = self.client.get(reverse("accounts:member_directory"))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, "Community Members")
+        self.assertContains(res, "Directory Member")
+        self.assertContains(res, "member-directory-card")
+
+    def test_registered_member_triggers_across_pages(self):
+        """All registered member badges have the js-open-members-modal class and proper accessibility."""
+        res = self.client.get(reverse("discussions:topic_list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, "community-members-modal")
+        self.assertContains(res, "js-open-members-modal")
+        self.assertContains(res, "members-modal-search")
+
+
 
 

@@ -9,6 +9,9 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.core.cache import cache
+from django.core.paginator import Paginator
+from django.db.models import Count, Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -227,6 +230,85 @@ class PublicProfileView(View):
                 "discussions": identified_discussions,
                 "replies_count": identified_replies_count,
                 "invited_members": invited_members,
+            },
+        )
+
+
+class MemberDirectoryView(View):
+    """
+    Renders the community members directory for interactive modal (JSON) and dedicated page (HTML).
+    CRITICAL PRIVACY RULE: Never leak email address, phone number, password hash,
+    or associate anonymous posts with member identities.
+    """
+    template_name = "accounts/members_list.html"
+
+    def get(self, request):
+        query = request.GET.get("q", "").strip()
+        members_qs = (
+            User.objects.filter(is_active=True)
+            .select_related("profile")
+            .annotate(
+                public_discussions_count=Count(
+                    "discussions",
+                    filter=Q(discussions__is_anonymous=False, discussions__is_deleted=False),
+                    distinct=True,
+                )
+            )
+            .order_by("-date_joined")
+        )
+
+        if query:
+            members_qs = members_qs.filter(display_name__icontains=query)
+
+        is_json = (
+            request.GET.get("format") == "json"
+            or request.headers.get("x-requested-with") == "XMLHttpRequest"
+            or "application/json" in request.headers.get("Accept", "")
+        )
+
+        if is_json:
+            total_active = User.objects.filter(is_active=True).count()
+            members_list = list(members_qs[:120])
+            members_data = []
+            for m in members_list:
+                avatar_url = ""
+                if hasattr(m, "profile") and m.profile.avatar:
+                    try:
+                        avatar_url = m.profile.avatar.url
+                    except Exception:
+                        avatar_url = ""
+
+                members_data.append({
+                    "id": m.id,
+                    "display_name": m.display_name,
+                    "initial": (m.display_name[:1].upper() if m.display_name else "?"),
+                    "avatar_url": avatar_url,
+                    "is_moderator": m.is_moderator,
+                    "is_staff": m.is_staff,
+                    "role_label": "Moderator" if m.is_moderator else "Member",
+                    "date_joined": m.date_joined.strftime("%b %Y"),
+                    "public_discussions_count": m.public_discussions_count,
+                    "profile_url": reverse("accounts:public_profile", kwargs={"user_id": m.id}),
+                })
+
+            return JsonResponse({
+                "total_count": total_active,
+                "filtered_count": len(members_data),
+                "query": query,
+                "members": members_data,
+            })
+
+        paginator = Paginator(members_qs, 24)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "page_obj": page_obj,
+                "query": query,
+                "total_members": User.objects.filter(is_active=True).count(),
             },
         )
 

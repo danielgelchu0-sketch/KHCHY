@@ -759,6 +759,207 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 12000);
         }
     }
+
+    // =========================================================================
+    // 9. Community Members Directory Modal Controller
+    // =========================================================================
+    const membersModal = document.getElementById('community-members-modal');
+    const membersListContainer = document.getElementById('members-modal-list');
+    const membersSearchInput = document.getElementById('members-modal-search');
+    const membersSearchClear = document.getElementById('members-search-clear');
+    let cachedMembers = null;
+    let isFetchingMembers = false;
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function openMembersModal() {
+        if (!membersModal) return;
+
+        // If mobile drawer is open, close it cleanly
+        if (mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+            closeDrawer();
+        }
+
+        membersModal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+
+        if (!cachedMembers && !isFetchingMembers) {
+            fetchMembers();
+        } else if (cachedMembers) {
+            renderMembersList(cachedMembers);
+            setTimeout(function () {
+                membersSearchInput?.focus();
+            }, 50);
+        }
+    }
+
+    function closeMembersModal() {
+        if (!membersModal) return;
+        membersModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+        if (membersSearchInput) {
+            membersSearchInput.value = '';
+        }
+        if (membersSearchClear) {
+            membersSearchClear.classList.add('hidden');
+        }
+    }
+
+    function fetchMembers(query) {
+        if (!membersListContainer) return;
+        isFetchingMembers = true;
+
+        membersListContainer.innerHTML = `
+            <div class="members-loading-state">
+                <div class="members-loading-spinner" aria-hidden="true"></div>
+                <span>Loading community members... / አባላትን በመጫን ላይ...</span>
+            </div>
+        `;
+
+        const q = query || '';
+        const url = `/auth/members/?format=json${q ? '&q=' + encodeURIComponent(q) : ''}`;
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load members');
+            return res.json();
+        })
+        .then(function (data) {
+            isFetchingMembers = false;
+            cachedMembers = data.members || [];
+            renderMembersList(cachedMembers);
+            setTimeout(function () {
+                membersSearchInput?.focus();
+            }, 50);
+        })
+        .catch(function () {
+            isFetchingMembers = false;
+            membersListContainer.innerHTML = `
+                <div class="members-empty-state">
+                    <p style="color: #ef4444; margin-bottom: 0.5rem;">⚠️ Unable to load members. / አባላትን መጫን አልተቻለም።</p>
+                    <button type="button" class="btn btn-secondary btn-sm" id="js-retry-members">Retry / እንደገና ይሞክሩ</button>
+                </div>
+            `;
+            document.getElementById('js-retry-members')?.addEventListener('click', function () {
+                fetchMembers();
+            });
+        });
+    }
+
+    function renderMembersList(members) {
+        if (!membersListContainer) return;
+
+        if (!members || members.length === 0) {
+            membersListContainer.innerHTML = `
+                <div class="members-empty-state">
+                    <span style="font-size: 1.8rem; display: block; margin-bottom: 0.5rem;" aria-hidden="true">🔍</span>
+                    <p style="margin-bottom: 0.25rem; font-weight: 600;">No members found / ምንም የተገኘ አባል የለም</p>
+                    <span style="font-size: 0.8rem; color: #94a3b8;">Try a different name search</span>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        members.forEach(function (m) {
+            const avatarHtml = m.avatar_url
+                ? `<img src="${escapeHtml(m.avatar_url)}" alt="${escapeHtml(m.display_name)}" class="member-avatar-img">`
+                : `<span aria-hidden="true">${escapeHtml(m.initial)}</span>`;
+
+            const modTagHtml = m.is_moderator
+                ? `<span class="mod-tag">Mod</span>`
+                : '';
+
+            const discussionsLabel = m.public_discussions_count === 1 ? 'public question' : 'public questions';
+
+            html += `
+                <a href="${escapeHtml(m.profile_url)}" class="member-list-item">
+                    <div class="member-avatar-wrap">
+                        ${avatarHtml}
+                    </div>
+                    <div class="member-item-info">
+                        <div class="member-name-row">
+                            <span class="member-name">${escapeHtml(m.display_name)}</span>
+                            ${modTagHtml}
+                        </div>
+                        <div class="member-meta-row">
+                            <span>Joined ${escapeHtml(m.date_joined)}</span>
+                            <span class="member-discussions-count">${m.public_discussions_count} ${discussionsLabel}</span>
+                        </div>
+                    </div>
+                    <span class="member-item-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            `;
+        });
+
+        membersListContainer.innerHTML = html;
+    }
+
+    // Attach open modal listener to all triggers
+    document.querySelectorAll('.js-open-members-modal').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            openMembersModal();
+        });
+    });
+
+    // Close button & backdrop click
+    document.querySelectorAll('.js-close-members-modal').forEach(function (btn) {
+        btn.addEventListener('click', closeMembersModal);
+    });
+
+    membersModal?.addEventListener('click', function (e) {
+        if (e.target === membersModal) {
+            closeMembersModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && membersModal && !membersModal.classList.contains('hidden')) {
+            closeMembersModal();
+        }
+    });
+
+    // Live search filter
+    membersSearchInput?.addEventListener('input', function () {
+        const val = this.value.trim().toLowerCase();
+        if (val.length > 0) {
+            membersSearchClear?.classList.remove('hidden');
+        } else {
+            membersSearchClear?.classList.add('hidden');
+        }
+
+        if (!cachedMembers) return;
+
+        const filtered = cachedMembers.filter(function (m) {
+            return m.display_name.toLowerCase().includes(val);
+        });
+        renderMembersList(filtered);
+    });
+
+    // Clear search button
+    membersSearchClear?.addEventListener('click', function () {
+        if (membersSearchInput) {
+            membersSearchInput.value = '';
+            membersSearchInput.focus();
+        }
+        membersSearchClear.classList.add('hidden');
+        if (cachedMembers) {
+            renderMembersList(cachedMembers);
+        }
+    });
 });
 
 

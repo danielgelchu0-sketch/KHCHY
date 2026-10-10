@@ -17,10 +17,10 @@
       </div>
     </div>
     <div class="topic-welcome-actions">
-      <div class="banner-stat-badge" title="{% trans 'Total Registered Members' %}">
+      <button type="button" class="banner-stat-badge js-open-members-modal" title="{% trans 'Tap to view registered members' %}" aria-label="{% trans 'View registered members' %}" style="cursor: pointer; font-family: inherit;">
         <span aria-hidden="true">👥</span>
         <span><strong class="js-total-members-count">{{ total_registered_members }}</strong> {% trans "Registered Members" %}</span>
-      </div>
+      </button>
 
       {% if user.is_authenticated %}
         <button type="button" class="btn btn-outline btn-sm js-open-share-modal"

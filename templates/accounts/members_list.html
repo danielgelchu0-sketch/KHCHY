@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Community Members" %} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 980px; margin: 1.5rem auto 3.5rem;">
+  <!-- Header Card -->
+  <div class="card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <a href="{% url 'discussions:topic_list' %}" style="font-size: 0.85rem; display: inline-block; margin-bottom: 0.5rem;">&larr; {% trans "Topic Rooms" %}</a>
+        <h1 style="margin-bottom: 0.25rem; font-size: 1.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span aria-hidden="true">👥</span> {% trans "Community Members" %}
+        </h1>
+        <p class="text-muted" style="margin-bottom: 0; font-size: 0.95rem;">
+          <strong class="js-total-members-count">{{ total_members }}</strong> {% trans "registered members in community" %} &bull; {% trans "Safe, Christ-centered fellowship" %}
+        </p>
+      </div>
+
+      <!-- Search Bar -->
+      <form method="get" action="{% url 'accounts:member_directory' %}" style="display: flex; gap: 0.5rem; max-width: 340px; width: 100%;">
+        <input type="search" name="q" value="{{ query }}" placeholder="{% trans 'Search members by name...' %}" class="form-input" style="flex: 1; padding: 0.55rem 0.85rem; font-size: 0.9rem;" aria-label="{% trans 'Search members' %}">
+        <button type="submit" class="btn btn-secondary btn-sm">{% trans "Search" %}</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Members Grid -->
+  {% if page_obj %}
+    <div class="members-page-grid">
+      {% for m in page_obj %}
+        <a href="{% url 'accounts:public_profile' user_id=m.id %}" class="member-directory-card">
+          <div class="member-card-avatar-wrap">
+            {% if m.profile.avatar %}
+              <img src="{{ m.profile.avatar.url }}" alt="{{ m.display_name }}" class="member-card-avatar-img">
+            {% else %}
+              <div class="member-card-avatar-fallback">
+                {{ m.display_name|slice:":1"|upper }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="member-card-info">
+            <div class="member-card-name-row">
+              <strong class="member-card-name">{{ m.display_name }}</strong>
+              {% if m.is_moderator %}
+                <span class="mod-tag">{% trans "Mod" %}</span>
+              {% endif %}
+            </div>
+            <span class="member-card-joined">
+              {% trans "Joined" %} {{ m.date_joined|date:"M Y" }}
+            </span>
+            <span class="member-card-stats">
+              {{ m.public_discussions_count }} {% if m.public_discussions_count == 1 %}{% trans "public discussion" %}{% else %}{% trans "public discussions" %}{% endif %}
+            </span>
+          </div>
+          <span class="member-card-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+      <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-secondary btn-sm">&larr; {% trans "Previous" %}</a>
+        {% endif %}
+        <span class="btn btn-sm" style="background: var(--bg-card); cursor: default;">
+          {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-secondary btn-sm">{% trans "Next" %} &rarr;</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="card" style="padding: 3rem; text-align: center;">
+      <p class="text-muted" style="margin-bottom: 0;">{% trans "No members found" %}{% if query %} matching "{{ query }}"{% endif %}.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
