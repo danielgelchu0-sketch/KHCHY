@@ -20,67 +20,46 @@ class Command(BaseCommand):
                 "order": 1,
             },
             {
-                "name": "Youth Questions",
-                "slug": "youth-questions",
-                "description": "A dedicated, supportive room for teens, youths, and young adults tackling peer pressure, identity, and life choices.",
-                "icon": "academic-cap",
+                "name": "Youth & Emotional Well-being",
+                "slug": "youth-emotional-wellbeing",
+                "description": "A dedicated, safe room for teens, youths, and young adults tackling peer pressure, identity, emotional struggles, anxiety, burnout, and life choices.",
+                "icon": "heart",
                 "order": 2,
             },
             {
-                "name": "Mental & Emotional Struggles",
-                "slug": "mental-emotional-struggles",
-                "description": "Safe, compassionate discussions regarding anxiety, depression, burnout, grief, loneliness, and emotional well-being.",
-                "icon": "heart",
-                "order": 3,
-            },
-            {
-                "name": "Sexuality & Boundaries",
-                "slug": "sexuality-boundaries",
-                "description": "Confidential, biblical, and sensitive dialogue on purity, dating boundaries, temptations, attraction, and healing.",
-                "icon": "shield-check",
-                "order": 4,
-            },
-            {
-                "name": "Relationships & Dating",
-                "slug": "relationships-dating",
-                "description": "Navigating friendships, godly dating, courtship, heartbreaks, and healthy relationship patterns.",
+                "name": "Relationships, Marriage & Boundaries",
+                "slug": "relationships-marriage-boundaries",
+                "description": "Biblical dialogue on godly dating, purity, healthy boundaries, temptations, courtship, marriage communication, and Christian family life.",
                 "icon": "user-group",
-                "order": 5,
-            },
-            {
-                "name": "Marriage & Family",
-                "slug": "marriage-family",
-                "description": "Couples, parents, and families discussing marriage challenges, parenting, communication, and home life.",
-                "icon": "home",
-                "order": 6,
+                "order": 3,
             },
             {
                 "name": "Bible Questions & Theology",
                 "slug": "bible-questions-theology",
                 "description": "Scripture interpretation, difficult biblical passages, theology questions, and apologetics.",
                 "icon": "book-open",
-                "order": 7,
+                "order": 4,
             },
             {
                 "name": "Education & Career",
                 "slug": "education-career",
                 "description": "School, college decisions, workplace integrity, career discernment, and balancing work with Christian faith.",
                 "icon": "briefcase",
-                "order": 8,
+                "order": 5,
             },
             {
                 "name": "Church Life & Community",
                 "slug": "church-life-community",
                 "description": "Ministry involvement, serving in church, resolving interpersonal friction, and building authentic community fellowship.",
                 "icon": "building-office",
-                "order": 9,
+                "order": 6,
             },
             {
                 "name": "General Discussion",
                 "slug": "general-discussion",
                 "description": "Open fellowship, encouraging testimonies, books, hobbies, and everyday community conversations.",
                 "icon": "chat-bubble",
-                "order": 10,
+                "order": 7,
             },
         ]
 
@@ -156,10 +135,10 @@ class Command(BaseCommand):
             self.stdout.write("  Member created: sarah@example.com / MemberPass123!")
 
         # 3. Seed Sample Discussion (Demonstrating Anonymous Posting)
-        mental_health_topic = created_topics.get("mental-emotional-struggles")
-        if mental_health_topic and not Discussion.objects.filter(topic=mental_health_topic).exists():
+        youth_topic = created_topics.get("youth-emotional-wellbeing")
+        if youth_topic and not Discussion.objects.filter(topic=youth_topic).exists():
             disc1 = Discussion.objects.create(
-                topic=mental_health_topic,
+                topic=youth_topic,
                 author=daniel_user if 'daniel_user' in locals() else youth_user,
                 title="How do I overcome persistent anxiety when everyone at church expects me to be joyful?",
                 content=(

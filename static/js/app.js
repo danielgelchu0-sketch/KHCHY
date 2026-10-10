@@ -26,32 +26,78 @@ document.addEventListener('htmx:configRequest', function (evt) {
     }
 });
 
-// Auto-scroll to newly appended reply after HTMX swap
+// Quote Reply Handler (Telegram style)
+window.quoteReply = function (replyId, authorName, snippet) {
+    const parentInput = document.getElementById('composer-parent-id');
+    const quoteBar = document.getElementById('composer-quote-bar');
+    const quoteAuthor = document.getElementById('composer-quote-author');
+    const quoteSnippet = document.getElementById('composer-quote-snippet');
+    const textarea = document.getElementById('chat-reply-textarea');
+
+    if (parentInput) parentInput.value = replyId;
+    if (quoteAuthor) quoteAuthor.textContent = authorName;
+    if (quoteSnippet) quoteSnippet.textContent = ' — "' + snippet + '"';
+    if (quoteBar) quoteBar.classList.remove('hidden');
+
+    if (textarea) {
+        textarea.focus();
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+};
+
+// Backward-compatibility alias for toggleNestedReplyForm
+window.toggleNestedReplyForm = function (replyId) {
+    const card = document.getElementById('reply-' + replyId);
+    if (!card) return;
+    const authorEl = card.querySelector('.author-chip, .reply-header a, .reply-header strong');
+    const authorName = authorEl ? authorEl.textContent.trim() : 'Community Member';
+    const contentEl = card.querySelector('.reply-content');
+    const snippet = contentEl ? contentEl.textContent.trim().substring(0, 70) : '';
+    window.quoteReply(replyId, authorName, snippet);
+};
+
+// Cancel quote reply handler
+function cancelQuoteReply() {
+    const parentInput = document.getElementById('composer-parent-id');
+    const quoteBar = document.getElementById('composer-quote-bar');
+    if (parentInput) parentInput.value = '';
+    if (quoteBar) quoteBar.classList.add('hidden');
+}
+
+// Auto-scroll and cleanup after HTMX reply swap
 document.addEventListener('htmx:afterSwap', function (evt) {
     if (evt.detail.target && evt.detail.target.id === 'replies-container') {
         const lastCard = evt.detail.target.lastElementChild;
         if (lastCard) {
             lastCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            lastCard.classList.add('highlight-pulse');
+            lastCard.classList.add('bubble-highlight-pulse');
+            const cardId = lastCard.getAttribute('data-reply-id');
+            if (cardId) {
+                const currentMax = parseInt(evt.detail.target.getAttribute('data-max-id') || '0', 10);
+                if (parseInt(cardId, 10) > currentMax) {
+                    evt.detail.target.setAttribute('data-max-id', cardId);
+                }
+            }
         }
-        const textarea = document.querySelector('#main-reply-form textarea');
-        if (textarea) textarea.value = '';
+        const textarea = document.getElementById('chat-reply-textarea') || document.querySelector('#main-reply-form textarea');
+        if (textarea) {
+            textarea.value = '';
+            textarea.style.height = 'auto';
+        }
+        cancelQuoteReply();
+
+        // Hide empty placeholder if visible
+        const placeholder = document.getElementById('no-replies-placeholder');
+        if (placeholder) placeholder.remove();
+
+        // Increment count display
+        const countDisplay = document.getElementById('replies-count-display');
+        if (countDisplay) {
+            const current = parseInt(countDisplay.textContent.trim() || '0', 10);
+            countDisplay.textContent = current + 1;
+        }
     }
 });
-
-// Toggle nested reply box
-function toggleNestedReplyForm(replyId) {
-    const formEl = document.getElementById('reply-form-' + replyId);
-    if (formEl) {
-        const isHidden = formEl.classList.contains('hidden');
-        document.querySelectorAll('.nested-reply-form').forEach(el => el.classList.add('hidden'));
-        if (isHidden) {
-            formEl.classList.remove('hidden');
-            const textarea = formEl.querySelector('textarea');
-            if (textarea) textarea.focus();
-        }
-    }
-}
 
 // Confirmation helper for destructive actions
 function confirmAction(message) {
@@ -599,6 +645,119 @@ document.addEventListener('DOMContentLoaded', function () {
             message: 'You can now paste and send it to your friends on WhatsApp or Telegram.',
             notification_type: 'new_discussion'
         });
+    }
+
+    // =========================================================================
+    // 6. Conversational Chat Sticky Composer & In-Room Live Poller
+    // =========================================================================
+
+    // 1-Tap Anonymity Switcher Button
+    const anonToggleBtn = document.getElementById('btn-toggle-anonymity');
+    const composerPostMode = document.getElementById('composer-post-mode');
+    if (anonToggleBtn && composerPostMode) {
+        anonToggleBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const realIcon = anonToggleBtn.querySelector('.anon-icon-real');
+            const secretIcon = anonToggleBtn.querySelector('.anon-icon-secret');
+            const labelEl = document.getElementById('anon-label-text');
+            const realName = anonToggleBtn.getAttribute('data-real-name') || 'Me';
+
+            if (composerPostMode.value === 'identified') {
+                // Switch to Anonymous
+                composerPostMode.value = 'anonymous';
+                anonToggleBtn.classList.remove('mode-identified');
+                anonToggleBtn.classList.add('mode-anonymous');
+                if (realIcon) realIcon.classList.add('hidden');
+                if (secretIcon) secretIcon.classList.remove('hidden');
+                if (labelEl) labelEl.textContent = 'Anonymous / ስም-አልባ';
+            } else {
+                // Switch to Real Name
+                composerPostMode.value = 'identified';
+                anonToggleBtn.classList.remove('mode-anonymous');
+                anonToggleBtn.classList.add('mode-identified');
+                if (realIcon) realIcon.classList.remove('hidden');
+                if (secretIcon) secretIcon.classList.add('hidden');
+                if (labelEl) labelEl.textContent = realName.length > 12 ? realName.slice(0, 11) + '…' : realName;
+            }
+        });
+    }
+
+    // Cancel Quote Reply
+    const quoteCancelBtn = document.getElementById('composer-quote-cancel');
+    if (quoteCancelBtn) {
+        quoteCancelBtn.addEventListener('click', cancelQuoteReply);
+    }
+
+    // Auto-expanding chat textarea + Desktop Enter-to-send
+    const chatTextarea = document.getElementById('chat-reply-textarea');
+    if (chatTextarea) {
+        chatTextarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        chatTextarea.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+                if (window.innerWidth > 640 && this.value.trim().length > 0) {
+                    e.preventDefault();
+                    const form = document.getElementById('main-reply-form');
+                    if (form) {
+                        if (window.htmx) {
+                            htmx.trigger(form, 'submit');
+                        } else {
+                            form.submit();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // In-Room Live Discussion Replies Poller (every 12 seconds)
+    const repliesContainer = document.getElementById('replies-container');
+    if (repliesContainer) {
+        const pollUrl = repliesContainer.getAttribute('data-poll-url');
+        if (pollUrl) {
+            setInterval(function () {
+                if (document.hidden) return; // Skip if tab in background
+                const currentMaxId = repliesContainer.getAttribute('data-max-id') || '0';
+                fetch(`${pollUrl}?after_id=${currentMaxId}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Poll failed');
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (data && data.new_count > 0 && data.html) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = data.html;
+                        const newCards = Array.from(tempDiv.children);
+
+                        newCards.forEach(function (card) {
+                            card.classList.add('bubble-highlight-pulse');
+                            repliesContainer.appendChild(card);
+                        });
+
+                        repliesContainer.setAttribute('data-max-id', data.max_id);
+
+                        const countDisplay = document.getElementById('replies-count-display');
+                        if (countDisplay) {
+                            countDisplay.textContent = data.count;
+                        }
+
+                        const placeholder = document.getElementById('no-replies-placeholder');
+                        if (placeholder) placeholder.remove();
+
+                        // Soft audio chime
+                        playNotificationSound();
+                    }
+                })
+                .catch(function () {
+                    // Fail silently on transient network disconnection
+                });
+            }, 12000);
+        }
     }
 });
 

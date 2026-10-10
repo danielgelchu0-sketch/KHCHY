@@ -137,14 +137,14 @@
   <!-- ==============================================================================
        REPLIES SECTION: Answers & Discussion
        ============================================================================== -->
-  <section id="answers-section" style="margin-top: 2.5rem;">
+  <section id="answers-section" style="margin-top: 2.5rem; margin-bottom: 2rem;">
     <h2 class="replies-section-title">
       <span>{% trans "Community Answers & Discussion" %}</span>
-      <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">({{ replies_count }})</span>
+      <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">(<span id="replies-count-display">{{ replies_count }}</span>)</span>
     </h2>
 
-    <!-- Replies Container (Live target for HTMX updates) -->
-    <div id="replies-container">
+    <!-- Replies Container (Live target for HTMX updates & Poller) -->
+    <div id="replies-container" class="chat-stream-container" data-poll-url="{% url 'discussions:replies_poll' topic_slug=topic.slug pk=discussion.id %}" data-max-id="{{ max_reply_id }}">
       {% if root_replies %}
         {% for reply in root_replies %}
           {% include "discussions/partials/reply_card.html" with reply=reply discussion=discussion %}
@@ -158,67 +158,69 @@
       {% endif %}
     </div>
 
-    <!-- Main Reply Form -->
+    <!-- Pinned / Sticky Telegram-Style Chat Composer Bar -->
     {% if discussion|can_reply:user %}
-      <div class="card" style="padding: 2rem; margin-top: 2rem; background-color: var(--surface);">
-        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">{% trans "Provide an Answer or Share Your Reflection" %}</h3>
-        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">
-          {% trans "Your reply can be posted with your identity or anonymously." %}
-        </p>
+      <div id="chat-composer-wrap" class="chat-composer-wrap">
+        <!-- Reply Quotation Banner (Hidden by default, shown when replying to a message) -->
+        <div id="composer-quote-bar" class="composer-quote-bar hidden">
+          <div class="composer-quote-content">
+            <span class="composer-quote-icon">↩️</span>
+            <div class="composer-quote-text">
+              <strong id="composer-quote-author"></strong>
+              <span id="composer-quote-snippet"></span>
+            </div>
+          </div>
+          <button type="button" id="composer-quote-cancel" class="composer-quote-cancel-btn" title="{% trans 'Cancel reply' %}">&times;</button>
+        </div>
 
         <form id="main-reply-form" action="{% url 'discussions:reply_create' topic_slug=topic.slug pk=discussion.id %}" method="post"
               hx-post="{% url 'discussions:reply_create' topic_slug=topic.slug pk=discussion.id %}"
               hx-target="#replies-container"
               hx-swap="beforeend">
           {% csrf_token %}
+          <input type="hidden" name="parent_id" id="composer-parent-id" value="">
+          <input type="hidden" name="post_mode" id="composer-post-mode" value="identified">
 
-          <div class="form-group">
-            {{ reply_form.content }}
-          </div>
+          <div class="chat-composer-inner">
+            <!-- 1-Tap Anonymity Switcher Button -->
+            <button type="button" id="btn-toggle-anonymity" class="btn-anonymity-toggle mode-identified"
+                    data-real-name="{{ user.display_name }}"
+                    title="{% trans 'Tap to toggle between Real Name and Anonymous' %}"
+                    aria-label="{% trans 'Toggle Anonymity' %}">
+              <span class="anon-icon-real" aria-hidden="true">👤</span>
+              <span class="anon-icon-secret hidden" aria-hidden="true">🕵️</span>
+              <span class="anon-label-text" id="anon-label-text">{{ user.display_name|truncatechars:12 }}</span>
+            </button>
 
-          <!-- Explicit Anonymity Choice Selector -->
-          <div class="identity-mode-selector">
-            <h4>{% trans "How would you like to post this answer?" %}</h4>
-            <div class="identity-options-grid">
-              <label class="identity-option-card">
-                <input type="radio" name="post_mode" value="identified" checked>
-                <div class="identity-card-content">
-                  <strong>{% trans "Post with my identity" %}</strong>
-                  <span>{% trans "Display your name" %} (<strong>{{ user.display_name }}</strong>) {% trans "to other members." %}</span>
-                </div>
-              </label>
-
-              <label class="identity-option-card">
-                <input type="radio" name="post_mode" value="anonymous">
-                <div class="identity-card-content">
-                  <strong>&#128274; {% trans "Post anonymously" %}</strong>
-                  <span>{% trans "Display as" %} <strong>{% trans "Anonymous Member" %}</strong>. {% trans "Your name and profile are completely hidden." %}</span>
-                </div>
-              </label>
+            <!-- Text Input / Expanding Textarea -->
+            <div class="chat-input-wrapper">
+              <textarea id="chat-reply-textarea" name="content" class="chat-textarea" rows="1"
+                        placeholder="{% trans 'Write an encouraging answer or reflection...' %} / መልስ ወይም ማበረታቻ ይጻፉ..."
+                        required></textarea>
             </div>
-            <div class="privacy-explainer-banner" style="margin-top: 0.75rem;">
-              <strong>{% trans "Note:" %}</strong> {% trans "Internal account identity is preserved for church moderation and safety review." %}
-            </div>
-          </div>
 
-          <div style="text-align: right; margin-top: 1rem;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
-              {% trans "Post Answer" %}
+            <!-- Send Button -->
+            <button type="submit" id="chat-send-btn" class="chat-send-btn" title="{% trans 'Post Answer' %} / ላክ" aria-label="{% trans 'Send' %}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
             </button>
           </div>
         </form>
       </div>
     {% elif not user.is_authenticated %}
-      <div class="card text-center" style="padding: 2rem; margin-top: 2rem;">
-        <p style="margin-bottom: 1rem; font-weight: 500;">
-          {% trans "Please sign in to participate in the discussion and provide an answer." %}
+      <div class="card text-center" style="padding: 1.75rem 1.25rem; margin-top: 1.5rem; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+        <p style="margin-bottom: 0.75rem; font-weight: 600; color: var(--primary-900);">
+          💬 {% trans "Join the fellowship to answer or share encouragement." %}
         </p>
-        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">{% trans "Sign In to Reply" %}</a>
+        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-sm">
+          {% trans "Sign In to Reply" %} / ለመመለስ ይግቡ
+        </a>
       </div>
     {% elif discussion.status == 'locked' %}
-      <div class="card text-center" style="padding: 2rem; margin-top: 2rem; background-color: var(--primary-50);">
-        <p class="text-muted" style="margin-bottom: 0;">
-          &#128274; {% trans "This discussion has been locked by community moderators. No further replies can be submitted." %}
+      <div class="card text-center" style="padding: 1.5rem; margin-top: 1.5rem; background-color: var(--primary-50); border: 1px solid #cbd5e1; border-radius: var(--radius-lg);">
+        <p class="text-muted" style="margin-bottom: 0; font-size: 0.9rem;">
+          🔒 {% trans "This discussion has been locked by community moderators. No further replies can be submitted." %}
         </p>
       </div>
     {% endif %}

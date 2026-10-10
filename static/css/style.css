@@ -1581,47 +1581,104 @@ p {
   gap: 0.5rem;
 }
 
+.chat-stream-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
 .reply-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease;
+  border-radius: 16px 16px 16px 4px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  position: relative;
+  max-width: 94%;
+}
+
+.reply-card.own-message {
+  border-radius: 16px 16px 4px 16px;
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  margin-left: auto;
 }
 
 .reply-card.nested {
-  margin-left: 2rem;
-  background-color: #fafbfc;
-  border-left: 3px solid var(--accent-600);
+  margin-left: 1.5rem;
+  border-left: 3px solid var(--accent-500);
 }
 
 @media (max-width: 640px) {
-  .reply-card.nested {
-    margin-left: 0.75rem;
+  .reply-card {
+    max-width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
   }
+  .reply-card.nested {
+    margin-left: 0.5rem;
+  }
+}
+
+/* Telegram-Style Quote Block inside bubble */
+.reply-bubble-quote {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.035);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  border-left: 3px solid #3b82f6;
+  transition: background 0.15s ease;
+}
+
+.reply-bubble-quote:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.quote-bar-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.quote-author {
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.quote-snippet {
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
 }
 
 .reply-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 0.85rem;
 }
 
 .reply-content {
   font-size: 0.95rem;
   color: var(--primary-800);
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  line-height: 1.55;
 }
 
 .reply-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   font-size: 0.85rem;
 }
 
@@ -1653,6 +1710,181 @@ p {
   font-size: 0.75rem;
   color: #92400e;
   margin-bottom: 0.5rem;
+}
+
+/* ==============================================================================
+   Sticky Mobile & Desktop Chat Composer Bar
+   ============================================================================== */
+.chat-composer-wrap {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.06);
+  padding: 0.75rem 1rem;
+  margin: 1.5rem -1rem 0;
+  border-radius: 16px 16px 0 0;
+}
+
+@media (min-width: 768px) {
+  .chat-composer-wrap {
+    margin: 2rem 0 0;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.composer-quote-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #1e3a8a;
+}
+
+.composer-quote-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.composer-quote-text strong {
+  color: #1d4ed8;
+  margin-right: 0.35rem;
+}
+
+.composer-quote-snippet {
+  color: #475569;
+  font-style: italic;
+}
+
+.composer-quote-cancel-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0 0.35rem;
+  line-height: 1;
+}
+
+.composer-quote-cancel-btn:hover {
+  color: #ef4444;
+}
+
+.chat-composer-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-anonymity-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.btn-anonymity-toggle.mode-identified {
+  background-color: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.btn-anonymity-toggle.mode-identified:hover {
+  background-color: #d1fae5;
+  border-color: #34d399;
+}
+
+.btn-anonymity-toggle.mode-anonymous {
+  background-color: #f1f5f9;
+  border-color: #64748b;
+  color: #1e293b;
+}
+
+.btn-anonymity-toggle.mode-anonymous:hover {
+  background-color: #e2e8f0;
+  border-color: #475569;
+}
+
+.chat-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.chat-textarea {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: #ffffff;
+  resize: none;
+  max-height: 120px;
+  min-height: 40px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.chat-textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.chat-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+
+.chat-send-btn:hover {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
+}
+
+.chat-send-btn:active {
+  transform: scale(0.96);
+}
+
+.bubble-highlight-pulse {
+  animation: bubblePulse 2.5s ease-out;
+}
+
+@keyframes bubblePulse {
+  0% { background-color: #eff6ff; }
+  100% { background-color: var(--surface); }
 }
 
 /* Moderation Dashboard */

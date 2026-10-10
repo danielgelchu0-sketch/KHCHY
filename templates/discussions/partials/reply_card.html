@@ -1,12 +1,21 @@
 {% load static discussion_tags i18n %}
-<div id="reply-{{ reply.id }}" class="reply-card {% if reply.parent %}nested{% endif %}">
-
+<div id="reply-{{ reply.id }}" class="reply-card {% if reply.parent %}nested{% endif %} {% if user.is_authenticated and reply.author == user and not reply.is_anonymous %}own-message{% endif %}" data-reply-id="{{ reply.id }}">
 
   <!-- Moderator Author Inspection Banner (Only rendered for authorized moderators) -->
   {% if reply.is_anonymous and user.is_authenticated and user.is_moderator and not reply.is_deleted %}
     <div class="mod-inspect-box">
       <strong>&#128737; {% trans "Moderator Inspection" %}:</strong> {% trans "This post is anonymous to members. True author:" %}
       <strong>{{ reply.author.display_name }}</strong> (<code>{{ reply.author.email }}</code>)
+    </div>
+  {% endif %}
+
+  <!-- Quoted parent snippet if this is a reply to another comment -->
+  {% if reply.parent and not reply.parent.is_deleted %}
+    <div class="reply-bubble-quote" onclick="document.getElementById('reply-{{ reply.parent.id }}')?.scrollIntoView({behavior: 'smooth', block: 'center'});" title="{% trans 'Jump to quoted message' %}">
+      <div class="quote-bar-text">
+        <span class="quote-author">{% if reply.parent.is_anonymous %}🕵️ {% trans "Anonymous Member" %}{% else %}👤 {{ reply.parent.author.display_name }}{% endif %}</span>
+        <span class="quote-snippet">{{ reply.parent.content|striptags|truncatechars:70 }}</span>
+      </div>
     </div>
   {% endif %}
 
@@ -55,7 +64,7 @@
 
   <!-- Reply Actions Bar -->
   {% if not reply.is_deleted %}
-    <div class="reply-actions-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid #f1f5f9;">
+    <div class="reply-actions-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px solid #f1f5f9;">
       <!-- Reply Reactions (Like / Dislike) -->
       {% with u_reaction=reply|user_reaction:user %}
         {% include "discussions/partials/reply_reaction_buttons.html" with reply=reply user_reaction=u_reaction %}
@@ -64,7 +73,7 @@
       {% if discussion.status == 'active' and not discussion.topic.is_archived %}
         <div class="reply-actions">
           {% if user.is_authenticated and user.can_post %}
-            <button type="button" onclick="toggleNestedReplyForm({{ reply.id }})">
+            <button type="button" class="btn-bubble-reply" onclick="quoteReply({{ reply.id }}, '{% if reply.is_anonymous %}{% trans "Anonymous Member" %}{% else %}{{ reply.author.display_name|escapejs }}{% endif %}', '{{ reply.content|striptags|truncatechars:70|escapejs }}')">
               &#8617; {% trans "Reply" %}
             </button>
           {% endif %}
@@ -101,45 +110,11 @@
         </div>
       {% endif %}
     </div>
-
-    <!-- Nested Reply Form (Toggled) -->
-    {% if user.is_authenticated and user.can_post %}
-      <div id="reply-form-{{ reply.id }}" class="nested-reply-form hidden" style="margin-top: 1rem; padding: 1rem; background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
-        <form action="{% url 'discussions:reply_create' topic_slug=discussion.topic.slug pk=discussion.id %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="parent_id" value="{{ reply.id }}">
-
-          <div class="form-group" style="margin-bottom: 0.75rem;">
-            <textarea name="content" rows="3" class="form-textarea" placeholder="{% trans 'Write a reply to this comment...' %}" required></textarea>
-          </div>
-
-          <!-- Nested Anonymity Selector -->
-          <div class="identity-mode-selector" style="padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-900);">{% trans "Post as:" %}</span>
-            <div style="display: flex; gap: 1rem; margin-top: 0.35rem; font-size: 0.85rem;">
-              <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
-                <input type="radio" name="post_mode" value="identified" checked>
-                <span>{{ user.display_name }}</span>
-              </label>
-              <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
-                <input type="radio" name="post_mode" value="anonymous">
-                <span>&#128274; {% trans "Anonymous Member" %}</span>
-              </label>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleNestedReplyForm({{ reply.id }})">{% trans "Cancel" %}</button>
-            <button type="submit" class="btn btn-primary btn-sm">{% trans "Submit Reply" %}</button>
-          </div>
-        </form>
-      </div>
-    {% endif %}
   {% endif %}
 
   <!-- Recursive Child Replies -->
   {% if reply.child_replies %}
-    <div class="child-replies-list" style="margin-top: 1rem;">
+    <div class="child-replies-list" style="margin-top: 0.75rem;">
       {% for child in reply.child_replies %}
         {% include "discussions/partials/reply_card.html" with reply=child discussion=discussion %}
       {% endfor %}

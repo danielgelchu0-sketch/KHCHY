@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, F, Q
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -173,6 +174,8 @@ class DiscussionDetailView(View):
 
         reply_form = ReplyCreateForm()
 
+        max_reply_id = max([r.id for r in replies_list], default=0)
+
         return render(
             request,
             "discussions/discussion_detail.html",
@@ -181,6 +184,7 @@ class DiscussionDetailView(View):
                 "discussion": discussion,
                 "root_replies": root_replies,
                 "replies_count": len(replies_list),
+                "max_reply_id": max_reply_id,
                 "is_bookmarked": is_bookmarked,
                 "user_reaction": user_reaction,
                 "reply_form": reply_form,
@@ -310,6 +314,69 @@ class ReplyCreateView(View):
 
         messages.error(request, "Please check your reply and try again.")
         return redirect(discussion.get_absolute_url())
+
+
+class DiscussionRepliesPollView(View):
+    """
+    Lightweight near real-time poller for discussion detail pages.
+    Returns new replies created since after_id as HTML snippets.
+    PythonAnywhere free tier compatible (<1ms execution time).
+    """
+
+    def get(self, request, topic_slug, pk):
+        topic = get_object_or_404(Topic, slug=topic_slug)
+        discussion = get_object_or_404(Discussion, pk=pk, topic=topic)
+
+        try:
+            after_id = int(request.GET.get("after_id", 0))
+        except (ValueError, TypeError):
+            after_id = 0
+
+        new_replies = (
+            Reply.objects.filter(
+                discussion=discussion,
+                id__gt=after_id,
+                is_deleted=False,
+                status=Reply.Status.ACTIVE,
+            )
+            .select_related("author", "author__profile", "parent", "parent__author")
+            .order_by("created_at")
+        )
+
+        total_active_count = Reply.objects.filter(
+            discussion=discussion,
+            is_deleted=False,
+            status=Reply.Status.ACTIVE,
+        ).count()
+
+        if not new_replies.exists():
+            return JsonResponse({
+                "count": total_active_count,
+                "new_count": 0,
+                "max_id": after_id,
+                "html": "",
+            })
+
+        html_chunks = []
+        max_id = after_id
+        for reply in new_replies:
+            reply.child_replies = []
+            html_chunks.append(
+                render_to_string(
+                    "discussions/partials/reply_card.html",
+                    {"reply": reply, "discussion": discussion, "user": request.user},
+                    request=request,
+                )
+            )
+            if reply.id > max_id:
+                max_id = reply.id
+
+        return JsonResponse({
+            "count": total_active_count,
+            "new_count": len(new_replies),
+            "max_id": max_id,
+            "html": "".join(html_chunks),
+        })
 
 
 @method_decorator(login_required, name="dispatch")

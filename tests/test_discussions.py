@@ -492,5 +492,68 @@ class DiscussionsTests(TestCase):
         self.assertContains(response, "anonymous_avatar.svg")
         self.assertContains(response, f"reply-{anon_reply.id}")
 
+    def test_discussion_detail_renders_chat_composer_and_anonymity_switch(self):
+        """Discussion detail view renders Telegram-style sticky composer and 1-tap anonymity switch."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.discussion.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="chat-composer-wrap"')
+        self.assertContains(response, 'id="btn-toggle-anonymity"')
+        self.assertContains(response, 'id="chat-reply-textarea"')
+        self.assertContains(response, 'id="composer-quote-bar"')
+        self.assertContains(response, 'id="replies-count-display"')
+
+    def test_discussion_replies_poll_endpoint(self):
+        """Near real-time replies poller returns new replies since after_id."""
+        poll_url = reverse("discussions:replies_poll", kwargs={"topic_slug": self.topic.slug, "pk": self.discussion.id})
+
+        # Initially 0 replies
+        res = self.client.get(f"{poll_url}?after_id=0")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["new_count"], 0)
+        self.assertEqual(data["count"], 0)
+
+        # Create a reply
+        reply1 = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.responder,
+            content="Real-time message stream test.",
+        )
+
+        # Poll with after_id=0 -> should get reply1
+        res = self.client.get(f"{poll_url}?after_id=0")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["new_count"], 1)
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["max_id"], reply1.id)
+        self.assertIn("Real-time message stream test.", data["html"])
+
+        # Poll with after_id=reply1.id -> should be 0 new
+        res = self.client.get(f"{poll_url}?after_id={reply1.id}")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["new_count"], 0)
+
+    def test_quote_reply_renders_bubble_quote_preview(self):
+        """Replies quoting another reply render the quote bubble preview block."""
+        parent_reply = Reply.objects.create(
+            discussion=self.discussion,
+            author=self.user,
+            content="Original message text that gets quoted.",
+        )
+        child_reply = Reply.objects.create(
+            discussion=self.discussion,
+            parent=parent_reply,
+            author=self.responder,
+            content="My follow up reply quoting you.",
+        )
+        response = self.client.get(self.discussion.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "reply-bubble-quote")
+        self.assertContains(response, "Original message text")
+
+
 
 
