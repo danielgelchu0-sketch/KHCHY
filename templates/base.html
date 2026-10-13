@@ -11,6 +11,13 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
   <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
   <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+  <!-- Progressive Web App Manifest & Mobile Meta Tags -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HKHC">
   <!-- Production Styles -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <!-- Offline-safe minified HTMX -->
@@ -25,6 +32,20 @@
 </head>
 
 <body>
+
+  <!-- Offline Status Toast / Banner -->
+  <aside id="offline-indicator" class="offline-banner hidden" role="status" aria-live="polite">
+    <div class="container offline-banner-content">
+      <span class="offline-icon" aria-hidden="true">📡</span>
+      <div class="offline-text">
+        <strong>{% trans "You are currently offline." %}</strong>
+        <span>{% trans "Viewing cached discussions. Reconnect to send replies." %} / መስመር ላይ አይደሉም (የተቀመጡ ውይይቶች እየታዩ ነው)</span>
+      </div>
+      <button type="button" class="btn-offline-retry" onclick="window.location.reload();" aria-label="{% trans 'Retry Connection' %}">
+        🔄 {% trans "Retry" %} / እንደገና ሞክር
+      </button>
+    </div>
+  </aside>
 
   <!-- Navigation Bar -->
   <header class="navbar">
@@ -75,6 +96,13 @@
             <span class="lang-tag {% if LANGUAGE_CODE == 'am' %}active{% endif %}">አማ (Amh)</span>
           </button>
         </form>
+
+        <!-- App Install Button (Header - Visible when installable) -->
+        <button type="button" id="nav-install-btn" class="btn-nav-install hidden" aria-label="{% trans 'Install App' %}" title="{% trans 'Install HKHC App on your device' %}">
+          <span class="install-icon" aria-hidden="true">📲</span>
+          <span class="install-label desktop-only">{% trans "Install App" %}</span>
+          <span class="install-label mobile-only">{% trans "App" %}</span>
+        </button>
 
         {% if user.is_authenticated %}
           <!-- Notification Bell with live polling (Visible on both Desktop and Mobile) -->
@@ -223,6 +251,15 @@
       <div class="drawer-section">
         <span class="drawer-section-title">{% trans "Explore Fellowship" %}</span>
         <ul class="drawer-nav-list">
+          <li id="drawer-install-item" class="hidden">
+            <button type="button" id="drawer-install-btn" class="drawer-nav-item drawer-install-item-btn" style="width: 100%; border: none; background: rgba(13, 148, 136, 0.08); border-radius: var(--radius-md); text-align: left; cursor: pointer; font-family: inherit;">
+              <span class="drawer-nav-icon" style="font-size: 1.25rem; display: flex; align-items: center; justify-content: center;" aria-hidden="true">📲</span>
+              <div class="drawer-nav-content">
+                <span class="drawer-nav-label" style="color: var(--accent-700); font-weight: 700;">{% trans "Install HKHC App" %} / አፑን ጫን</span>
+                <span class="drawer-nav-desc">{% trans "Add to Home Screen for fast 1-tap access" %}</span>
+              </div>
+            </button>
+          </li>
           <li>
             <a href="{% url 'discussions:topic_list' %}" class="drawer-nav-item">
               <svg class="drawer-nav-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
@@ -512,6 +549,43 @@
 
   <!-- Community Members Directory Modal -->
   {% include "accounts/partials/members_modal.html" %}
+
+  <!-- iOS Safari Install Helper Modal -->
+  <div id="ios-install-modal" class="share-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="ios-modal-title">
+    <div class="share-modal-card" style="max-width: 440px;">
+      <div class="share-modal-header">
+        <div class="share-modal-title-wrap">
+          <span class="share-modal-header-icon" aria-hidden="true">📲</span>
+          <h3 id="ios-modal-title" class="share-modal-title">{% trans "Install HKHC App" %} / አፑን ጫን</h3>
+        </div>
+        <button type="button" class="share-modal-close-btn js-close-ios-modal" aria-label="{% trans 'Close' %}">&times;</button>
+      </div>
+
+      <p class="share-modal-desc">
+        {% trans "Install HKHC directly onto your Home Screen for quick 1-tap access and full-screen view." %}
+        <span class="share-modal-desc-am">አፑን ወደ ስልክዎ መነሻ ገጽ (Home Screen) በመጫን በቀላሉ በአንድ ጠቅታ ይክፈቱት፦</span>
+      </p>
+
+      <div style="background: var(--primary-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin: 1rem 0; font-size: 0.92rem; line-height: 1.6;">
+        <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.75rem;">
+          <span style="background: var(--accent-600); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; flex-shrink: 0;">1</span>
+          <div>
+            {% trans "Tap the Safari Share button" %} <strong>(Share / አጋራ ⬆)</strong> {% trans "at the bottom of your screen." %}
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+          <span style="background: var(--accent-600); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; flex-shrink: 0;">2</span>
+          <div>
+            {% trans "Scroll down and tap" %} <strong>"{% trans 'Add to Home Screen' %}"</strong> (<strong>ወደ መነሻ ገጽ አክል ➕</strong>).
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary js-close-ios-modal" style="width: 100%; justify-content: center;">
+        {% trans "Got it" %} / ገብቶኛል
+      </button>
+    </div>
+  </div>
 
   <!-- Application Interactivity Script -->
   <script src="{% static 'js/app.js' %}"></script>

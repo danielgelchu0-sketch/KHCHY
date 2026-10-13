@@ -9,6 +9,8 @@ urlpatterns = [
     path("privacy-policy/", views.PrivacyPolicyView.as_view(), name="privacy_policy"),
     path("guidelines/", views.CommunityGuidelinesView.as_view(), name="guidelines"),
     path("how-to-use/", views.HowToUseView.as_view(), name="how_to_use"),
+    path("offline/", views.OfflineView.as_view(), name="offline"),
+    path("manifest.json", views.ManifestView.as_view(), name="manifest"),
     path("language/toggle/", views.toggle_language, name="toggle_language"),
 ]
 

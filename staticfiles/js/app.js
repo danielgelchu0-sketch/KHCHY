@@ -447,60 +447,176 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnEnablePush = document.getElementById('btn-enable-push');
     const btnDismissPush = document.getElementById('btn-dismiss-push');
 
-    if (isAuthenticated && 'serviceWorker' in navigator && 'PushManager' in window && vapidPublicKey) {
-        // Register the root service worker
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-            .then(function (registration) {
-                return registration.pushManager.getSubscription().then(function (sub) {
-                    // Check if already subscribed
-                    if (sub) {
-                        // Keep subscription in sync
-                        sendSubscriptionToServer(sub);
-                    } else if (Notification.permission === 'default' && !sessionStorage.getItem('hkhc_push_dismissed')) {
-                        // Show friendly bilingual card for non-tech users
-                        setTimeout(function () {
-                            pushCard?.classList.remove('hidden');
-                        }, 2500);
-                    }
-                });
-            })
-            .catch(function (err) {
-                console.debug('ServiceWorker registration note:', err);
-            });
+    // -------------------------------------------------------------------------
+    // 4. Progressive Web App (PWA) & Offline Service Worker Registration
+    // -------------------------------------------------------------------------
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(function (registration) {
+                    console.debug('HKHC ServiceWorker active with scope:', registration.scope);
 
-        // User clicked Enable Alerts
-        btnEnablePush?.addEventListener('click', function () {
-            playNotificationSound(); // Also unlocks audio autoplay for page
-
-            Notification.requestPermission().then(function (permission) {
-                pushCard?.classList.add('hidden');
-                if (permission === 'granted') {
-                    navigator.serviceWorker.ready.then(function (registration) {
-                        const subscribeOptions = {
-                            userVisibleOnly: true,
-                            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-                        };
-                        return registration.pushManager.subscribe(subscribeOptions);
-                    }).then(function (subscription) {
-                        return sendSubscriptionToServer(subscription);
-                    }).then(function () {
-                        showNotificationToast({
-                            title: 'Alerts Activated! / ማሳወቂያዎች ተከፍተዋል!',
-                            message: 'You will receive instant alerts for community replies.',
-                            notification_type: 'new_discussion'
+                    // Web Push flow (for logged-in members)
+                    if (isAuthenticated && 'PushManager' in window && vapidPublicKey) {
+                        registration.pushManager.getSubscription().then(function (sub) {
+                            if (sub) {
+                                sendSubscriptionToServer(sub);
+                            } else if (Notification.permission === 'default' && !sessionStorage.getItem('hkhc_push_dismissed')) {
+                                setTimeout(function () {
+                                    pushCard?.classList.remove('hidden');
+                                }, 2500);
+                            }
                         });
-                    }).catch(function (err) {
-                        console.error('Push subscribe error:', err);
-                    });
-                }
-            });
+                    }
+                })
+                .catch(function (err) {
+                    console.debug('ServiceWorker registration note:', err);
+                });
         });
+    }
 
-        // User clicked Later
-        btnDismissPush?.addEventListener('click', function () {
+    // User clicked Enable Alerts
+    btnEnablePush?.addEventListener('click', function () {
+        playNotificationSound();
+
+        Notification.requestPermission().then(function (permission) {
             pushCard?.classList.add('hidden');
-            sessionStorage.setItem('hkhc_push_dismissed', 'true');
+            if (permission === 'granted') {
+                navigator.serviceWorker.ready.then(function (registration) {
+                    const subscribeOptions = {
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+                    };
+                    return registration.pushManager.subscribe(subscribeOptions);
+                }).then(function (subscription) {
+                    return sendSubscriptionToServer(subscription);
+                }).then(function () {
+                    showNotificationToast({
+                        title: 'Alerts Activated! / ማሳወቂያዎች ተከፍተዋል!',
+                        message: 'You will receive instant alerts for community replies.',
+                        notification_type: 'new_discussion'
+                    });
+                }).catch(function (err) {
+                    console.error('Push subscribe error:', err);
+                });
+            }
         });
+    });
+
+    // User clicked Later for push card
+    btnDismissPush?.addEventListener('click', function () {
+        pushCard?.classList.add('hidden');
+        sessionStorage.setItem('hkhc_push_dismissed', 'true');
+    });
+
+    // -------------------------------------------------------------------------
+    // 4b. Add to Home Screen (PWA Install Button Controller)
+    // -------------------------------------------------------------------------
+    let deferredInstallPrompt = null;
+    const navInstallBtn = document.getElementById('nav-install-btn');
+    const drawerInstallItem = document.getElementById('drawer-install-item');
+    const drawerInstallBtn = document.getElementById('drawer-install-btn');
+    const iosInstallModal = document.getElementById('ios-install-modal');
+
+    // Detect if running in standalone mode (already installed on Home Screen)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true ||
+                         document.referrer.includes('android-app://');
+
+    function hideInstallTriggers() {
+        if (navInstallBtn) navInstallBtn.classList.add('hidden');
+        if (drawerInstallItem) drawerInstallItem.classList.add('hidden');
+    }
+
+    function showInstallTriggers() {
+        if (isStandalone) return;
+        if (navInstallBtn) navInstallBtn.classList.remove('hidden');
+        if (drawerInstallItem) drawerInstallItem.classList.remove('hidden');
+    }
+
+    // Android/Chrome: intercept beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        showInstallTriggers();
+    });
+
+    // iOS Safari detection
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIos && !isStandalone) {
+        showInstallTriggers();
+    }
+
+    function handleInstallTriggerClick() {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(function (choiceResult) {
+                if (choiceResult.outcome === 'accepted') {
+                    console.debug('User accepted HKHC app install');
+                    hideInstallTriggers();
+                }
+                deferredInstallPrompt = null;
+            });
+        } else if (isIos) {
+            if (iosInstallModal) iosInstallModal.classList.remove('hidden');
+        } else {
+            showNotificationToast({
+                title: 'HKHC Community App / የHKHC አፕሊኬሽን',
+                message: 'To install, tap your browser menu (⋮) and select "Add to Home Screen" or "Install App".',
+                notification_type: 'new_discussion'
+            });
+        }
+    }
+
+    navInstallBtn?.addEventListener('click', handleInstallTriggerClick);
+    drawerInstallBtn?.addEventListener('click', handleInstallTriggerClick);
+
+    // Close iOS instruction modal
+    document.querySelectorAll('.js-close-ios-modal').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            if (iosInstallModal) iosInstallModal.classList.add('hidden');
+        });
+    });
+
+    // App was successfully installed
+    window.addEventListener('appinstalled', function () {
+        hideInstallTriggers();
+        deferredInstallPrompt = null;
+        showNotificationToast({
+            title: 'App Installed! / አፑ ተጭኗል! 🎉',
+            message: 'HKHC Community is now installed on your device home screen.',
+            notification_type: 'new_discussion'
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // 4c. Network Status Monitor & Offline Banner
+    // -------------------------------------------------------------------------
+    const offlineIndicator = document.getElementById('offline-indicator');
+
+    function updateNetworkStatus() {
+        if (!offlineIndicator) return;
+        if (!navigator.onLine) {
+            offlineIndicator.classList.remove('hidden');
+            offlineIndicator.classList.remove('offline-banner-restored');
+        } else {
+            if (!offlineIndicator.classList.contains('hidden')) {
+                offlineIndicator.classList.add('offline-banner-restored');
+                const textStrong = offlineIndicator.querySelector('.offline-text strong');
+                const textSpan = offlineIndicator.querySelector('.offline-text span');
+                if (textStrong) textStrong.textContent = 'Back online! / ኢንተርኔት ተመልሷል!';
+                if (textSpan) textSpan.textContent = 'Connected to HKHC Community. / ግንኙነቱ ተመልሷል።';
+                setTimeout(function () {
+                    offlineIndicator.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    if (!navigator.onLine) {
+        updateNetworkStatus();
     }
 
     function sendSubscriptionToServer(subscription) {

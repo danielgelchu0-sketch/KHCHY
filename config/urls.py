@@ -6,10 +6,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from apps.core.views import ManifestView
 from apps.notifications.views import ServiceWorkerView
 
 urlpatterns = [
     path("sw.js", ServiceWorkerView.as_view(), name="root_service_worker"),
+    path("manifest.json", ManifestView.as_view(), name="root_manifest"),
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include("apps.core.urls")),

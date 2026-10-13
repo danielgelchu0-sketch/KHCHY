@@ -3005,5 +3005,126 @@ p {
   color: var(--primary-700);
 }
 
+/* ==============================================================================
+   PWA Installation & Offline Experience Components
+   ============================================================================== */
 
+/* Navigation Header Install Button */
+.btn-nav-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--accent-50, #f0fdfa);
+  color: var(--accent-700, #0f766e);
+  border: 1.5px solid var(--accent-600, #0d9488);
+  border-radius: var(--radius-md, 8px);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
 
+.btn-nav-install:hover {
+  background: var(--accent-600, #0d9488);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-nav-install .install-icon {
+  font-size: 1rem;
+}
+
+/* Offline Indicator Banner */
+.offline-banner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fffbeb;
+  border-bottom: 2px solid #f59e0b;
+  color: #92400e;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+}
+
+.offline-banner.offline-banner-restored {
+  background-color: #ecfdf5;
+  border-bottom-color: #10b981;
+  color: #065f46;
+}
+
+.offline-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.offline-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.offline-text {
+  flex-grow: 1;
+  line-height: 1.4;
+}
+
+.offline-text strong {
+  margin-right: 0.35rem;
+}
+
+.btn-offline-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  color: #92400e;
+  border: 1px solid #d97706;
+  border-radius: var(--radius-sm, 4px);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.offline-banner.offline-banner-restored .btn-offline-retry {
+  display: none;
+}
+
+.btn-offline-retry:hover {
+  background: #fef3c7;
+}
+
+/* Mobile Drawer Install Item Button */
+.drawer-install-item-btn {
+  transition: background 0.15s;
+}
+
+.drawer-install-item-btn:hover {
+  background: rgba(13, 148, 136, 0.15) !important;
+}
+
+@media (max-width: 640px) {
+  .offline-banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0.6rem 0.75rem;
+  }
+  .btn-offline-retry {
+    align-self: flex-start;
+  }
+  .btn-nav-install {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.78rem;
+  }
+}

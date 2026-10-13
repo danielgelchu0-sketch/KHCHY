@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Offline" %} | {{ COMMUNITY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="max-width: 600px; padding: 4rem 1rem;">
+  <div class="card" style="padding: 3rem 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-md);">
+    <div style="font-size: 3.5rem; margin-bottom: 1rem;" aria-hidden="true">📡</div>
+    <h1 style="font-size: 1.75rem; color: var(--primary-900); margin-bottom: 0.5rem;">
+      {% trans "You are Currently Offline" %}
+    </h1>
+    <h2 style="font-size: 1.1rem; color: var(--accent-700); font-weight: 500; margin-bottom: 1.5rem;">
+      መስመር ላይ አይደሉም (የኢንተርኔት ግንኙነት የለም)
+    </h2>
+
+    <p class="text-muted" style="line-height: 1.6; margin-bottom: 1rem;">
+      {% trans "This specific page has not been cached on your device yet. Any discussions or topics you previously opened are still available to read in your cache." %}
+    </p>
+    <p class="text-muted" style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
+      ቀደም ሲል የከፈቷቸው እና ያነበቧቸው ውይይቶች ያለ ኢንተርኔት በስልክዎ ላይ ይገኛሉ። ይህንን አዲስ ገጽ ለመክፈት ግን እባክዎ ኢንተርኔት ያብሩ።
+    </p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <button type="button" onclick="window.location.reload();" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+        <span aria-hidden="true">🔄</span>
+        <span>{% trans "Retry Connection" %} / እንደገና ሞክር</span>
+      </button>
+      <a href="{% url 'discussions:topic_list' %}" class="btn btn-secondary">
+        {% trans "View Cached Topics" %} / የተቀመጡ ውይይቶች
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

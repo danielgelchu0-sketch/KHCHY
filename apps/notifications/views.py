@@ -197,17 +197,148 @@ class ServiceWorkerView(View):
 
     def get(self, request):
         sw_code = """/**
- * HKHC Community Discussion Platform - Web Push Service Worker
+ * HKHC Community Discussion Platform - Service Worker
+ * Progressive Web App (PWA) + Offline Caching + Web Push
  */
 
+const STATIC_CACHE = 'hkhc-static-v2';
+const DYNAMIC_CACHE = 'hkhc-pages-v2';
+
+const PRECACHE_ASSETS = [
+    '/',
+    '/discussions/',
+    '/static/css/style.css',
+    '/static/js/htmx.min.js',
+    '/static/js/app.js',
+    '/static/img/logo.png',
+    '/static/img/icon-192x192.png',
+    '/static/img/icon-512x512.png',
+    '/static/img/icon-maskable-192x192.png',
+    '/static/img/icon-maskable-512x512.png',
+    '/static/sounds/notification.wav',
+    '/offline/'
+];
+
+// 1. Install Event: Pre-cache core application shell
 self.addEventListener('install', function(event) {
-    self.skipWaiting();
+    event.waitUntil(
+        caches.open(STATIC_CACHE).then(function(cache) {
+            return Promise.allSettled(
+                PRECACHE_ASSETS.map(function(url) {
+                    return cache.add(url).catch(function(err) {
+                        console.debug('[SW] Pre-cache non-critical item failed:', url, err);
+                    });
+                })
+            );
+        }).then(function() {
+            return self.skipWaiting();
+        })
+    );
 });
 
+// 2. Activate Event: Clean up outdated caches and claim clients immediately
 self.addEventListener('activate', function(event) {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(
+        caches.keys().then(function(cacheNames) {
+            return Promise.all(
+                cacheNames.map(function(cacheName) {
+                    if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(function() {
+            return self.clients.claim();
+        })
+    );
 });
 
+// 3. Fetch Event: Intelligent offline caching strategy
+self.addEventListener('fetch', function(event) {
+    const request = event.request;
+    const url = new URL(request.url);
+
+    // Only process GET requests from same origin
+    if (request.method !== 'GET' || url.origin !== self.location.origin) {
+        return;
+    }
+
+    // Never cache background polling or admin paths
+    if (
+        url.pathname.includes('/notifications/poll-recent') ||
+        url.pathname.includes('/notifications/badge') ||
+        url.pathname.startsWith('/admin')
+    ) {
+        return;
+    }
+
+    // Static Assets: Cache-First with background revalidation
+    if (url.pathname.startsWith('/static/')) {
+        event.respondWith(
+            caches.match(request).then(function(cachedResponse) {
+                if (cachedResponse) {
+                    fetch(request).then(function(networkResponse) {
+                        if (networkResponse && networkResponse.status === 200) {
+                            caches.open(STATIC_CACHE).then(function(cache) {
+                                cache.put(request, networkResponse);
+                            });
+                        }
+                    }).catch(function() { /* Offline: cached copy is already served */ });
+                    return cachedResponse;
+                }
+                return fetch(request).then(function(networkResponse) {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const copy = networkResponse.clone();
+                        caches.open(STATIC_CACHE).then(function(cache) {
+                            cache.put(request, copy);
+                        });
+                    }
+                    return networkResponse;
+                });
+            })
+        );
+        return;
+    }
+
+    // Navigation / HTML pages (Discussions, topics, former chats):
+    // Network-First -> Caches newly read discussions -> Falls back to cache if offline
+    const isNavigation = request.mode === 'navigate' ||
+        (request.headers.get('accept') && request.headers.get('accept').includes('text/html'));
+
+    if (isNavigation) {
+        event.respondWith(
+            fetch(request).then(function(networkResponse) {
+                if (networkResponse && networkResponse.status === 200) {
+                    const copy = networkResponse.clone();
+                    caches.open(DYNAMIC_CACHE).then(function(cache) {
+                        cache.put(request, copy);
+                    });
+                }
+                return networkResponse;
+            }).catch(function() {
+                // Device is offline: Serve cached conversation/discussion if previously visited
+                return caches.match(request).then(function(cachedPage) {
+                    if (cachedPage) {
+                        return cachedPage;
+                    }
+                    // If this specific URL was never visited before, serve offline fallback screen
+                    return caches.match('/offline/').then(function(fallback) {
+                        if (fallback) {
+                            return fallback;
+                        }
+                        return new Response(
+                            '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Offline | HKHC</title></head><body style="font-family:sans-serif;text-align:center;padding:2rem;"><h2>📡 You are currently offline</h2><p>Please reconnect to the internet to load new discussions.</p><a href="/">Return to Home</a></body></html>',
+                            { headers: { 'Content-Type': 'text/html; charset=utf-8' }, status: 503 }
+                        );
+                    });
+                });
+            })
+        );
+        return;
+    }
+});
+
+// 4. Web Push Notification Event
 self.addEventListener('push', function(event) {
     let payload = {};
     if (event.data) {
@@ -224,8 +355,8 @@ self.addEventListener('push', function(event) {
 
     const options = {
         body: message,
-        icon: payload.icon || '/static/img/logo.png',
-        badge: payload.badge || '/static/img/logo.png',
+        icon: payload.icon || '/static/img/icon-192x192.png',
+        badge: payload.badge || '/static/img/icon-192x192.png',
         data: { url: url },
         vibrate: [150, 80, 150],
         renotify: true,
@@ -240,6 +371,7 @@ self.addEventListener('push', function(event) {
     );
 });
 
+// 5. Notification Click Event
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/';

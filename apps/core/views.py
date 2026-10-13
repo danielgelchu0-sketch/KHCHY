@@ -2,7 +2,7 @@ import logging
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.utils import translation
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -96,6 +96,28 @@ class HowToUseView(View):
     def get(self, request):
         return render(request, "core/how_to_use.html")
 
+
+
+class OfflineView(View):
+    """Fallback view served when a user is offline and visits an uncached page."""
+
+    def get(self, request):
+        return render(request, "core/offline.html")
+
+
+class ManifestView(View):
+    """Serves the Web App Manifest (PWA)."""
+
+    def get(self, request):
+        manifest_path = settings.BASE_DIR / "static" / "manifest.json"
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                content = f.read()
+        except OSError:
+            content = "{}"
+        response = HttpResponse(content, content_type="application/manifest+json")
+        response["Cache-Control"] = "public, max-age=86400"
+        return response
 
 
 # Custom HTTP error views
