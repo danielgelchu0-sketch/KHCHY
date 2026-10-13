@@ -60,17 +60,19 @@
     <strong style="font-size: 0.9rem; color: var(--primary-900);">
       {% if LANGUAGE_CODE == 'am' %}ፈጣን ማውጫ፡{% else %}Quick Navigation:{% endif %}
     </strong>
-    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem;">
+    <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem;">
       <a href="#section-overview" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">1. {% if LANGUAGE_CODE == 'am' %}ዓላማ{% else %}Overview{% endif %}</a>
       <a href="#section-account" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">2. {% if LANGUAGE_CODE == 'am' %}መመዝገብና መግባት{% else %}Account & Login{% endif %}</a>
-      <a href="#section-topics" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">3. {% if LANGUAGE_CODE == 'am' %}የውይይት ክፍሎች{% else %}Topic Rooms{% endif %}</a>
-      <a href="#section-identity" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">4. {% if LANGUAGE_CODE == 'am' %}በስም ወይስ በሚስጥር?{% else %}Identity & Privacy{% endif %}</a>
-      <a href="#section-ask" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">5. {% if LANGUAGE_CODE == 'am' %}ጥያቄ መጠየቅ{% else %}Asking Questions{% endif %}</a>
-      <a href="#section-replies" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">6. {% if LANGUAGE_CODE == 'am' %}መልስ መስጠት{% else %}Replying{% endif %}</a>
-      <a href="#section-reactions" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">7. {% if LANGUAGE_CODE == 'am' %}Like & Dislike መስጠት{% else %}Reacting (Like/Dislike){% endif %}</a>
-      <a href="#section-bookmarks" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">8. {% if LANGUAGE_CODE == 'am' %}ማስታወሻና ማሳወቂያዎች{% else %}Bookmarks & Alerts{% endif %}</a>
-      <a href="#section-safety" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">9. {% if LANGUAGE_CODE == 'am' %}ደህንነትና ሪፖርት{% else %}Safety & Report{% endif %}</a>
-      <a href="#section-faq" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">10. {% if LANGUAGE_CODE == 'am' %}ተደጋጋሚ ጥያቄዎች{% else %}FAQ{% endif %}</a>
+      <a href="#section-pwa" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">3. {% if LANGUAGE_CODE == 'am' %}አፑን መጫንና ኦፍላይን{% else %}Install App & Offline{% endif %}</a>
+      <a href="#section-topics" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">4. {% if LANGUAGE_CODE == 'am' %}የውይይት ክፍሎች{% else %}Topic Rooms{% endif %}</a>
+      <a href="#section-identity" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">5. {% if LANGUAGE_CODE == 'am' %}በስም ወይስ በሚስጥር?{% else %}Identity & Privacy{% endif %}</a>
+      <a href="#section-ask" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">6. {% if LANGUAGE_CODE == 'am' %}ጥያቄ መጠየቅ{% else %}Asking Questions{% endif %}</a>
+      <a href="#section-replies" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">7. {% if LANGUAGE_CODE == 'am' %}መልስ መስጠት{% else %}Replying{% endif %}</a>
+      <a href="#section-reactions" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">8. {% if LANGUAGE_CODE == 'am' %}6ቱ ኢሞጂዎች (Reactions){% else %}6 Emoji Reactions{% endif %}</a>
+      <a href="#section-members" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">9. {% if LANGUAGE_CODE == 'am' %}የአባላት ዝርዝር (Members){% else %}Members Directory{% endif %}</a>
+      <a href="#section-bookmarks" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">10. {% if LANGUAGE_CODE == 'am' %}ማሳወቂያዎችና ድምፅ{% else %}Alerts & Sounds{% endif %}</a>
+      <a href="#section-safety" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">11. {% if LANGUAGE_CODE == 'am' %}ደህንነትና ሪፖርት{% else %}Safety & Report{% endif %}</a>
+      <a href="#section-faq" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem;">12. {% if LANGUAGE_CODE == 'am' %}ተደጋጋሚ ጥያቄዎች{% else %}FAQ{% endif %}</a>
     </div>
   </div>
 
@@ -208,13 +210,112 @@
     </section>
 
     <!-- =====================================================================
-         SECTION 3: TOPIC ROOMS
+         SECTION 3: INSTALL APP ON MOBILE & OFFLINE READING (PWA)
+         ===================================================================== -->
+    <section id="section-pwa" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%); border-left: 5px solid var(--accent-600);">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">📲 📡</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. መድረኩን እንደ ሞባይል አፕ (App) በስልክዎ መጫን እና ያለ ኢንተርኔት ማንበብ</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text);">
+          የHKHC መድረክ ዘመናዊ <strong>Progressive Web App (PWA)</strong> ቴክኖሎጂ የታጠቀ በመሆኑ ልክ እንደ ቴሌግራም ወይም ዋትስአፕ በቀጥታ ወደ ስልክዎ መነሻ ገጽ (Home Screen) በመጫን ያለ አሳሽ (Browser) በፍጥነት መጠቀም ይችላሉ!
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.25rem 0;">
+          <!-- Android Installation -->
+          <div style="border: 2px solid #99f6e4; background: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🤖</span>
+              <strong style="font-size: 1.05rem; color: #0f766e;">በአንድሮይድ ስልክ (Android / Chrome)</strong>
+            </div>
+            <ol style="margin-top: 0.5rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li>ከላይ ባለው ዋና ማውጫ ላይ <strong>"📲 አፑን ጫን" (Install App)</strong> የሚለውን አረንጓዴ ቁልፍ ይጫኑ።</li>
+              <li>የሚመጣውን የማረጋገጫ መስኮት ላይ <strong>"Install" (ጫን)</strong> የሚለውን ይምረጡ።</li>
+              <li>አፑ ወዲያውኑ ወደ ስልክዎ መነሻ ገጽ ይገባል፤ ከዚያ በኋላ ልክ እንደ ማንኛውም አፕ በአንድ ጠቅታ ይከፍቱታል!</li>
+            </ol>
+          </div>
+
+          <!-- iPhone Installation -->
+          <div style="border: 2px solid #bae6fd; background: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🍏</span>
+              <strong style="font-size: 1.05rem; color: #0369a1;">በአይፎን ስልክ (iPhone / Safari)</strong>
+            </div>
+            <ol style="margin-top: 0.5rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li>በSafari አሳሽ ገጹን ሲከፍቱ በማያ ገጹ ታች ያለውን የ<strong>ማጋሪያ ምልክት (Share ⬆)</strong> ይጫኑ።</li>
+              <li>ወደ ታች ዝቅ ብለው <strong>"Add to Home Screen" (ወደ መነሻ ገጽ አክል ➕)</strong> የሚለውን ይምረጡ።</li>
+              <li>ከላይ በቀኝ በኩል <strong>"Add"</strong> ሲሉ የHKHC አርማ በስልክዎ መነሻ ገጽ ላይ ይቀመጣል!</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Offline Reading Feature -->
+        <div style="background-color: #fffbeb; border: 1px solid #fde68a; padding: 1.15rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.95rem; line-height: 1.7; margin-top: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+            <span style="font-size: 1.2rem;">📡</span>
+            <strong style="color: #92400e;">ያለ ኢንተርኔት ማንበብ (Offline Reading Mode)፦</strong>
+          </div>
+          የሞባይል ዳታ ቢያልቅብዎት ወይም የዋይፋይ (Wi-Fi) ግንኙነት ቢቋረጥ እንኳ ቀደም ሲል የከፈቷቸውን ውይይቶች፣ ጥቅሶችና መልሶች በሙሉ ያለ ኢንተርኔት ማንበብ ይችላሉ! ኢንተርኔት ሲቋረጥ ከላይ <strong>"መስመር ላይ አይደሉም / You are offline"</strong> የሚል ምልክት ያሳያል፤ ግንኙነቱ ሲመለስ ደግሞ አዳዲስ መልሶች ወዲያውኑ ይጫናሉ።
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">📲 📡</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. Installing HKHC as a Mobile App & Offline Reading (PWA)</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text);">
+          The HKHC Community Platform is built with state-of-the-art <strong>Progressive Web App (PWA)</strong> technology. You can install it directly onto your Android or iPhone home screen with one tap—enjoying a fast, distraction-free app experience without browser address bars.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.25rem 0;">
+          <!-- Android Installation -->
+          <div style="border: 2px solid #99f6e4; background: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🤖</span>
+              <strong style="font-size: 1.05rem; color: #0f766e;">Android Devices (Google Chrome / Brave)</strong>
+            </div>
+            <ol style="margin-top: 0.5rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li>Tap the green <strong>"📲 Install App"</strong> button in the navigation bar or mobile side menu.</li>
+              <li>When the browser prompt appears, tap <strong>"Install"</strong>.</li>
+              <li>The HKHC App icon is added right to your home screen with instant 1-tap launching!</li>
+            </ol>
+          </div>
+
+          <!-- iPhone Installation -->
+          <div style="border: 2px solid #bae6fd; background: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.3rem;">🍏</span>
+              <strong style="font-size: 1.05rem; color: #0369a1;">Apple iPhones & iPads (Safari)</strong>
+            </div>
+            <ol style="margin-top: 0.5rem; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li>In Safari, tap the <strong>Share button (⬆)</strong> at the bottom of your screen.</li>
+              <li>Scroll down and tap <strong>"Add to Home Screen" (➕)</strong>.</li>
+              <li>Tap <strong>"Add"</strong> at the top right to place the HKHC icon alongside your other apps!</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Offline Reading Feature -->
+        <div style="background-color: #fffbeb; border: 1px solid #fde68a; padding: 1.15rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.95rem; line-height: 1.7; margin-top: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+            <span style="font-size: 1.2rem;">📡</span>
+            <strong style="color: #92400e;">Offline Reading Support (No Internet Required):</strong>
+          </div>
+          If your mobile connection drops or you run out of data, previously opened conversations, scripture reflections, and replies remain fully readable offline! The app will display a friendly <strong>"📡 You are offline"</strong> banner and automatically reconnect once service is restored.
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 4: TOPIC ROOMS
          ===================================================================== -->
     <section id="section-topics" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🏷️</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. የውይይት ክፍሎችን (Topic Rooms) መምረጥና መጎብኘት</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. የውይይት ክፍሎችን (Topic Rooms) መምረጥና መጎብኘት</h2>
         </div>
         <p>ውይይቶች በዘፈቀደ እንዳይዘበራረቁ እና የሚፈልጉትን ርዕስ በቀላሉ እንዲያገኙ ውይይቶቹ በልዩ ልዩ ክፍሎች የተከፋፈሉ ናቸው።</p>
         <ul style="margin-left: 1.5rem; line-height: 1.7; font-size: 0.95rem;">
@@ -231,7 +332,7 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🏷️</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">3. Exploring Topic Rooms</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. Exploring Topic Rooms</h2>
         </div>
         <p>To keep discussions organized and easy to find, conversations are categorized into dedicated "Topic Rooms" just like different ministries or classrooms at church.</p>
         <ul style="margin-left: 1.5rem; line-height: 1.7; font-size: 0.95rem;">
@@ -247,13 +348,13 @@
     </section>
 
     <!-- =====================================================================
-         SECTION 4: IDENTIFIED VS ANONYMOUS MODE
+         SECTION 5: IDENTIFIED VS ANONYMOUS MODE
          ===================================================================== -->
     <section id="section-identity" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; border-left: 5px solid var(--accent-600);">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🔒</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. ማንነትን መምረጥ፡ በግልጽ ስም ወይስ በሚስጥር (Anonymous)?</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. ማንነትን መምረጥ፡ በግልጽ ስም ወይስ በሚስጥር (Anonymous)?</h2>
         </div>
         <p style="font-size: 1.05rem; line-height: 1.7;">
           ይህ የመድረካችን <strong>እጅግ በጣም ጠቃሚና ልዩ ገጽታ</strong> ነው። ማንኛውም አባል ጥያቄ ሲጠይቅ ወይም መልስ ሲሰጥ ማንነቱ እንዲታይ ወይም እንዳይታይ <strong>ለእያንዳንዱ ጽሑፍ ራሱን ችሎ መምረጥ ይችላል</strong>።
@@ -298,7 +399,7 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🔒</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">4. Choosing Your Identity: With Your Name vs. Anonymous</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. Choosing Your Identity: With Your Name vs. Anonymous</h2>
         </div>
         <p style="font-size: 1.05rem; line-height: 1.7;">
           This is one of the most reassuring and powerful features of the HKHC platform. You have the freedom to decide your anonymity <strong>on every single question or reply you post</strong>.
@@ -342,13 +443,13 @@
     </section>
 
     <!-- =====================================================================
-         SECTION 5: ASKING A QUESTION
+         SECTION 6: ASKING A QUESTION
          ===================================================================== -->
     <section id="section-ask" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">✍️</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. አዲስ ጥያቄ ወይም ውይይት እንዴት ይቀርባል?</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. አዲስ ጥያቄ ወይም ውይይት እንዴት ይቀርባል?</h2>
         </div>
         <p>በመድረኩ ላይ ጥያቄ ማቅረብ እጅግ በጣም ቀላል ነው፡</p>
         <ol style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
@@ -364,7 +465,7 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">✍️</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">5. How to Ask a Question or Start a Discussion</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. How to Ask a Question or Start a Discussion</h2>
         </div>
         <p>Starting a discussion is quick and intuitive:</p>
         <ol style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
@@ -379,18 +480,18 @@
     </section>
 
     <!-- =====================================================================
-         SECTION 6: REPLYING & THREADED DISCUSSIONS
+         SECTION 7: REPLYING & THREADED DISCUSSIONS
          ===================================================================== -->
     <section id="section-replies" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">💬</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. መልስ መስጠት እና እርስ በእርስ መወያየት</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. መልስ መስጠት እና እርስ በእርስ መወያየት</h2>
         </div>
         <p>ማንኛውም አባል ለተጠየቀ ጥያቄ መልስ መስጠት ወይም የሌላ ሰውን መልስ በማሟላት መወያየት ይችላል፡</p>
         <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
           <li><strong>ለዋናው ጥያቄ መልስ መስጠት፡</strong> ወደ ገጹ ግርጌ ወረድ ብለው በሚገኘው የጽሑፍ ሳጥን ውስጥ መልስዎን ይጻፉ፣ በስምዎ ወይስ በሚስጥር መሆኑን መርጠው <strong>"Post Answer"</strong> የሚለውን ይጫኑ።</li>
-          <li><strong>ለአንድ አባል የተለየ መልስ መመለስ (Threaded Reply)፡</strong> አንድ አባል የጻፈውን መልስ ለመመለስ ወይም ለማበረታታት በመልሱ ስር ያለውን <strong>"↩ Reply" (መልስ ስጥ)</strong> የሚለውን ቁልፍ ይጫኑ። ይህ መልስዎ ከእርሱ ጽሑፍ ስር ተያይዞ እንዲታይ ያደርጋል።</li>
+          <li><strong>ጥቅስ አድርጎ መመለስ (Telegram-Style Quote Reply)፡</strong> የአንድን አባል ጽሑፍ ጠቅሶ ለመመለስ በመልሱ ስር ያለውን <strong>"↩ Reply" (መልስ ስጥ)</strong> የሚለውን ቁልፍ ይጫኑ። የጸሐፊው አጭር ጥቅስ ከላይ ተያይዞ በቴሌግራም ስልት መልስዎን መጻፍ ይችላሉ!</li>
           <li><strong>የራስዎን ጽሑፍ ማስተካከል ወይም መሰረዝ፡</strong> ጽሑፍዎ ላይ ስህተት ካለ "Edit" በመጫን ማስተካከል ወይም "Delete" በመጫን ማስወገድ ይችላሉ።</li>
         </ul>
       </div>
@@ -398,141 +499,320 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">💬</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">6. Replying & Threaded Conversations</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. Replying & Telegram-Style Quote Discussions</h2>
         </div>
         <p>Meaningful fellowship happens when we respond with grace, biblical scripture, and honest reflections:</p>
         <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
           <li><strong>Answering the Main Question:</strong> Scroll to the bottom of the discussion page, write your answer in the form, choose whether to post with your name or anonymously, and click <strong>"Post Answer"</strong>.</li>
-          <li><strong>Replying to Another Member's Comment:</strong> Click the <strong>"↩ Reply"</strong> button on any reply card. This opens a nested reply box right beneath that specific comment so the conversation stays organized.</li>
+          <li><strong>Telegram-Style Quote Replies:</strong> Click the <strong>"↩ Reply"</strong> button on any reply card. The original message is cleanly quoted at the top of your reply box, keeping the dialogue crystal clear.</li>
           <li><strong>Editing or Deleting:</strong> If you made a typo or want to update what you shared, you can click <strong>"Edit"</strong> or <strong>"Delete"</strong> on your own posts at any time.</li>
         </ul>
       </div>
     </section>
 
     <!-- =====================================================================
-         SECTION 7: REACTIONS (LIKE & DISLIKE) ON POSTS & REPLIES
+         SECTION 8: 6 TELEGRAM-STYLE COMMUNITY REACTIONS
          ===================================================================== -->
     <section id="section-reactions" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #f8fafc 0%, #fefce8 100%); border-color: #fde047;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <span style="font-size: 1.8rem;">👍 👎</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. ለጥያቄዎች እና ለመልሶች ምላሽ መስጠት (Like እና Dislike)</h2>
+          <span style="font-size: 1.8rem;">👍 ❤️ 🙏</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. ቴሌግራም-መሰል 6ቱ የህብረት ስሜት መግለጫዎች (Reactions)</h2>
         </div>
         <p style="font-size: 1.05rem; line-height: 1.7;">
-          <strong>አዲስና የተሻሻለ ገጽታ፡</strong> አሁን በመድረኩ ላይ በዋናው ጥያቄ ላይ ብቻ ሳይሆን <strong>በእያንዳንዱ አባል መልስ (Reply) ላይም Like ወይም Dislike ምላሽ መስጠት ይችላሉ!</strong>
+          <strong>አዲስና የተሟላ ገጽታ፡</strong> ልክ እንደ ቴሌግራም (Telegram) በውይይቶች ላይ ስሜትዎን፣ ጸሎትዎን እና አድናቆትዎን በቀላሉ ለመግለጽ የተዘጋጁ <strong>6 መንፈሳዊና ማህበራዊ ኢሞጂዎች (Emojis)</strong> ተካተዋል! እነዚህ ምላሾች በዋናው ጥያቄ ላይ ብቻ ሳይሆን <strong>በእያንዳንዱ አባል መልስ (Reply) ላይም ይሰራሉ።</strong>
         </p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
-          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-size: 1.4rem;">👍</span>
-              <strong style="color: var(--accent-700);">መውደድ (Like)</strong>
+
+        <!-- 6 Emoji Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; margin-top: 1.25rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">👍</span>
+              <strong style="color: var(--primary-900); font-size: 0.95rem;">Like (ድጋፍ / ወደድኩት)</strong>
             </div>
-            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
-              አንድ ጥያቄ ወይም የተሰጠ መልስ ጠቃሚ፣ መጽሐፍ ቅዱሳዊ ምክር ያዘለ፣ አጽናኝ ወይም ልብ የሚነካ ሆኖ ሲያገኙት የ👍 <strong>Like</strong> ቁልፉን ይጫኑ። የቁጥሩ መጨመር ለጸሐፊው ትልቅ ማበረታቻ ይሆናል።
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              የቀረበውን ሐሳብ ሲደግፉ፣ ጠቃሚ ምክር ሲያገኙ ወይም ሲያደንቁ ይጠቀሙበት።
             </p>
           </div>
 
-          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-size: 1.4rem;">👎</span>
-              <strong style="color: var(--danger-txt);">አለመውደድ (Dislike)</strong>
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">❤️</span>
+              <strong style="color: #e11d48; font-size: 0.95rem;">Love (ፍቅር / መውደድ)</strong>
             </div>
-            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
-              በተሰጠው ሐሳብ ላይ በአክብሮት ካልተስማሙ ወይም ጽሑፉ ትክክለኛ ካልመሰለዎት የ👎 <strong>Dislike</strong> ቁልፍን መጫን ይችላሉ። እባክዎን ይህን ቁልፍ ሰውን ለመጉዳት ወይም ለመናቅ ፈጽሞ አይጠቀሙበት።
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              የክርስቶስን ፍቅር፣ ልባዊ ምስጋና እና ጥልቅ ወንድማማችነትን ለመግለጽ።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">🙏</span>
+              <strong style="color: #0284c7; font-size: 0.95rem;">Amen (አሜን / ጸሎት)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              በቀረበው ጸሎት ወይም ከመጽሐፍ ቅዱስ ቃል ጋር በሙሉ ልብ ሲስማሙ የሚሰጥ ምላሽ።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">💡</span>
+              <strong style="color: #d97706; font-size: 0.95rem;">Insight (ብርሃን / ማስተዋል)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              መንፈሳዊ ማስተዋልን የከፈተ፣ አዲስ እውቀት ያስጨበጠ ወይም ጥልቅ ምላሽ ሲሆን።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">🤝</span>
+              <strong style="color: #059669; font-size: 0.95rem;">Fellowship (ህብረት / አንድነት)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              አብሮነትን፣ መረዳዳትን እና በቤተክርስቲያን አንድነት መቆምን ለማሳየት።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">😢</span>
+              <strong style="color: #6366f1; font-size: 0.95rem;">Comfort (ማጽናናት / አብሮ መተከዝ)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              ከሚያለቅሱ ጋር ማልቀስ፣ የልብ ህመምን መጋራትና አጽናኝ ቃላትን ማጋራት።
             </p>
           </div>
         </div>
 
         <div style="background-color: var(--surface); border-left: 4px solid var(--accent-600); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1.25rem; font-size: 0.9rem; line-height: 1.6;">
-          <strong>💡 የReaction ቁልፎች አጠቃቀም ጠቃሚ ነጥቦች፡</strong>
+          <strong>💡 የReaction አጠቃቀም መመሪያ፡</strong>
           <ul style="margin: 0.5rem 0 0 1.25rem;">
-            <li><strong>ምላሽዎን ማንሳት፡</strong> የተጫኑትን ቁልፍ (Like ወይም Dislike) ደግመው ሲጫኑት ምላሽዎ ይሰረዛል።</li>
-            <li><strong>ምላሽ መቀየር፡</strong> ከLike ወደ Dislike (ወይም በተቃራኒው) ለመቀየር ሌላኛውን ቁልፍ መጫን ብቻ በቂ ነው፤ ሥርዓቱ ወዲያውኑ ይቀይርልዎታል።</li>
-            <li><strong>ፈጣን አሰራር (HTMX)፡</strong> ቁልፉን ሲጫኑ ገጹን እንደገና ሳይከፍት በቅጽበት እዚያው ላይ ቁጥሩ ይጨምራል ወይም ይቀንሳል።</li>
+            <li><strong>ኢሞጂ ለመምረጥ፡</strong> በጽሑፉ ስር የሚገኘውን <strong>"➕ React"</strong> ቁልፍ ሲጫኑ 6ቱ ኢሞጂዎች በረድፍ ተዘርግተው ይመጣሉ፤ የመረጡትን አንዱን ይጫኑ።</li>
+            <li><strong>ምላሽዎን ለመሰረዝ (Toggle Off)፡</strong> ቀድመው የመረጡትን ኢሞጂ ደግመው ሲጫኑት ምላሽዎ ወዲያውኑ ይሰረዛል።</li>
+            <li><strong>ምላሽ ለመቀየር፡</strong> ሌላ ኢሞጂ ሲመርጡ የነበረው ተሰርዞ ወደ አዲሱ ይቀየራል።</li>
+            <li><strong>ቀጥታ ውጤት (HTMX)፡</strong> ቁልፎቹን ሲጫኑ ገጹን ሳያድስ ወዲያውኑ በቅጽበት ቁጥሩ ይጨምራል ወይም ይቀንሳል።</li>
           </ul>
         </div>
       </div>
 
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <span style="font-size: 1.8rem;">👍 👎</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">7. Reacting with Likes & Dislikes (On Posts and Replies)</h2>
+          <span style="font-size: 1.8rem;">👍 ❤️ 🙏</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. 6 Telegram-Style Community Reactions (Expressing Grace & Fellowship)</h2>
         </div>
         <p style="font-size: 1.05rem; line-height: 1.7;">
-          <strong>Complete Reaction Support:</strong> You can react with a Like or Dislike on the main discussion question <strong>AND on every individual reply</strong> throughout the conversation!
+          <strong>Enriched Fellowship Reactions:</strong> Just like Telegram, you can express your thoughts, prayer, and encouragement through <strong>6 specially tailored, church-centered emoji reactions</strong>. These reactions are active on both main discussion questions <strong>and on every individual reply card!</strong>
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
-          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-size: 1.4rem;">👍</span>
-              <strong style="color: var(--accent-700);">Like Button</strong>
+        <!-- 6 Emoji Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; margin-top: 1.25rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">👍</span>
+              <strong style="color: var(--primary-900); font-size: 0.95rem;">Like (Support & Agreement)</strong>
             </div>
-            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
-              Click the 👍 <strong>Like</strong> button whenever a post or reply is spiritually enriching, thoughtful, wise, or encouraging. It shows your appreciation and uplifts the person who shared.
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Affirms helpful advice, sound viewpoints, and constructive reflections.
             </p>
           </div>
 
-          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-size: 1.4rem;">👎</span>
-              <strong style="color: var(--danger-txt);">Dislike Button</strong>
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">❤️</span>
+              <strong style="color: #e11d48; font-size: 0.95rem;">Love (Christian Affection)</strong>
             </div>
-            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
-              Click the 👎 <strong>Dislike</strong> button if you respectfully disagree with an assertion or believe an explanation is misleading. Always exercise this with Christian humility and gentleness.
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Expresses Christ-like love, pastoral warmth, and gratitude for vulnerable sharing.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">🙏</span>
+              <strong style="color: #0284c7; font-size: 0.95rem;">Amen (Prayer & Agreement)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Stands in agreement with scripture, prayer petitions, and declarations of faith.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">💡</span>
+              <strong style="color: #d97706; font-size: 0.95rem;">Insight (Spiritual Light)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Celebrates wisdom that opened fresh understanding or biblically enlightened thinking.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">🤝</span>
+              <strong style="color: #059669; font-size: 0.95rem;">Fellowship (Unity & Partnership)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Signals solidarity, church brotherhood/sisterhood, and walking side-by-side.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span style="font-size: 1.5rem;">😢</span>
+              <strong style="color: #6366f1; font-size: 0.95rem;">Comfort (Pastoral Empathy)</strong>
+            </div>
+            <p style="font-size: 0.85rem; line-height: 1.5; margin: 0; color: var(--text-muted);">
+              Mourns with those who mourn, acknowledging pain with compassion and comfort.
             </p>
           </div>
         </div>
 
         <div style="background-color: var(--surface); border-left: 4px solid var(--accent-600); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-top: 1.25rem; font-size: 0.9rem; line-height: 1.6;">
-          <strong>💡 Handy Reaction Tips:</strong>
+          <strong>💡 Tips for Using Reactions:</strong>
           <ul style="margin: 0.5rem 0 0 1.25rem;">
-            <li><strong>To undo your reaction:</strong> Simply click the active reaction button again to toggle it off.</li>
-            <li><strong>To switch:</strong> If you liked something and want to change to dislike, just click the dislike button. It switches smoothly in one tap.</li>
-            <li><strong>Instant live update:</strong> Powered by modern inline HTMX, counts update smoothly without refreshing the whole webpage.</li>
+            <li><strong>Opening the Emoji Tray:</strong> Click the <strong>"➕ React"</strong> button underneath any post or reply to reveal the horizontal reaction tray.</li>
+            <li><strong>Toggle Off to Undo:</strong> Click your active reaction again to retract it.</li>
+            <li><strong>Switch Smoothly:</strong> Clicking a different emoji automatically updates your selection to the new reaction.</li>
+            <li><strong>Live HTMX Updates:</strong> Counts update smoothly in real time without reloading the page.</li>
           </ul>
         </div>
       </div>
     </section>
 
     <!-- =====================================================================
-         SECTION 8: BOOKMARKS & NOTIFICATIONS
+         SECTION 9: COMMUNITY MEMBERS DIRECTORY & GUEST PRIVACY GATE
+         ===================================================================== -->
+    <section id="section-members" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border-color: #86efac;">
+      <div class="guide-block lang-am">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👥 🔒</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. የተመዘገቡ አባላትን ማየት እና የደህንነት ክልል (Members Directory & Privacy)</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          የቤተክርስቲያናችን ማህበረሰብ ማን እንደሆነ ለማወቅ፣ እርስ በርስ ለመተዋወቅና ህብረትን ለማጠንከር የተዘጋጀ የቀጥታ የአባላት ማውጫ (Members Directory) ተዘጋጅቷል፡
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👥</span>
+              <strong style="color: var(--primary-900);">የአባላት ቁጥርን በመጫን መክፈት (Toggle Directory)</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              በገጹ አናት ላይ ያለውን <strong>"👥 [ቁጥር] አባላት"</strong> የሚለውን ቁልፍ ሲጫኑ የተመዘገቡ አባላት ዝርዝር መስኮት ይከፈታል። ዝርዝሩን ለመዝጋት ቁልፉን ደግመው ይጫኑ ወይም የ"✕" ምልክቱን ይንኩ።
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">🔍</span>
+              <strong style="color: var(--primary-900);">ቀጥታ የአባላት ፍለጋ (Instant Search)</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              በአባላት ዝርዝሩ አናት ላይ በሚገኘው የፍለጋ ሳጥን ውስጥ የአንድን አባል ስም መተየብ ሲጀምሩ ሥርዓቱ ወዲያውኑ አጣርቶ ያቀርብልዎታል።
+            </p>
+          </div>
+        </div>
+
+        <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 1.25rem; margin-top: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span style="font-size: 1.4rem;">🔒</span>
+            <strong style="color: #065f46; font-size: 1rem;">የአባላት ክብርና ደህንነት ጥበቃ (Guest Privacy Gate)</strong>
+          </div>
+          <p style="font-size: 0.92rem; line-height: 1.6; margin: 0; color: #047857;">
+            <strong>እንግዶች ማየት አይችሉም፡</strong> ያልተመዘገቡ እንግዳ ጎብኚዎች (Unregistered Guests) የአባላትን ዝርዝር ማየት እንዳይችሉ በደህንነት ተቆልፏል። እንግዳ ሰው የአባላትን ቁጥር ሲጫን መጀመሪያ እንዲመዘገብ ወይም እንዲገባ የሚጠይቅ መልእክት ይቀርብለታል።<br>
+            <strong>የሚስጥር ጽሑፎች ፍጹም ጥበቃ፡</strong> አንድ አባል በሚስጥር (Anonymous) የጠየቀው ጥያቄ ወይም የሰጠው መልስ ከመገለጫው (Profile) ጋር በፍጹም አይገናኝም። ማንኛውም ሰው የአባላትን ዝርዝር ቢያይ እንኳ በሚስጥር የተጻፉ ጽሑፎችን የማን እንደሆኑ ማወቅ አይችልም!
+          </p>
+        </div>
+      </div>
+
+      <div class="guide-block lang-en">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.8rem;">👥 🔒</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. Community Members Directory & Safe Fellowship Gate</h2>
+        </div>
+        <p style="font-size: 1.05rem; line-height: 1.7;">
+          To help church members stay connected and build authentic community, HKHC includes an interactive member directory with strict privacy protections:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">👥</span>
+              <strong style="color: var(--primary-900);">Tap to Open & Toggle Directory</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              Tap the <strong>"👥 [count] Members"</strong> button in the top navigation header to view active church members. Tapping it again or clicking the "✕" close button dismisses the list.
+            </p>
+          </div>
+
+          <div style="background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.4rem;">🔍</span>
+              <strong style="color: var(--primary-900);">Live Real-Time Member Search</strong>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+              Type a name in the directory search input to instantly filter members by display name or username with zero delay.
+            </p>
+          </div>
+        </div>
+
+        <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 1.25rem; margin-top: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span style="font-size: 1.4rem;">🔒</span>
+            <strong style="color: #065f46; font-size: 1rem;">Guest Privacy Gate & Total Anonymous Protection</strong>
+          </div>
+          <p style="font-size: 0.92rem; line-height: 1.6; margin: 0; color: #047857;">
+            <strong>Guest Protection Gate:</strong> Unregistered visitors cannot see registered member lists. If a guest taps the member count, a friendly prompt invites them to register or sign in first.<br>
+            <strong>Decoupled Anonymity:</strong> Anonymous posts are completely decoupled from user profiles. Viewing a member in the directory will NEVER expose their anonymous contributions. Confidentiality is unconditionally protected.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 10: BOOKMARKS, ALERTS, SOUND TOGGLE & INVITES
          ===================================================================== -->
     <section id="section-bookmarks" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <span style="font-size: 1.8rem;">🔖 🔔</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. ውይይቶችን ምልክት ማድረግ (Bookmark) እና ማሳወቂያዎች (Notifications)</h2>
+          <span style="font-size: 1.8rem;">🔖 🔔 🔊</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. ውይይትን መከታተል (Bookmark)፣ ማሳወቂያዎችና የድምፅ ማስተካከያ</h2>
         </div>
         <p>የሚፈልጉትን ውይይት እንዳይረሱ እና አዳዲስ መልሶች ሲጻፉ ወዲያውኑ እንዲያውቁ የሚረዱ ጠቃሚ ባህሪያት፡</p>
         <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
-          <li><strong>ውይይትን መከታተል (Bookmark)፡</strong> በማንኛውም ውይይት ገጽ ላይ <strong>"🔖 Bookmark" (ተከታተል)</strong> የሚለውን ቁልፍ ሲጫኑ ውይይቱ በተከታታይ ዝርዝርዎ ውስጥ ይመዘገባል።</li>
-          <li><strong>የማሳወቂያ ደወል (🔔)፡</strong> እርስዎ በጠየቁት ጥያቄ ላይ ወይም ምልክት ባደረጉበት ውይይት ላይ ሌላ ሰው መልስ ሲሰጥ ከላይ ባለው የደወል ምልክት ላይ የቀይ ቁጥር ምልክት ይታያል። ደወሉን በመጫን የተሰጡትን ምላሾች በቀጥታ ማየት ይችላሉ።</li>
+          <li><strong>ውይይትን መከታተል (Bookmark)፡</strong> በማንኛውም ውይይት ገጽ ላይ <strong>"🔖 Bookmark" (ተከታተል)</strong> የሚለውን ቁልፍ ሲጫኑ ውይይቱ በተከታታይ ዝርዝርዎ ውስጥ ይመዘገባል፤ በመገለጫዎ ላይ በማንኛውም ጊዜ ማግኘት ይችላሉ።</li>
+          <li><strong>የማሳወቂያ ደወል (🔔)፡</strong> እርስዎ በጠየቁት ጥያቄ ላይ፣ ለሰጡት መልስ ምላሽ ሲሰጥ ወይም ምልክት ባደረጉበት ውይይት ላይ አዲስ መልስ ሲጨመር ከላይ ባለው የደወል ምልክት ላይ የቀይ ቁጥር ባጅ ይታያል።</li>
+          <li><strong>የደወል ድምፅ ማስተካከያ (🔊 / 🔇 Sound Player)፡</strong> አዲስ ምላሽ ወይም ማሳወቂያ ሲደርስዎ መድረኩ ረጋ ያለ አጭር ድምፅ ያሰማል። ድምፅ እንዲጠፋ ከፈለጉ በድምፅ ማብሪያ/ማጥፊያ ቁልፉ ላይ መጫን ይችላሉ።</li>
+          <li><strong>በቴሌግራም እና ዋትስአፕ ማጋራት (🎁 Invite)፡</strong> ውይይቶችን ለቤተሰብና ለጓደኞችዎ በቀላሉ ለማካፈል <strong>"🎁 Invite / አጋራ"</strong> የሚለውን በመጫን ወደ WhatsApp ወይም Telegram በቀጥታ መላክ ይችላሉ።</li>
         </ul>
       </div>
 
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <span style="font-size: 1.8rem;">🔖 🔔</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">8. Bookmarking Discussions & Receiving Notifications</h2>
+          <span style="font-size: 1.8rem;">🔖 🔔 🔊</span>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. Bookmarks, Notification Alerts, Sound Toggle & Social Invites</h2>
         </div>
-        <p>Stay effortlessly connected to the conversations that matter to you:</p>
+        <p>Stay effortlessly connected to the conversations that matter to you with real-time feedback:</p>
         <ul style="margin-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
-          <li><strong>Bookmarking:</strong> Click the <strong>"🔖 Bookmark"</strong> button on any discussion thread you want to follow.</li>
-          <li><strong>Notification Bell (🔔):</strong> Whenever another member replies to a question you asked or to a thread you bookmarked, the notification bell in the top navigation bar will badge with an unread count. Click it to view and jump straight to the new response!</li>
+          <li><strong>Bookmarking Discussions:</strong> Click the <strong>"🔖 Bookmark"</strong> button on any thread you wish to follow. Access all your saved discussions in one place from your profile.</li>
+          <li><strong>Notification Bell (🔔):</strong> Whenever another member replies to your question, quote-replies to you, or posts in a bookmarked thread, the notification bell badges with an unread count.</li>
+          <li><strong>Audio Notification Sound (🔊 / 🔇):</strong> A gentle, discreet tone plays when new replies or notifications arrive. You can mute or unmute notification sounds at any time.</li>
+          <li><strong>1-Tap Social Invites (🎁 Invite):</strong> Click the <strong>"🎁 Invite"</strong> button to easily share discussions to your WhatsApp groups or Telegram channels in one click.</li>
         </ul>
       </div>
     </section>
 
     <!-- =====================================================================
-         SECTION 9: SAFETY & REPORTING
+         SECTION 11: SAFETY & REPORTING
          ===================================================================== -->
     <section id="section-safety" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem; border-left: 5px solid #f43f5e;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🚩</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. የጋራ ሰላማዊ ህብረት እና ተገቢ ያልሆነ ነገር ሪፖርት ማድረግ (Report)</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">11. የጋራ ሰላማዊ ህብረት እና ተገቢ ያልሆነ ነገር ሪፖርት ማድረግ (Report)</h2>
         </div>
         <p>ይህ መድረክ የእግዚአብሔር ቤተሰብ የሚገናኝበት የተቀደሰና የተከበረ ስፍራ ነው። ማንኛውንም አባል ማዋረድ፣ የግል ስድብ፣ ዛቻ፣ የጥላቻ ንግግር ወይም የብልግና ይዘት በፍጹም አይፈቀድም።</p>
         <div style="background-color: var(--danger-bg); border: 1px solid #fecdd3; border-radius: var(--radius-md); padding: 1.25rem; margin: 1rem 0;">
@@ -546,7 +826,7 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
           <span style="font-size: 1.8rem;">🚩</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">9. Community Safety, Respect, and the Report Button</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">11. Community Safety, Respect, and the Report Button</h2>
         </div>
         <p>We treat every member with Christian gentleness, patience, and mutual respect. Bullying, name-calling, mockery, explicit content, or attempting to expose anonymous posters are strictly forbidden.</p>
         <div style="background-color: var(--danger-bg); border: 1px solid #fecdd3; border-radius: var(--radius-md); padding: 1.25rem; margin: 1rem 0;">
@@ -559,13 +839,13 @@
     </section>
 
     <!-- =====================================================================
-         SECTION 10: FAQ
+         SECTION 12: FREQUENTLY ASKED QUESTIONS (FAQ)
          ===================================================================== -->
     <section id="section-faq" class="card guide-card" style="padding: 2rem; margin-bottom: 2rem;">
       <div class="guide-block lang-am">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <span style="font-size: 1.8rem;">❓</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. ተደጋግመው የሚጠየቁ ጥያቄዎች (FAQ)</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">12. ተደጋግመው የሚጠየቁ ጥያቄዎች (FAQ)</h2>
         </div>
 
         <div style="margin-bottom: 1.25rem;">
@@ -583,9 +863,9 @@
         </div>
 
         <div style="margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 3፡ ቋንቋውን ከአማርኛ ወደ እንግሊዝኛ እንዴት እቀይራለሁ?</h3>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 3፡ ለጥያቄዎች እና መልሶች በ6ቱ ኢሞጂዎች (Reactions) ምላሽ መስጠት እችላለሁ?</h3>
           <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
-            መልስ፡ በየትኛውም ገጽ ላይ ከላይ በቀኝ በኩል ያለውን <strong>"Eng / አማ (Amh)"</strong> የሚለውን ቁልፍ ሲጫኑት መላው ድረ-ገጽ ወዲያውኑ ወደ ፈለጉት ቋንቋ ይቀየራል።
+            መልስ፡ አዎ! ልክ እንደ ቴሌግራም በ6ቱ መንፈሳዊ ኢሞጂዎች (👍 ❤️ 🙏 💡 🤝 😢) በዋናው ጥያቄም ሆነ በእያንዳንዱ አባል መልስ ላይ በነፃነት ስሜትዎንና ጸሎትዎን መግለጽ ይችላሉ።
           </p>
         </div>
 
@@ -596,10 +876,31 @@
           </p>
         </div>
 
-        <div>
+        <div style="margin-bottom: 1.25rem;">
           <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 5፡ ያለ ኢሜይል በስልክ ቁጥር ብቻ መመዝገብና መግባት እችላለሁ?</h3>
           <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
             መልስ፡ አዎ! መድረካችን ለሁሉም አባላት ምቹና ተደራሽ እንዲሆን በሞባይል ስልክ ቁጥርዎ ብቻ (ወይም በኢሜይል) መመዝገብ ይችላሉ። ወደ መድረኩ ሲገቡም በስልክ ቁጥርዎ፣ በኢሜይልዎ ወይም በመገለጫ ስምዎ መግባት ይችላሉ። እንዲሁም የይለፍ ቃል በሚተይቡበት ጊዜ የዓይን ምልክቷን (👁️) በመጫን የይለፍ ቃልዎን ማረጋገጥ ይችላሉ።
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 6፡ የHKHC መድረክን በስልኬ እንደ አፕ (App) እንዴት መጫን እችላለሁ?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ በስልክዎ ጎግል ክሮም (Chrome) ሲጠቀሙ ከላይ ወይም ከታች በሚመጣው "📲 አፑን ጫን / Install App" ቁልፍ ላይ መጫን ይችላሉ። በiPhone (Safari) ተጠቃሚ ከሆኑ ደግሞ የሼር (Share) ምልክቷን ነክተው "Add to Home Screen" የሚለውን ይምረጡ። አፑ ወዲያውኑ ወደ ስልክዎ ስክሪን ይገባል!
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 7፡ ኢንተርኔት በሌለበት ጊዜ (Offline) ጽሑፎችን ማንበብ እችላለሁ?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ አዎ! አፑ በስልክዎ ላይ አንዴ ከተጫነ በኋላ ቀደም ብለው የጎበኟቸውን የውይይት ርዕሶች እና ጥያቄዎች ያለ ኢንተርኔት (Offline) መክፈትና ማንበብ ይችላሉ። ኢንተርኔት ሲመለስ አዳዲስ መልሶች ወዲያውኑ ይደርሱዎታል።
+          </p>
+        </div>
+
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">ጥያቄ 8፡ ያልተመዘገቡ እንግዶች የአባላትን ዝርዝር ማየት የማይችሉት ለምንድን ነው?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            መልስ፡ የአባላትን ደህንነት ከማያውቋቸው ሰዎችና ከአላስፈላጊ የኢንተርኔት ስጋት (Spam) ለመጠበቅ ሲባል የአባላት ዝርዝር የተፈቀደው ለተመዘገቡ አባላት ብቻ ነው። እንዲሁም አንድ ሰው በሚስጥር (Anonymous) የጻፈው ጥያቄ ወይም መልስ ከአባሉ ስም ጋር በፍጹም እንደማይገናኝ ዋስትና እንሰጣለን።
           </p>
         </div>
       </div>
@@ -607,7 +908,7 @@
       <div class="guide-block lang-en">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <span style="font-size: 1.8rem;">❓</span>
-          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">10. Frequently Asked Questions (FAQ)</h2>
+          <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-900);">12. Frequently Asked Questions (FAQ)</h2>
         </div>
 
         <div style="margin-bottom: 1.25rem;">
@@ -625,9 +926,9 @@
         </div>
 
         <div style="margin-bottom: 1.25rem;">
-          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q3: Can I react to replies as well as main questions?</h3>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q3: Can I react using all 6 Telegram-style emojis on posts and replies?</h3>
           <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
-            Answer: Yes! You can react with Like (👍) or Dislike (👎) on both the original question and every individual reply card.
+            Answer: Absolutely! You can express encouragement, love, prayer, and insight using all 6 reactions (👍 ❤️ 🙏 💡 🤝 😢) on the main question and on every reply card.
           </p>
         </div>
 
@@ -638,10 +939,31 @@
           </p>
         </div>
 
-        <div>
+        <div style="margin-bottom: 1.25rem;">
           <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q5: Can I sign up and log in using just my mobile phone number?</h3>
           <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
             Answer: Yes! To make community participation as simple and accessible as possible, you can register using your mobile phone number, your email address, or both. When logging in, you can use your phone number, email address, or display name, and you can tap the eye icon (👁️) to view and verify your password at any time.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q6: How do I install the HKHC app on my mobile phone?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: On Android Chrome, tap the "📲 Install App" banner at the top or bottom of your screen. On iPhone Safari, tap the Share icon and choose "Add to Home Screen". The app will appear directly on your phone home screen with one-tap access!
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q7: Can I read conversations when I don't have internet (Offline)?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: Yes! The installed app caches pages and discussions you've visited so you can continue reading them offline even when your mobile data or Wi-Fi is temporarily disconnected.
+          </p>
+        </div>
+
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-900); margin-bottom: 0.35rem;">Q8: Why is the member directory restricted from unregistered guests?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
+            Answer: To safeguard our church family from automated scrapers, unsolicited messages, and outside harassment, the member list is reserved exclusively for registered members. Furthermore, anonymous posts remain 100% decoupled from member profiles to guarantee confidential fellowship.
           </p>
         </div>
       </div>

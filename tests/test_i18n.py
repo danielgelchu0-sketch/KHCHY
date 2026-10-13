@@ -117,7 +117,8 @@ class InternationalizationTests(TestCase):
         self.assertEqual(en_res.status_code, 200)
         self.assertContains(en_res, "How to Use the HKHC Community Platform")
         self.assertContains(en_res, "Choosing Your Identity: With Your Name vs. Anonymous")
-        self.assertContains(en_res, "Reacting with Likes & Dislikes (On Posts and Replies)")
+        self.assertContains(en_res, "6 Telegram-Style Community Reactions")
+        self.assertContains(en_res, "Community Members Directory & Safe Fellowship Gate")
 
         # Amharic view
         self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "am"
@@ -125,7 +126,7 @@ class InternationalizationTests(TestCase):
         self.assertEqual(am_res.status_code, 200)
         self.assertContains(am_res, "የHKHC ማህበረሰብ መድረክ አጠቃቀም መመሪያ")
         self.assertContains(am_res, "ማንነትን መምረጥ፡ በግልጽ ስም ወይስ በሚስጥር")
-        self.assertContains(am_res, "Like እና Dislike")
+        self.assertContains(am_res, "6ቱ የህብረት ስሜት መግለጫዎች")
 
     def test_navbar_and_footer_contain_user_guide_links(self):
         """Base layout navbar and footer include user guide links."""
