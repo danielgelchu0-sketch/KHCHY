@@ -896,6 +896,15 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/'/g, '&#39;');
     }
 
+    function toggleMembersModal() {
+        if (!membersModal) return;
+        if (!membersModal.classList.contains('hidden')) {
+            closeMembersModal();
+        } else {
+            openMembersModal();
+        }
+    }
+
     function openMembersModal() {
         if (!membersModal) return;
 
@@ -907,13 +916,15 @@ document.addEventListener('DOMContentLoaded', function () {
         membersModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
 
-        if (!cachedMembers && !isFetchingMembers) {
-            fetchMembers();
-        } else if (cachedMembers) {
-            renderMembersList(cachedMembers);
-            setTimeout(function () {
-                membersSearchInput?.focus();
-            }, 50);
+        if (isAuthenticated && membersListContainer) {
+            if (!cachedMembers && !isFetchingMembers) {
+                fetchMembers();
+            } else if (cachedMembers) {
+                renderMembersList(cachedMembers);
+                setTimeout(function () {
+                    membersSearchInput?.focus();
+                }, 50);
+            }
         }
     }
 
@@ -1023,12 +1034,13 @@ document.addEventListener('DOMContentLoaded', function () {
         membersListContainer.innerHTML = html;
     }
 
-    // Attach open modal listener to all triggers
-    document.querySelectorAll('.js-open-members-modal').forEach(function (el) {
-        el.addEventListener('click', function (e) {
+    // Global Event Delegation for all member modal triggers (robust across mobile touch and HTMX swaps)
+    document.addEventListener('click', function (e) {
+        const trigger = e.target.closest('.js-open-members-modal');
+        if (trigger) {
             e.preventDefault();
-            openMembersModal();
-        });
+            toggleMembersModal();
+        }
     });
 
     // Close button & backdrop click
@@ -1076,6 +1088,49 @@ document.addEventListener('DOMContentLoaded', function () {
             renderMembersList(cachedMembers);
         }
     });
+});
+
+// ==========================================================================
+// Telegram-Style Floating Emoji Tray Interactivity (HTMX delegated)
+// ==========================================================================
+document.addEventListener('click', function (e) {
+    const trigger = e.target.closest('.js-toggle-emoji-tray');
+    if (trigger) {
+        e.preventDefault();
+        e.stopPropagation();
+        const wrap = trigger.closest('.telegram-picker-wrap');
+        if (!wrap) return;
+        const tray = wrap.querySelector('.telegram-emoji-tray');
+        if (!tray) return;
+
+        const isCurrentlyOpen = !tray.classList.contains('hidden');
+
+        // Close any other open emoji trays on the page
+        document.querySelectorAll('.telegram-emoji-tray:not(.hidden)').forEach(function (t) {
+            t.classList.add('hidden');
+        });
+
+        if (!isCurrentlyOpen) {
+            tray.classList.remove('hidden');
+        }
+        return;
+    }
+
+    // Dismiss any open emoji tray when clicking outside
+    if (!e.target.closest('.telegram-picker-wrap')) {
+        document.querySelectorAll('.telegram-emoji-tray:not(.hidden)').forEach(function (t) {
+            t.classList.add('hidden');
+        });
+    }
+});
+
+// Auto-dismiss open emoji trays on Escape key
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.telegram-emoji-tray:not(.hidden)').forEach(function (t) {
+            t.classList.add('hidden');
+        });
+    }
 });
 
 

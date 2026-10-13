@@ -1,3 +1,4 @@
+import collections
 import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,7 +15,7 @@ from django.views import View
 
 from apps.core.utils import sanitize_user_input
 from .forms import DiscussionCreateForm, ReplyCreateForm, TopicAdminForm
-from .models import Bookmark, Discussion, Reaction, Reply, ReplyReaction, Topic
+from .models import Bookmark, Discussion, Reaction, Reply, ReplyReaction, Topic, REACTION_CONFIG
 
 
 logger = logging.getLogger(__name__)
@@ -99,42 +100,38 @@ class DiscussionDetailView(View):
         topic = get_object_or_404(Topic, slug=topic_slug)
         discussion = get_object_or_404(
             Discussion.objects.select_related("author", "author__profile", "topic").annotate(
-                _likes_count=Count(
-                    "reactions",
-                    filter=Q(reactions__vote_type=Reaction.VoteType.LIKE),
-                    distinct=True,
-                ),
-                _dislikes_count=Count(
-                    "reactions",
-                    filter=Q(reactions__vote_type=Reaction.VoteType.DISLIKE),
-                    distinct=True,
-                ),
+                _count_like=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.LIKE), distinct=True),
+                _count_love=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.LOVE), distinct=True),
+                _count_amen=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.AMEN), distinct=True),
+                _count_insight=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.INSIGHT), distinct=True),
+                _count_fellowship=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.FELLOWSHIP), distinct=True),
+                _count_comfort=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.COMFORT), distinct=True),
+                _count_dislike=Count("reactions", filter=Q(reactions__vote_type=Reaction.VoteType.DISLIKE), distinct=True),
             ),
             pk=pk,
             topic=topic,
         )
+        discussion._reaction_counts = {
+            "like": discussion._count_like,
+            "love": discussion._count_love,
+            "amen": discussion._count_amen,
+            "insight": discussion._count_insight,
+            "fellowship": discussion._count_fellowship,
+            "comfort": discussion._count_comfort,
+            "dislike": discussion._count_dislike,
+        }
+        discussion._likes_count = discussion._count_like
+        discussion._dislikes_count = discussion._count_dislike
 
         # Increment views safely
         Discussion.objects.filter(pk=pk).update(views_count=F("views_count") + 1)
-        discussion.refresh_from_db(fields=["views_count"])
+        discussion.views_count += 1
 
         # Fetch replies tree efficiently avoiding N+1 queries
         replies_list = list(
             Reply.objects.filter(discussion=discussion)
             .exclude(status=Reply.Status.HIDDEN)
             .select_related("author", "author__profile", "parent")
-            .annotate(
-                _likes_count=Count(
-                    "reactions",
-                    filter=Q(reactions__vote_type=ReplyReaction.VoteType.LIKE),
-                    distinct=True,
-                ),
-                _dislikes_count=Count(
-                    "reactions",
-                    filter=Q(reactions__vote_type=ReplyReaction.VoteType.DISLIKE),
-                    distinct=True,
-                ),
-            )
             .order_by("created_at")
         )
 
@@ -151,6 +148,28 @@ class DiscussionDetailView(View):
         else:
             for r in replies_list:
                 r._user_reaction = None
+
+        # Pre-fetch reaction counts for all replies in a single query
+        if replies_list:
+            reply_ids = [r.id for r in replies_list]
+            counts_qs = (
+                ReplyReaction.objects.filter(reply_id__in=reply_ids)
+                .values("reply_id", "vote_type")
+                .annotate(count=Count("id"))
+                .values_list("reply_id", "vote_type", "count")
+            )
+            reply_reaction_counts = collections.defaultdict(dict)
+            for reply_id, vote_type, count in counts_qs:
+                reply_reaction_counts[reply_id][vote_type] = count
+            for r in replies_list:
+                r._reaction_counts = reply_reaction_counts.get(r.id, {})
+                r._likes_count = r._reaction_counts.get("like", 0)
+                r._dislikes_count = r._reaction_counts.get("dislike", 0)
+        else:
+            for r in replies_list:
+                r._reaction_counts = {}
+                r._likes_count = 0
+                r._dislikes_count = 0
 
         # Build hierarchical reply structure
         replies_by_id = {}
@@ -170,7 +189,11 @@ class DiscussionDetailView(View):
         user_reaction = None
         if request.user.is_authenticated:
             is_bookmarked = Bookmark.objects.filter(user=request.user, discussion=discussion).exists()
-            user_reaction = discussion.get_user_reaction(request.user)
+            user_reaction_obj = Reaction.objects.filter(discussion=discussion, user=request.user).first()
+            user_reaction = user_reaction_obj.vote_type if user_reaction_obj else None
+            discussion._user_reaction = user_reaction
+        else:
+            discussion._user_reaction = None
 
         reply_form = ReplyCreateForm()
 
@@ -520,7 +543,7 @@ class ReactionToggleView(View):
             return redirect(discussion.get_absolute_url())
 
         vote = vote_type or request.POST.get("vote_type")
-        if vote not in (Reaction.VoteType.LIKE, Reaction.VoteType.DISLIKE):
+        if vote not in Reaction.VoteType.values:
             if request.headers.get("HX-Request"):
                 return HttpResponseBadRequest("Invalid reaction type.")
             return redirect(discussion.get_absolute_url())
@@ -557,6 +580,8 @@ class ReactionToggleView(View):
                 {
                     "discussion": discussion,
                     "user_reaction": current_reaction,
+                    "reaction_badges": discussion.get_reaction_counts(request.user),
+                    "reaction_config": REACTION_CONFIG,
                     "user": request.user,
                 },
             )
@@ -568,9 +593,9 @@ class ReactionToggleView(View):
 @method_decorator(login_required, name="dispatch")
 class ReplyReactionToggleView(View):
     """
-    Handles user reactions (like or dislike) on a reply.
+    Handles user reactions (Telegram-style emojis) on a reply.
     - If user clicks the same reaction they currently have, remove it (toggle off).
-    - If user clicks the opposite reaction, switch to that reaction.
+    - If user clicks a different reaction, switch to that reaction.
     - If user has no existing reaction, create it.
     Supports HTMX partial rendering or standard HTTP redirects.
     """
@@ -591,7 +616,7 @@ class ReplyReactionToggleView(View):
             return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
 
         vote = vote_type or request.POST.get("vote_type")
-        if vote not in (ReplyReaction.VoteType.LIKE, ReplyReaction.VoteType.DISLIKE):
+        if vote not in ReplyReaction.VoteType.values:
             if request.headers.get("HX-Request"):
                 return HttpResponseBadRequest("Invalid reaction type.")
             return redirect(f"{reply.discussion.get_absolute_url()}#reply-{reply.id}")
@@ -628,6 +653,8 @@ class ReplyReactionToggleView(View):
                 {
                     "reply": reply,
                     "user_reaction": current_reaction,
+                    "reaction_badges": reply.get_reaction_counts(request.user),
+                    "reaction_config": REACTION_CONFIG,
                     "user": request.user,
                 },
             )

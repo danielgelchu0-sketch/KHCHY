@@ -240,7 +240,7 @@ class DiscussionsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "discussions/partials/reaction_buttons.html")
         content = response.content.decode()
-        self.assertIn("like-btn", content)
+        self.assertIn("reaction-pill-btn", content)
         self.assertIn("active", content)
         self.assertIn(react_url, content)
 
@@ -297,15 +297,14 @@ class DiscussionsTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.discussion.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "reaction-buttons-group")
-        self.assertContains(response, "like-btn")
-        self.assertContains(response, "dislike-btn")
+        self.assertContains(response, "telegram-reactions-container")
+        self.assertContains(response, "btn-picker-trigger")
 
         # Anonymous view
         self.client.logout()
         response = self.client.get(self.discussion.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "reaction-buttons-group")
+        self.assertContains(response, "telegram-reactions-container")
 
     def test_reply_reaction_like_and_unlike(self):
         """User can like a reply and clicking again removes the like."""
@@ -401,7 +400,7 @@ class DiscussionsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "discussions/partials/reply_reaction_buttons.html")
         content = response.content.decode()
-        self.assertIn("like-btn", content)
+        self.assertIn("reaction-pill-btn", content)
         self.assertIn("active", content)
         self.assertIn(f"reply-reactions-{reply.id}", content)
 
@@ -470,7 +469,7 @@ class DiscussionsTests(TestCase):
         response = self.client.get(self.discussion.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, f"reply-reactions-{reply.id}")
-        self.assertContains(response, "reply-reaction-group")
+        self.assertContains(response, "reply-reactions-container")
 
     def test_anonymous_avatar_rendered_on_discussions_and_replies(self):
         """Discussions and replies posted anonymously render the privacy avatar SVG."""

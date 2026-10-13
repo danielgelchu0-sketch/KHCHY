@@ -18,8 +18,32 @@
       <button type="button" class="share-modal-close-btn js-close-members-modal" aria-label="{% trans 'Close' %}">&times;</button>
     </div>
 
+    <!-- Guest Gate: Explains that member directory is private for registered church members -->
+    <div id="members-guest-gate" class="members-guest-gate {% if user.is_authenticated %}hidden{% endif %}" style="padding: 2.5rem 1.5rem; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 0.75rem;" aria-hidden="true">🔒</div>
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-900); margin-bottom: 0.35rem;">
+        {% trans "Fellowship Directory is Private" %}
+      </h4>
+      <p style="color: var(--accent-700); font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem;">
+        የአባላት ዝርዝር ለተመዘገቡ አባላት ብቻ የተከለለ ነው
+      </p>
+      <p class="text-muted" style="font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.75rem; max-width: 380px; margin-left: auto; margin-right: auto;">
+        {% trans "To protect church family privacy and safety, only registered community members can view who has joined. Register today to connect in honest Christian fellowship." %}
+        <br>
+        <span style="font-size: 0.82rem; color: var(--text-muted); display: inline-block; margin-top: 0.35rem;">የአባላትን ደህንነት እና ሚስጥራዊነት ለመጠበቅ አባላትን ማየት የሚችሉት የተመዘገቡ ብቻ ናቸው።</span>
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 300px; margin: 0 auto;">
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 0.8rem 1.25rem; font-size: 1rem; font-weight: 700; justify-content: center; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);">
+          ✨ {% trans "Join Community" %} / ይመዝገቡ
+        </a>
+        <a href="{% url 'accounts:login' %}" class="btn btn-secondary" style="padding: 0.65rem 1.25rem; font-size: 0.92rem; justify-content: center;">
+          {% trans "Already a member? Log in" %} / ይግቡ
+        </a>
+      </div>
+    </div>
+
     <!-- Live Search Filter Input -->
-    <div class="members-search-container">
+    <div class="members-search-container {% if not user.is_authenticated %}hidden{% endif %}">
       <div class="members-search-input-wrap">
         <svg class="members-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -32,7 +56,7 @@
     </div>
 
     <!-- Scrollable Member List Container -->
-    <div id="members-modal-list" class="members-modal-list" role="list" aria-live="polite">
+    <div id="members-modal-list" class="members-modal-list {% if not user.is_authenticated %}hidden{% endif %}" role="list" aria-live="polite">
       <!-- Loading Skeleton (Initial state before fetch) -->
       <div class="members-loading-state">
         <div class="members-loading-spinner" aria-hidden="true"></div>
@@ -41,7 +65,7 @@
     </div>
 
     <!-- Privacy & Safe Fellowship Footnote -->
-    <div class="members-modal-footer">
+    <div class="members-modal-footer {% if not user.is_authenticated %}hidden{% endif %}">
       <div class="members-privacy-note">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>

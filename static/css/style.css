@@ -3128,3 +3128,282 @@ p {
     font-size: 0.78rem;
   }
 }
+
+/* ==========================================================================
+   Telegram-Style Multi-Emoji Reactions & Floating Emoji Picker Tray
+   Senior UX: Tactile raised buttons, min 44px touch targets, bilingual labels
+   ========================================================================== */
+
+.telegram-reactions-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  position: relative;
+  user-select: none;
+}
+
+.reply-reactions-container {
+  margin-top: 0.4rem;
+  gap: 0.35rem;
+}
+
+.reaction-badges-row {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.reaction-form-pill {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+/* Active Reaction Pill Badges */
+.reaction-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--primary-50, #f8fafc);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 9999px;
+  padding: 0.28rem 0.7rem;
+  min-height: 38px;
+  min-width: 44px;
+  cursor: pointer;
+  color: var(--text-muted, #475569);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.reaction-pill-btn.reply-pill {
+  min-height: 34px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+.reaction-pill-btn:hover {
+  background-color: #ffffff;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(15, 23, 42, 0.08);
+}
+
+.reaction-pill-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.05);
+}
+
+/* Highlighted state when active for viewing member */
+.reaction-pill-btn.active {
+  background-color: #f0fdfa;
+  border-color: #0d9488;
+  color: #0f766e;
+  box-shadow: 0 0 0 1.5px #0d9488, 0 2px 6px rgba(13, 148, 136, 0.2);
+}
+
+.pill-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+  display: inline-block;
+  transform-origin: center;
+  transition: transform 0.15s ease;
+}
+
+.reaction-pill-btn:hover .pill-emoji {
+  transform: scale(1.18);
+}
+
+.pill-count {
+  font-weight: 700;
+  font-size: 0.85rem;
+  min-width: 0.85rem;
+  text-align: center;
+}
+
+/* Telegram Picker Wrap & Trigger Button */
+.telegram-picker-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.btn-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: #ffffff;
+  border: 1px dashed #94a3b8;
+  border-radius: 9999px;
+  padding: 0.28rem 0.75rem;
+  min-height: 38px;
+  cursor: pointer;
+  color: var(--text-muted, #475569);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.btn-picker-trigger.reply-picker-trigger {
+  min-height: 34px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.btn-picker-trigger:hover {
+  background-color: #f0fdfa;
+  border-color: #0d9488;
+  border-style: solid;
+  color: #0f766e;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(13, 148, 136, 0.15);
+}
+
+.btn-picker-trigger:active {
+  transform: translateY(1px);
+}
+
+.picker-plus {
+  font-size: 0.88rem;
+  line-height: 1;
+}
+
+.picker-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Telegram Floating Horizontal Emoji Tray */
+.telegram-emoji-tray {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background: #ffffff;
+  border: 1px solid rgba(203, 213, 225, 0.95);
+  border-radius: 36px;
+  padding: 0.35rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 14px 30px -4px rgba(15, 23, 42, 0.22), 0 6px 14px -2px rgba(15, 23, 42, 0.1);
+  z-index: 60;
+  backdrop-filter: blur(10px);
+  animation: telegramTrayPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@keyframes telegramTrayPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.telegram-emoji-tray.hidden {
+  display: none !important;
+}
+
+.emoji-tray-form {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+.emoji-tray-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 52px;
+  padding: 0.25rem 0.4rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.emoji-tray-btn:hover {
+  background-color: #f0fdfa;
+  transform: scale(1.24) translateY(-4px);
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+}
+
+.emoji-tray-btn:active {
+  transform: scale(1.08);
+}
+
+.emoji-tray-btn.selected {
+  background-color: #ccfbf1;
+  border-color: #0d9488;
+}
+
+.tray-emoji {
+  font-size: 1.55rem;
+  line-height: 1.1;
+  display: block;
+}
+
+.tray-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  margin-top: 2px;
+  line-height: 1;
+}
+
+.emoji-tray-btn.selected .tray-label {
+  color: #0f766e;
+}
+
+/* Mobile Tray Adaptability */
+@media (max-width: 520px) {
+  .telegram-emoji-tray {
+    position: fixed;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 95vw;
+    justify-content: space-around;
+    padding: 0.4rem 0.6rem;
+    border-radius: 26px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.32);
+  }
+
+  @keyframes telegramTrayPopIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 10px) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+
+  .emoji-tray-btn {
+    min-width: 42px;
+    min-height: 48px;
+    padding: 0.2rem;
+  }
+
+  .tray-emoji {
+    font-size: 1.4rem;
+  }
+}
+

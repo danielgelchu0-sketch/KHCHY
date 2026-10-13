@@ -266,8 +266,24 @@ class MemberDirectoryView(View):
             or "application/json" in request.headers.get("Accept", "")
         )
 
+        total_active = User.objects.filter(is_active=True).count()
+
+        # Strict Privacy Rule: Unregistered guests cannot view members directory
+        if not request.user.is_authenticated:
+            if is_json:
+                return JsonResponse({
+                    "authenticated": False,
+                    "requires_auth": True,
+                    "total_count": total_active,
+                    "filtered_count": 0,
+                    "query": query,
+                    "members": [],
+                    "message": "Sign in to view registered church members / አባላትን ለማየት እባክዎ ይግቡ።",
+                })
+            messages.info(request, "Please log in to view community members / የአባላትን ዝርዝር ለማየት እባክዎ ይግቡ።")
+            return redirect(f"{reverse('accounts:login')}?next={request.path}")
+
         if is_json:
-            total_active = User.objects.filter(is_active=True).count()
             members_list = list(members_qs[:120])
             members_data = []
             for m in members_list:

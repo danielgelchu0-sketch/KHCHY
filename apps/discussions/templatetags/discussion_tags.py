@@ -45,8 +45,24 @@ def can_delete(obj, user):
 
 @register.filter(name="user_reaction")
 def user_reaction(discussion, user):
-    """Safely return user's reaction ('like', 'dislike', or None)."""
+    """Safely return user's reaction ('like', 'amen', etc. or None)."""
     if hasattr(discussion, "get_user_reaction"):
         return discussion.get_user_reaction(user)
     return None
+
+
+@register.filter(name="reaction_badges")
+def reaction_badges(obj, user):
+    """Return active reaction badges for discussion or reply."""
+    if hasattr(obj, "get_reaction_counts"):
+        return obj.get_reaction_counts(user)
+    return []
+
+
+@register.simple_tag
+def get_reaction_config():
+    """Return available community reaction emoji choices."""
+    from apps.discussions.models import REACTION_CONFIG
+    return REACTION_CONFIG
+
 

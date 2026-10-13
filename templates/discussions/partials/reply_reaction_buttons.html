@@ -1,68 +1,79 @@
-{% load i18n %}
-<div id="reply-reactions-{{ reply.id }}" class="reaction-buttons-group reply-reaction-group">
-  <!-- Like Button -->
-  {% if user.is_authenticated and not reply.is_deleted and reply.status == 'active' %}
-    <form action="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}" method="post"
-          hx-post="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}"
-          hx-target="#reply-reactions-{{ reply.id }}"
-          hx-swap="outerHTML" style="display: inline-flex; margin: 0;">
-      {% csrf_token %}
-      <input type="hidden" name="vote_type" value="like">
-      <button type="submit"
-              class="reaction-btn like-btn {% if user_reaction == 'like' %}active{% endif %}"
-              title="{% if user_reaction == 'like' %}{% trans "Remove Like" %}{% else %}{% trans "Like this reply" %}{% endif %}"
-              aria-label="{% trans "Like" %}">
-        <svg class="reaction-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-        </svg>
-        <span class="reaction-label">{% trans "Like" %}</span>
-        <span class="reaction-count">{{ reply.likes_count }}</span>
-      </button>
-    </form>
-  {% else %}
-    <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}?next={{ reply.discussion.get_absolute_url }}#reply-{{ reply.id }}{% else %}#{% endif %}"
-       class="reaction-btn like-btn {% if user.is_authenticated %}disabled{% endif %}"
-       title="{% if not user.is_authenticated %}{% trans "Log in to like this reply" %}{% else %}{% trans "Reactions disabled" %}{% endif %}"
-       aria-label="{% trans "Like" %}">
-      <svg class="reaction-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-      </svg>
-      <span class="reaction-label">{% trans "Like" %}</span>
-      <span class="reaction-count">{{ reply.likes_count }}</span>
-    </a>
-  {% endif %}
+{% load i18n discussion_tags %}
+{% get_reaction_config as all_reactions %}
+{% with badges=reply|reaction_badges:user %}
 
-  <span class="reaction-divider" aria-hidden="true"></span>
+<div id="reply-reactions-{{ reply.id }}" class="telegram-reactions-container reply-reactions-container">
+  <!-- Active Reaction Badge Pills -->
+  <div class="reaction-badges-row">
+    {% for b in badges %}
+      {% if user.is_authenticated and not reply.is_deleted and reply.status == 'active' %}
+        <form action="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}" method="post"
+              hx-post="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}"
+              hx-target="#reply-reactions-{{ reply.id }}"
+              hx-swap="outerHTML" class="reaction-form-pill">
+          {% csrf_token %}
+          <input type="hidden" name="vote_type" value="{{ b.type }}">
+          <button type="submit"
+                  class="reaction-pill-btn reply-pill {% if b.is_active %}active{% endif %}"
+                  title="{% if b.is_active %}{% trans 'Remove' %} {{ b.label_en }}{% else %}{{ b.label_en }} / {{ b.label_am }}{% endif %}"
+                  aria-label="{{ b.label_en }}">
+            <span class="pill-emoji" aria-hidden="true">{{ b.emoji }}</span>
+            <span class="pill-count">{{ b.count }}</span>
+          </button>
+        </form>
+      {% else %}
+        <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}?next={{ reply.discussion.get_absolute_url }}#reply-{{ reply.id }}{% else %}#{% endif %}"
+           class="reaction-pill-btn reply-pill {% if not user.is_authenticated %}guest-reaction-pill{% endif %}"
+           title="{% if not user.is_authenticated %}{% trans 'Log in to react' %} / ስሜት ለመግለጽ ይግቡ{% endif %}"
+           aria-label="{{ b.label_en }}">
+          <span class="pill-emoji" aria-hidden="true">{{ b.emoji }}</span>
+          <span class="pill-count">{{ b.count }}</span>
+        </a>
+      {% endif %}
+    {% endfor %}
 
-  <!-- Dislike Button -->
-  {% if user.is_authenticated and not reply.is_deleted and reply.status == 'active' %}
-    <form action="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}" method="post"
-          hx-post="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}"
-          hx-target="#reply-reactions-{{ reply.id }}"
-          hx-swap="outerHTML" style="display: inline-flex; margin: 0;">
-      {% csrf_token %}
-      <input type="hidden" name="vote_type" value="dislike">
-      <button type="submit"
-              class="reaction-btn dislike-btn {% if user_reaction == 'dislike' %}active{% endif %}"
-              title="{% if user_reaction == 'dislike' %}{% trans "Remove Dislike" %}{% else %}{% trans "Dislike this reply" %}{% endif %}"
-              aria-label="{% trans "Dislike" %}">
-        <svg class="reaction-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
-        </svg>
-        <span class="reaction-label">{% trans "Dislike" %}</span>
-        <span class="reaction-count">{{ reply.dislikes_count }}</span>
-      </button>
-    </form>
-  {% else %}
-    <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}?next={{ reply.discussion.get_absolute_url }}#reply-{{ reply.id }}{% else %}#{% endif %}"
-       class="reaction-btn dislike-btn {% if user.is_authenticated %}disabled{% endif %}"
-       title="{% if not user.is_authenticated %}{% trans "Log in to dislike this reply" %}{% else %}{% trans "Reactions disabled" %}{% endif %}"
-       aria-label="{% trans "Dislike" %}">
-      <svg class="reaction-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
-      </svg>
-      <span class="reaction-label">{% trans "Dislike" %}</span>
-      <span class="reaction-count">{{ reply.dislikes_count }}</span>
-    </a>
-  {% endif %}
+    <!-- Telegram-Style Emoji Picker Trigger -->
+    {% if user.is_authenticated and not reply.is_deleted and reply.status == 'active' %}
+      <div class="telegram-picker-wrap">
+        <button type="button" class="btn-picker-trigger reply-picker-trigger js-toggle-emoji-tray"
+                aria-label="{% trans 'Add reaction' %}"
+                title="{% trans 'React with emoji' %} / ስሜት ይግለጹ">
+          <span class="picker-plus" aria-hidden="true">➕</span>
+          <span class="picker-label">{% trans "React" %}</span>
+        </button>
+
+        <!-- Floating Horizontal Emoji Tray (Telegram Style) -->
+        <div class="telegram-emoji-tray hidden">
+          {% for r in all_reactions %}
+            <form action="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}" method="post"
+                  hx-post="{% url 'discussions:reply_reaction_toggle' pk=reply.id %}"
+                  hx-target="#reply-reactions-{{ reply.id }}"
+                  hx-swap="outerHTML" class="emoji-tray-form">
+              {% csrf_token %}
+              <input type="hidden" name="vote_type" value="{{ r.type }}">
+              <button type="submit"
+                      class="emoji-tray-btn {% if user_reaction == r.type %}selected{% endif %}"
+                      title="{{ r.label_en }} / {{ r.label_am }}"
+                      aria-label="{{ r.label_en }}">
+                <span class="tray-emoji" aria-hidden="true">{{ r.emoji }}</span>
+                <span class="tray-label">{{ r.label_am }}</span>
+              </button>
+            </form>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}?next={{ reply.discussion.get_absolute_url }}#reply-{{ reply.id }}"
+           class="btn-picker-trigger reply-picker-trigger guest-picker-trigger"
+           title="{% trans 'Log in to react' %} / ስሜት ለመግለጽ ይግቡ"
+           aria-label="{% trans 'React' %}">
+          <span class="picker-plus" aria-hidden="true">➕</span>
+          <span class="picker-label">{% trans "React" %}</span>
+        </a>
+      {% endif %}
+    {% endif %}
+  </div>
 </div>
+
+{% endwith %}

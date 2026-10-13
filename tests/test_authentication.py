@@ -434,6 +434,8 @@ class AuthenticationTests(TestCase):
             is_anonymous=True,
         )
 
+        # Authenticated member access
+        self.client.force_login(regular_user)
         response = self.client.get(reverse("accounts:member_directory") + "?format=json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
@@ -462,9 +464,23 @@ class AuthenticationTests(TestCase):
         self.assertTrue(mod_data["is_moderator"])
         self.assertEqual(mod_data["role_label"], "Moderator")
 
+    def test_unregistered_guest_blocked_from_member_directory(self):
+        """Unregistered guests cannot view registered members list."""
+        # Unauthenticated JSON request
+        res = self.client.get(reverse("accounts:member_directory") + "?format=json")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertFalse(data.get("authenticated"))
+        self.assertEqual(len(data.get("members", [])), 0)
+
+        # Unauthenticated HTML request redirects to login
+        res_html = self.client.get(reverse("accounts:member_directory"))
+        self.assertEqual(res_html.status_code, 302)
+        self.assertIn("/auth/login/", res_html.url)
+
     def test_member_directory_search_filter(self):
-        """Searching members by name query filters results accurately."""
-        User.objects.create_user(
+        """Searching members by name query filters results accurately for logged-in members."""
+        u1 = User.objects.create_user(
             email="search_user_1@example.com",
             password="Password123!",
             display_name="Berhanu Wondimu",
@@ -474,6 +490,7 @@ class AuthenticationTests(TestCase):
             password="Password123!",
             display_name="Tigist Hailu",
         )
+        self.client.force_login(u1)
 
         res = self.client.get(reverse("accounts:member_directory") + "?format=json&q=Berhanu")
         self.assertEqual(res.status_code, 200)
@@ -483,12 +500,13 @@ class AuthenticationTests(TestCase):
         self.assertNotIn("Tigist Hailu", names)
 
     def test_member_directory_html_page_renders(self):
-        """Direct access to /auth/members/ renders the responsive community directory page."""
-        User.objects.create_user(
+        """Direct access to /auth/members/ renders community directory page for authenticated members."""
+        u = User.objects.create_user(
             email="directory_page_user@example.com",
             password="Password123!",
             display_name="Directory Member",
         )
+        self.client.force_login(u)
         res = self.client.get(reverse("accounts:member_directory"))
         self.assertEqual(res.status_code, 200)
         self.assertContains(res, "Community Members")

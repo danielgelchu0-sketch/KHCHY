@@ -48,6 +48,18 @@ class Topic(models.Model):
         return self.discussions.filter(is_deleted=False, status=Discussion.Status.ACTIVE).count()
 
 
+
+REACTION_CONFIG = [
+    {"type": "like", "emoji": "👍", "label_en": "Like", "label_am": "ድጋፍ"},
+    {"type": "love", "emoji": "❤️", "label_en": "Love", "label_am": "ፍቅር"},
+    {"type": "amen", "emoji": "🙏", "label_en": "Amen", "label_am": "አሜን"},
+    {"type": "insight", "emoji": "💡", "label_en": "Insight", "label_am": "ብርሃን"},
+    {"type": "fellowship", "emoji": "🤝", "label_en": "Fellowship", "label_am": "ህብረት"},
+    {"type": "comfort", "emoji": "😢", "label_en": "Comfort", "label_am": "ማጽናናት"},
+]
+REACTION_EMOJIS = {cfg["type"]: cfg["emoji"] for cfg in REACTION_CONFIG}
+
+
 class Discussion(models.Model):
     """
     Discussion thread / question started by a community member.
@@ -165,6 +177,39 @@ class Discussion(models.Model):
         if hasattr(self, "_dislikes_count"):
             return self._dislikes_count
         return self.reactions.filter(vote_type="dislike").count()
+    def get_reaction_counts(self, user=None):
+        """Returns list of active reaction badges with counts and current user's reaction."""
+        if hasattr(self, "_reaction_counts"):
+            counts = self._reaction_counts
+        else:
+            counts = dict(
+                self.reactions.values("vote_type").annotate(count=models.Count("id")).values_list("vote_type", "count")
+            )
+        user_reaction = self.get_user_reaction(user) if user and user.is_authenticated else None
+
+        active_badges = []
+        for cfg in REACTION_CONFIG:
+            v_type = cfg["type"]
+            c = counts.get(v_type, 0)
+            if c > 0:
+                active_badges.append({
+                    "type": v_type,
+                    "emoji": cfg["emoji"],
+                    "label_en": cfg["label_en"],
+                    "label_am": cfg["label_am"],
+                    "count": c,
+                    "is_active": (user_reaction == v_type),
+                })
+        if counts.get("dislike", 0) > 0:
+            active_badges.append({
+                "type": "dislike",
+                "emoji": "👎",
+                "label_en": "Dislike",
+                "label_am": "አልተስማማሁም",
+                "count": counts["dislike"],
+                "is_active": (user_reaction == "dislike"),
+            })
+        return active_badges
 
     def get_user_reaction(self, user):
         if hasattr(self, "_user_reaction"):
@@ -173,8 +218,6 @@ class Discussion(models.Model):
             return None
         reaction = self.reactions.filter(user=user).first()
         return reaction.vote_type if reaction else None
-
-
 
 
 class Reply(models.Model):
@@ -282,6 +325,40 @@ class Reply(models.Model):
             return self._dislikes_count
         return self.reactions.filter(vote_type="dislike").count()
 
+    def get_reaction_counts(self, user=None):
+        """Returns list of active reaction badges with counts and current user's reaction for this reply."""
+        if hasattr(self, "_reaction_counts"):
+            counts = self._reaction_counts
+        else:
+            counts = dict(
+                self.reactions.values("vote_type").annotate(count=models.Count("id")).values_list("vote_type", "count")
+            )
+        user_reaction = self.get_user_reaction(user) if user and user.is_authenticated else None
+
+        active_badges = []
+        for cfg in REACTION_CONFIG:
+            v_type = cfg["type"]
+            c = counts.get(v_type, 0)
+            if c > 0:
+                active_badges.append({
+                    "type": v_type,
+                    "emoji": cfg["emoji"],
+                    "label_en": cfg["label_en"],
+                    "label_am": cfg["label_am"],
+                    "count": c,
+                    "is_active": (user_reaction == v_type),
+                })
+        if counts.get("dislike", 0) > 0:
+            active_badges.append({
+                "type": "dislike",
+                "emoji": "👎",
+                "label_en": "Dislike",
+                "label_am": "አልተስማማሁም",
+                "count": counts["dislike"],
+                "is_active": (user_reaction == "dislike"),
+            })
+        return active_badges
+
     def get_user_reaction(self, user):
         if hasattr(self, "_user_reaction"):
             return self._user_reaction
@@ -311,12 +388,17 @@ class Bookmark(models.Model):
 
 class Reaction(models.Model):
     """
-    User reaction (like or dislike) on a discussion.
-    Each user can have at most one reaction per discussion (like OR dislike).
+    User reaction on a discussion.
+    Each user can have at most one reaction per discussion.
     """
 
     class VoteType(models.TextChoices):
-        LIKE = "like", "Like"
+        LIKE = "like", "👍 Like"
+        LOVE = "love", "❤️ Love"
+        AMEN = "amen", "🙏 Amen"
+        INSIGHT = "insight", "💡 Insight"
+        FELLOWSHIP = "fellowship", "🤝 Fellowship"
+        COMFORT = "comfort", "😢 Comfort"
         DISLIKE = "dislike", "Dislike"
 
     user = models.ForeignKey(
@@ -330,7 +412,7 @@ class Reaction(models.Model):
         related_name="reactions",
     )
     vote_type = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=VoteType.choices,
         db_index=True,
     )
@@ -356,12 +438,17 @@ class Reaction(models.Model):
 
 class ReplyReaction(models.Model):
     """
-    User reaction (like or dislike) on a reply.
-    Each user can have at most one reaction per reply (like OR dislike).
+    User reaction on a reply.
+    Each user can have at most one reaction per reply.
     """
 
     class VoteType(models.TextChoices):
-        LIKE = "like", "Like"
+        LIKE = "like", "👍 Like"
+        LOVE = "love", "❤️ Love"
+        AMEN = "amen", "🙏 Amen"
+        INSIGHT = "insight", "💡 Insight"
+        FELLOWSHIP = "fellowship", "🤝 Fellowship"
+        COMFORT = "comfort", "😢 Comfort"
         DISLIKE = "dislike", "Dislike"
 
     user = models.ForeignKey(
@@ -375,7 +462,7 @@ class ReplyReaction(models.Model):
         related_name="reactions",
     )
     vote_type = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=VoteType.choices,
         db_index=True,
     )
