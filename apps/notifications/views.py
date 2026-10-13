@@ -201,8 +201,8 @@ class ServiceWorkerView(View):
  * Progressive Web App (PWA) + Offline Caching + Web Push
  */
 
-const STATIC_CACHE = 'hkhc-static-v2';
-const DYNAMIC_CACHE = 'hkhc-pages-v2';
+const STATIC_CACHE = 'hkhc-static-v3';
+const DYNAMIC_CACHE = 'hkhc-pages-v3';
 
 const PRECACHE_ASSETS = [
     '/',

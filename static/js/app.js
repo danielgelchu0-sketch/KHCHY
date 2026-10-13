@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', function () {
         membersModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
 
-        if (isAuthenticated && membersListContainer) {
+        if (membersListContainer) {
             if (!cachedMembers && !isFetchingMembers) {
                 fetchMembers();
             } else if (cachedMembers) {
@@ -944,6 +944,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!membersListContainer) return;
         isFetchingMembers = true;
 
+        const guestGate = document.getElementById('members-guest-gate');
+        const searchWrap = document.querySelector('.members-search-container');
+        const footerWrap = document.querySelector('.members-modal-footer');
+
         membersListContainer.innerHTML = `
             <div class="members-loading-state">
                 <div class="members-loading-spinner" aria-hidden="true"></div>
@@ -965,6 +969,22 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(function (data) {
             isFetchingMembers = false;
+
+            if (data.requires_auth) {
+                // Server indicated user is an unregistered guest
+                if (guestGate) guestGate.classList.remove('hidden');
+                if (membersListContainer) membersListContainer.classList.add('hidden');
+                if (searchWrap) searchWrap.classList.add('hidden');
+                if (footerWrap) footerWrap.classList.add('hidden');
+                return;
+            }
+
+            // User is authenticated: show member list & search
+            if (guestGate) guestGate.classList.add('hidden');
+            if (membersListContainer) membersListContainer.classList.remove('hidden');
+            if (searchWrap) searchWrap.classList.remove('hidden');
+            if (footerWrap) footerWrap.classList.remove('hidden');
+
             cachedMembers = data.members || [];
             renderMembersList(cachedMembers);
             setTimeout(function () {

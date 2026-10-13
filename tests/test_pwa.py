@@ -38,8 +38,8 @@ class PWATests(TestCase):
         self.assertEqual(response["Content-Type"], "application/javascript")
         self.assertEqual(response["Service-Worker-Allowed"], "/")
         content = response.content.decode("utf-8")
-        self.assertIn("hkhc-static-v2", content)
-        self.assertIn("hkhc-pages-v2", content)
+        self.assertIn("hkhc-static-v3", content)
+        self.assertIn("hkhc-pages-v3", content)
         self.assertIn("offline", content)
 
     def test_base_template_has_pwa_meta_tags(self):

@@ -19,7 +19,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="HKHC">
   <!-- Production Styles -->
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.1">
   <!-- Offline-safe minified HTMX -->
   <script src="{% static 'js/htmx.min.js' %}"></script>
   <!-- Notification & Web Push Metadata -->
@@ -588,7 +588,7 @@
   </div>
 
   <!-- Application Interactivity Script -->
-  <script src="{% static 'js/app.js' %}"></script>
+  <script src="{% static 'js/app.js' %}?v=3.1"></script>
 
   {% block extra_js %}{% endblock %}
 </body>
